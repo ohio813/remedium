@@ -1,0 +1,13 @@
+#summary Discuss, document and implement the Flat file container
+
+= Introduction =
+
+A container is a remedium class that is used for storing and retrieving data.
+
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
