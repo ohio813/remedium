@@ -2,12 +2,11 @@
 
 == Introduction ==
 
-Remedium is an open source project that adopts its own licensing terms for use and distribution. The next paragraphs details licensing terms.
+Remedium is an open source project that adopts its own licensing terms for use and distribution. 
 
-In summary, end users are allowed to use Remedium without costs for home and enterprise scenarios. If you intend to proceed with commercial distribution of remedium and/or modification of the source code then you will need to 
+In summary, end users are allowed to use Remedium without costs for home and enterprise scenarios. If you intend to proceed with commercial distribution of remedium and/or modification of the source code then you will need to agree on a different licensing model with the remedium author.
 
-Restrictions are mentioned at the "Restrictions" section of this page and entities interested in distributing commercially remedium or distributing modified versions should contact the project administrator to agree on a separate licensing contract.
-
+The next paragraphs detail the licensing terms.
 
 In case of doubt, please contact reboot.pro - contacts available under the "contacts" section on this page.
 
