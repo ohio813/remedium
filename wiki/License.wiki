@@ -2,11 +2,11 @@
 
 == Introduction ==
 
-Remedium is an open source project that adopts its own licensing terms for use and distribution. In summary, end users are allowed to use Remedium without costs for home and enterprise scenarios. 
+Remedium is an open source project that adopts its own licensing terms for use and distribution. In summary, end users are allowed to use this software without costs for home and enterprise scenarios. 
 
-If you intend to proceed with commercial distribution of remedium and/or modification of the source code then you will need to agree on a different licensing model with the remedium author.
+If you intend to distribute remedium and/or provide modified versions of the source code then you need to acquire a different licensing model with the remedium author.
 
-In case of doubt, please contact reboot.pro - contacts available under the "contacts" section on this page.
+In case of doubt or custom licensing, please contact reboot.pro - contacts available under the "contacts" section on this page.
 
 
 ----
@@ -77,22 +77,26 @@ Europe, 30-06-2011
 You accept the following Agreement by downloading and/or using the Software. If you do not intend to honor this Agreement, you must remove this Software from your computer right now.
 
 ----
+== Contacts ==
 
+Licensing - Nuno Brito (mail@nunobrito.eu)
+Forum support - http://reboot.pro
 
 ----
 
 
 == Personal comment ==
 
-People have the rigth to know how to make boot disks with their own resources, and they surely deserve good tools and quality scripts to do them the way they really need. Each included project can easily be ported to other programs or tools in order to achieve similar or even better results, there's no intention to produce closed source projects, our goal is quite the opposite - everyone is free to understand how everything works and give a positive contribution to further improve any project available.
+People have the rigth to improve the security of their machines with affordable tools.
+
+There's no intention to develop a closed source project, our goal is quite the opposite - everyone is free to understand how everything works and give a positive contribution to further improve the available project.
  
 Let me know if you have a good idea or project you wish to develop using 
-Remedium, there is also a forum dedicated to all sort of ideas where
-you can post your thoughts. (http://reboot.pro)
+Remedium, don't forget to visit our forum dedicated to all sort of ideas where you can post your thoughts. (http://reboot.pro)
 
-As long as you're willing to work hard to get good results, expect nothing less than my dedicated contribution to help things go forward..
+As long as you're willing to work hard to get good results, expect nothing less than my dedicated contribution to help things go forward!
 
 
 Have fun!!
 
---nuno brito
+--Nuno Brito
