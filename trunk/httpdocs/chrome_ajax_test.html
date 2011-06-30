@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=UTF-8">
+  <script language="JavaScript">
+function createInstance()
+{
+if (window.XMLHttpRequest)
+{
+req = new XMLHttpRequest();
+} else alert("XHR not created");
+return(req);
+};
+function submitForm()
+{ document.ajax.dyn.value="Started...";
+var req = createInstance();
+req.onreadystatechange = function()
+{ document.ajax.dyn.value="Wait server...";
+if(req.readyState == 4)
+{
+if(req.status == 200)
+{
+document.ajax.dyn.value="Received:" + req.responseText; } else {
+document.ajax.dyn.value="Error: returned status code " + req.status + " " + req.statusText;
+} } }; req.open("GET", "http://localhost:10101/file?name=ajax-test.txt", true); req.send(null); } </script>
+  <title>Ajax XMLHttpRequest Test with Chrome</title>
+</head>
+<body>
+<h1>Ajax Test XMLHttpRequest Standard</h1>
+<hr>
+<div>
+<p>Should work under any browsers but Internet Explorer. Does
+work with Chrome. </p>
+<p>Loading the <b>ajax-test.txt</b> test file and
+storing the content into the form field below. </p>
+</div>
+<form name="ajax" method="post" action="">
+  <p><input value="Submit" onclick="submitForm()"
+ type="button"></p>
+  <p>
+  <input name="dyn" size="32" value=""
+ type="text"></p>
+</form>
+</body>
+</html>
