@@ -1,0 +1,38 @@
+<launch4jConfig>
+  <dontWrapJar>false</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>D:\java\remedium\20110611\20110518\store\remedium.jar</jar>
+  <outfile>D:\java\remedium\20110611\20110518\binary\remedium.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir></chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl></supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>D:\java\remedium\20110611\20110518\shield.ico</icon>
+  <singleInstance>
+    <mutexName>remedium</mutexName>
+    <windowTitle></windowTitle>
+  </singleInstance>
+  <jre>
+    <path></path>
+    <minVersion>1.4.1</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+  </jre>
+  <versionInfo>
+    <fileVersion>1.0.0.1</fileVersion>
+    <txtFileVersion>1</txtFileVersion>
+    <fileDescription>Beta version of Remedium</fileDescription>
+    <copyright>Creative Commons: Attribution-NoDerivs 3.0 Unported</copyright>
+    <productVersion>1.0.0.0</productVersion>
+    <txtProductVersion>1</txtProductVersion>
+    <productName>Remedium</productName>
+    <companyName>http://reboot.pro</companyName>
+    <internalName>remedium</internalName>
+    <originalFilename>remedium.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>
