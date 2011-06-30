@@ -2,9 +2,9 @@
 
 == Introduction ==
 
-Remedium is an open source project that adopts its own licensing terms for use and distribution. In summary, end users are allowed to use this software without costs for home and enterprise scenarios. 
+Remedium is an open source project that adopts its own licensing terms for use and distribution. In summary, end users are allowed to use this software without costs for home and enterprise scenarios.  You are also allowed to distribute remedium if you follow the licensing terms specified on this page or acquire a custom license agreement.
 
-If you intend to distribute remedium and/or provide modified versions of the source code then you need to acquire a different licensing model with the remedium author.
+If you intend to distribute remedium and/or provide modified versions of the source code then you are always required to acquire a custom licensing model from the remedium author.
 
 In case of doubt or custom licensing, please contact reboot.pro - contacts available under the "contacts" section on this page.
 
@@ -14,13 +14,13 @@ In case of doubt or custom licensing, please contact reboot.pro - contacts avail
 
 == Remedium License Agreement ==
 
-This license applies to "Remedium", wich will be refered as "this software" for the distribution conditions and license terms.
+  * This license applies to "Remedium", refered as "this software" on the context of the licensing terms
 
-The term "Author" applies to the administration panel of reboot.pro (http://reboot.pro), currently headed by Nuno Brito (mail@nunobrito.eu)
+  * The term "Author" applies to the administration panel of reboot.pro (http://reboot.pro), currently headed by Nuno Brito (mail@nunobrito.eu)
 
-The term "contributor" applies to people who contribute with code, documentation or other resources to this software.
+  * The term "contributor" applies to people who contribute with code, documentation or other resources to this software
 
-License terms are described over the next sections of this page.
+  * License terms are described over the next sections of this page
 
 
 ----
@@ -65,7 +65,7 @@ use the product, even if the Author has been advised of the possibility of such 
 
 == Copyright Notice ==
  
-All parts of this Software are copyrighted in benefit of the Author, unless specified otherwise by the Author.
+All parts of this Software are copyrighted by the Author unless specified otherwise.
 
 Remedium © Reboot.pro (http://reboot.pro)
 
@@ -79,8 +79,8 @@ You accept the following Agreement by downloading and/or using the Software. If 
 ----
 == Contacts ==
 
-Licensing - Nuno Brito (mail@nunobrito.eu)
-Forum support - http://reboot.pro
+  * Licensing - Nuno Brito (mail@nunobrito.eu)
+  * Forum support - http://reboot.pro
 
 ----
 
