@@ -97,6 +97,7 @@ This section provides a quick overlook of the meaning and context of terms used 
   * *container ID* - unique ID text that identifies the type of knowledge (example: crc32, sha1, ...)
   * *knowledge file* - flat file where data records are stored
   * *index file* - a file placed at the root of the target folder that contains the location and resources provided by each of knowledge file that was found
+  * *key index* - The column on the data record that is considered as most relevant. For example, the unique check-sum signature of each file
 
 === Steps of initialization ===
 
@@ -121,6 +122,18 @@ This section provides a quick overlook of the meaning and context of terms used 
   * Done!
 
 
+=== Steps for writing a record ===
+
+
+
+=== Steps for reading a record ===
+
+  * Assume that the first column always holds the key-index
+    * Two methods are provided to read records
+      * Get all records matching a given key
+      * Get the first record matching a given key
+  * Iterate through the knowledge files of our container for the record(s) that matches the search criteria
+  * Provide the requested results (if any) 
 
 == Constructor ==
 
