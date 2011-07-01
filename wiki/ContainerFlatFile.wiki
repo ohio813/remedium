@@ -85,9 +85,9 @@ Note how we see different key-value pairs that allow extracting information from
 
 = How it works =
 
-We created an Interface class to the Container and this way it is possible to create implementation of the container using more technologies in the future other than just HSQL or Flat files.
+We created an Interface class to the Container and this way it is possible to create implementations of the container using technologies in the future other than just HSQL or Flat files.
 
-Over the next sections we detail the important steps for this class that intend to serve as a guideline for implementation and later serve as documentation for the class itself.
+Over the next sections we detail the relevant execution steps for this class, intending to serve as a guideline for implementation and later serve as documentation for the class itself to be understood by other developers.
 
 === Glossary ===
 
