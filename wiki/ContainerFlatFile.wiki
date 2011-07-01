@@ -105,6 +105,21 @@ We care to ensure that our *root folder* is valid and then we will check if we c
 
 If anything goes wrong, the *result* message will provide details and a specific value number under {{{result.getCode()}}} that you can use for debugging what has happened. 
 
+=== Steps ===
+
+  * Find all files inside the target folder
+  * Create an index file for our container ID if one does not exist
+  * If any of the found knowledge files matches the container ID that we have, process them
+    * Check if the knowledge file is mentioned on the index file
+    * In case the knowledge file is mentioned, verify details such as check-sum of the file and date of last modification to check if any changes occurred.
+
+Glossary:
+  * target folder - the folder where where the containers are stored
+  * container ID - unique ID text that identifies the type of knowledge (example: crc32, sha1, ...)
+  * knowledge file - flat file where data records are stored
+  * index file - a file placed at the root of the target folder that contains the location and resources provided by each of knowledge file that was found
+
+
 ----
 
 
