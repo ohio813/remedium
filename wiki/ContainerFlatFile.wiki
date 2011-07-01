@@ -101,6 +101,7 @@ This section provides a quick overlook of the meaning and context of terms used 
 
 === Steps of initialization ===
 
+  * Verify that target folder is valid and available for operations
   * Find knowledge files inside the target folder, crawl subfolders
   * Create an index file for our container ID if one does not exist
   * Get the knowledge files that match our container ID
