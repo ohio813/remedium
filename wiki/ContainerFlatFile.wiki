@@ -2,12 +2,25 @@
 
 = Introduction =
 
-A container is a remedium class that is used for storing and retrieving data.
+A container is a remedium class that is used for storing and retrieving data using flat files. It is necessary since the current HSQL implementation of the container is using an excessive amount of RAM.
 
 
-= Details =
+= Desired properties =
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+  * Allows to set the max number of records per data file
+  * Least amount possible of data files
+  * Quick to retrieve data
+    * Should read a record from a DB with 100 000 records under an average of 0,05 seconds after 100 random record reads
+  * Quick to store data
+    * Should write onto a DB 100 000 records under 10 minutes
+  * Scale up to millions of records
+    * Should write a DB with 100 000 000 records and manage them
+  * Memory efficient
+    * Overall memory usage shouldn't surpass 30Mb regardless of DB size
+
+
+= Progress =
+
+30th June 2011
+  * Initial implementation of new class
+  * Introduced concept of log message object to allow testing the new class without tying it on a remedium component (allows testing exclusively the new class without interference from components)
