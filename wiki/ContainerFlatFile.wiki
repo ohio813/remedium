@@ -28,6 +28,30 @@ Some of the code and lessons learned from the implementation of Container dump c
 A test case is being developed along case with this class implementation to ensure that each method and step of this process is tested using a repetitive approach.
 
 
+= How it works =
+
+We created an Interface class to the Container and this way it is possible to create implementation of the container using more technologies in the future other than just HSQL or Flat files.
+
+== Constructor ==
+
+The first step is invoking the constructor method:
+{{{container = new ContainerFlatFile(id, fields, rootFolder, result);}}}
+
+Where:
+  * String *id* is the identification name of this container
+  * String[] *fields* are the columns for our table 
+  * File *rootFolder* is the folder where we are storing the containers 
+  * LogMessage *result* is a log message object that contains details about this operation
+
+ 
+=== Initial checks ===
+
+We care to ensure that our *root folder* is valid and then we will check if we can create a sub folder with the same name as *id*.
+
+If anything goes wrong, the *result* message will provide details and a specific value number under {{{result.getCode()}}} that you can use for debugging what has happened. 
+
+
+
 = Progress =
 
 30th June 2011
