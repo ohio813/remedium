@@ -93,7 +93,7 @@ Over the next sections we detail the relevant execution steps for this class, in
 
 This section provides a quick overlook of the meaning and context of terms used over this chapter.
 
-  * *target folder* - the folder where where the containers are stored
+  * *target folder* - the folder where the containers are stored
   * *container ID* - unique ID text that identifies the type of knowledge (example: crc32, sha1, ...)
   * *knowledge file* - flat file where data records are stored
   * *index file* - a file placed at the root of the target folder that contains the location and resources provided by each of knowledge file that was found
