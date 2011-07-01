@@ -68,6 +68,14 @@ There exist trade-offs about this approach:
   * This structure is limited to a single level of key-value pairs. Typical INI methods allow using INI sections
   * Some Operative Systems such as Windows will limit the max size of the file name to 256 characters
   * Malicious actors can tamper the file name or file contents
+  * Additional time required to process records
+  * Not a mature technique, will be prune to errors
+
+And advantages:
+  * Third-party providers can supply additional knowledge bases
+  * End users can manage available knowledge by their own means
+  * Reduced RAM usage
+  * Expand supported storage to large scale management on normal workstations
 
 ----
 
