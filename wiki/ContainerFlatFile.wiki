@@ -2,7 +2,7 @@
 
 = Introduction =
 
-A container is a remedium class that is used for storing and retrieving data using flat files. It is necessary since the current HSQL implementation of the container is using an excessive amount of RAM.
+A flat file container is a remedium class that is used for storing and retrieving data using flat files. It is necessary since the current HSQL implementation of the container is using an excessive amount of RAM.
 
 
 There exist trade-offs about this approach:
