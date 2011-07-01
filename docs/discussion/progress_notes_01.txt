@@ -1,6 +1,6 @@
 - Added LogMessage class, allows classes that require using the log functions from a component to become independent from components. Log messages became objects that can be handled without need for components.
 - Added ContainerFlatFile, replaces the HSQL container that is default on remedium to reduce the RAM usage when indexing a large of data
-
+- Created the specification document for the ContainerFlatFile (http://code.google.com/p/remedium/wiki/ContainerFlatFile)
 
 --- TODO ---
 - Load data dumped from Instance A onto Instance B
