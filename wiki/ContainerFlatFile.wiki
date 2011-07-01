@@ -19,6 +19,23 @@ A container is a remedium class that is used for storing and retrieving data usi
     * Overall memory usage shouldn't surpass 30Mb regardless of DB size
 
 
+= Nice to haves =
+
+We can attempt to store a max of a million of records for each file, however, it would be particularly nice to allow other providers to add more data on a folder.
+
+For example, we create a knowledge container with information gathered by someone about Microsoft Windows files and we include this knowledge inside our own container in a decentralized manner.
+
+The big advantage is allowing providers to make available specialized knowledge about a given subject. 
+
+People interested in updating the knowledge of their containers can do so manually. Despite primitive, it does bring the advantage of letting end-users manage updates and get them from other providers of their preference.
+
+
+For this model of data exchange be possible, we can't enforce a specific folder structure but rather scan all files and subfolders to discover the type of information that each container is providing.
+
+
+
+
+
 = Development approach =
 
 I have recently implemented the Container Dump class that is basically dumping all records from an HSQL database onto flat files. The remarkable speed noted when importing and exporting these records are the main reason why this class is now being implemented.
