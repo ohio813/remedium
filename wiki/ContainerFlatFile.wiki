@@ -4,6 +4,7 @@
 
 A container is a remedium class that is used for storing and retrieving data using flat files. It is necessary since the current HSQL implementation of the container is using an excessive amount of RAM.
 
+----
 
 = Desired properties =
 
@@ -18,6 +19,7 @@ A container is a remedium class that is used for storing and retrieving data usi
   * Memory efficient
     * Overall memory usage shouldn't surpass 30Mb regardless of DB size
 
+----
 
 = Nice to haves =
 
@@ -34,7 +36,7 @@ For this model of data exchange be possible, we can't enforce a specific folder 
 
 
 
-
+----
 
 = Development approach =
 
@@ -44,6 +46,30 @@ Some of the code and lessons learned from the implementation of Container dump c
 
 A test case is being developed along case with this class implementation to ensure that each method and step of this process is tested using a repetitive approach.
 
+=== Identifying files with knowledge ===
+
+Since under this model all files will be mixed and use a unknown folder structure, we are left with the challenge of identifying the contents of a given knowledge base flat file. We need to do this without reading the contents otherwise this method would become prohibitive to use when these files are numerous and large sized. 
+
+To identify each file, we apply the concept of file name properties that was introduced with the Container Dump class where we add an identifier to the file name. We scan all files inside a given folder and subfolder
+
+This way we scan files very quickly and in the process get file names that contain information about their respective contents.
+
+File name information uses Key=Value approach as seen for INI files with no INI sections. There are two reserved characters:
+  * *-* Equivalent to "="
+  * *_* Separates key-value pairs from each others
+
+An example of this usage: 
+{{{db-crc32_since-1309513994973_until-1309514033984_count-2307_checksum-6970388375f06a91f9b8f133697f94f2a1e0ed54ec1d64cebfb47f43595712bd_v-1.txt}}}
+Note how we see different key-value pairs that allow extracting information from the file without needing to read the contents. 
+
+There exist trade-offs about this approach:
+  * When the file name becomes long then it is unreadable by humans
+  * File contents might changes and differ from what is reported on the file name
+  * This structure is limited to a single level of key-value pairs. Typical INI methods allow using INI sections
+  * Some Operative Systems such as Windows will limit the max size of the file name to 256 characters
+  * Malicious actors can tamper the file name or file contents
+
+----
 
 = How it works =
 
@@ -67,6 +93,7 @@ We care to ensure that our *root folder* is valid and then we will check if we c
 
 If anything goes wrong, the *result* message will provide details and a specific value number under {{{result.getCode()}}} that you can use for debugging what has happened. 
 
+----
 
 
 = Progress =
