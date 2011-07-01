@@ -101,29 +101,35 @@ Where:
  
 === Initial checks ===
 
-We care to ensure that our *root folder* is valid and then we will check if we can create a sub folder with the same name as *id*.
+We first care to ensure that our *root folder* is valid and then we will check if we can create a sub folder with the same name as *id*.
 
 If anything goes wrong, the *result* message will provide details and a specific value number under {{{result.getCode()}}} that you can use for debugging what has happened. 
 
-=== Steps ===
+At this moment, there are no checks to verify if there exists enough disk space for storing data records in a reasonable manner (at least 200Mb available). 
 
-  * Find all knowledge files inside the target folder
+=== Steps of initialization ===
+
+  * Find knowledge files inside the target folder, crawl subfolders
   * Create an index file for our container ID if one does not exist
-  * Get all the knowledge files that match our container ID
+  * Get the knowledge files that match our container ID
   * Sort these files according to their importance level. Higher number = higher importance = first to be processed
-  * We save time if there have been no changes since the last start, so we check if the have been changes
+  * We save time if there have been no changes since the last start, so we check if there have been changes
     * Check if the knowledge file is mentioned on the index file
     * In case the knowledge file is mentioned, verify details such as check-sum of the file and date of last modification to check if any changes occurred
     * If nothing changed, no need to read the knowledge file
-    * Otherwise, proceed with the reading of knowledge
+    * Otherwise, proceed with reading of knowledge
   * For each knowledge file, evaluate the following properties:
-    * The file name describes this file as read-only or read-write?
+    * File name describes this file as read-only or read-write?
     * Compute current check-sum of knowledge file
     * Get absolute file path and date of last modification
     * Get the number of records present in file
     * Verify if the number of columns on each record matches our expected size
   * Write the properties about each knowledge file on the index file, according to their order of importance
-  *   
+  * From the processed knowledge files, create a list of files that will accept new records to be added
+    * If no knowledge files are available to add new records, create a new knowledge file and mark it as available
+  * Done!
+
+
 
 *Glossary*:
   * target folder - the folder where where the containers are stored
