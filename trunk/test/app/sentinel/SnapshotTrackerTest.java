@@ -14,7 +14,6 @@
 
 package app.sentinel;
 
-import app.sentinel.SnapshotTracker;
 import app.sentinel.SnapshotTracker.FileRecord;
 import java.io.File;
 import java.util.ArrayList;
