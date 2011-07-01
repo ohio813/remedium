@@ -19,6 +19,15 @@ A container is a remedium class that is used for storing and retrieving data usi
     * Overall memory usage shouldn't surpass 30Mb regardless of DB size
 
 
+= Development approach =
+
+I have recently implemented the Container Dump class that is basically dumping all records from an HSQL database onto flat files. The remarkable speed noted when importing and exporting these records are the main reason why this class is now being implemented.
+
+Some of the code and lessons learned from the implementation of Container dump can now be applied to this new class. The desired properties section acts as a guideline of performance requirements on my development machine (Toshiba R630 laptop, i5 CPU x64 with 4Gb of RAM under Windows 7). 
+
+A test case is being developed along case with this class implementation to ensure that each method and step of this process is tested using a repetitive approach.
+
+
 = Progress =
 
 30th June 2011
