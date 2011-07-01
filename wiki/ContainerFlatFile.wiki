@@ -55,8 +55,8 @@ To identify each file, we apply the concept of file name properties that was int
 This way we scan files very quickly and in the process get file names that contain information about their respective contents.
 
 File name information uses Key=Value approach as seen for INI files with no INI sections. There are two reserved characters:
-  * *-* Equivalent to "="
-  * *_* Separates key-value pairs from each others
+  * {{{-}}} is equivalent to "="
+  * {{{_}}} separates key-value pairs from each others
 
 An example of this usage: 
 {{{db-crc32_since-1309513994973_until-1309514033984_count-2307_checksum-6970388375f06a91f9b8f133697f94f2a1e0ed54ec1d64cebfb47f43595712bd_v-1.txt}}}
