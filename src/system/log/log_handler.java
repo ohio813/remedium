@@ -18,17 +18,18 @@
  * //TODO Add a UI to let us browse through the log entries
  */
 
-package system;
+package system.log;
 
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 14th April 2011 in Darmstadt, Germany
  */
-public class log_handler implements Message{
+public class log_handler implements msg{
 
     // settings
     //Boolean debug = true; // true if you want debugging messages
@@ -81,9 +82,9 @@ public class log_handler implements Message{
     /**
      *
      * @param ID Name of the remedium that is running
-     * @param who Name of the Application/Role that wrote the Message
-     * @param gender Type of Message (ERROR, INFO, DEBUG)
-     * @param Message the Message itself
+     * @param who Name of the Application/Role that wrote the msg
+     * @param gender Type of msg (ERROR, INFO, DEBUG)
+     * @param msg the msg itself
      */
     public void out(String who, int gender, String message) {
 
@@ -144,7 +145,7 @@ public class log_handler implements Message{
 
          for(log_record record : logs) // iterate all records
             if(record.getWho().equals(who)) // get only the ones to a given person
-                if(record.getMessage().contains(what)) // does it contain part of the Message?
+                if(record.getMessage().contains(what)) // does it contain part of the msg?
                     return true;
         // no dice, return as false;
         return false;

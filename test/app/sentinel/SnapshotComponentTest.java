@@ -16,7 +16,7 @@ package app.sentinel;
 
 import app.sentinel.SnapshotComponent;
 import java.io.File;
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 13th of June 2011 in Darmstadt, Germany.
  */
-public class SnapshotComponentTest implements Message {
+public class SnapshotComponentTest implements msg {
 
 
     public SnapshotComponentTest() {

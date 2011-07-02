@@ -7,13 +7,13 @@ package utils;
 import java.io.File;
 import java.util.Properties;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 29th of May 2011 in Darmstadt, Germany.
  */
-public class tweaks implements Message {
+public class tweaks implements msg {
 
       /** Remove the system tray icon from public sight*/
       public static void removeTrayIcon(String URL){

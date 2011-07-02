@@ -7,13 +7,13 @@
 package app.sentinel;
 
 import java.io.File;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 20th of March 2011 at Darmstadt, Germany.
  */
-public class Scanner_ThreadType extends Thread implements Message{
+public class Scanner_ThreadType extends Thread implements msg{
 
      // settings
         long
@@ -132,7 +132,7 @@ public void findfiles(File where, int maxDeep){
     }//findfiles
 
 
-    // output a log Message through the assigned role
+    // output a log msg through the assigned role
     private void log(int gender, String message){
         role.log(//lock,
                 gender, message);

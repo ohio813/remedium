@@ -12,9 +12,9 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 
-public class ScannerComponent extends Component implements Message{
+public class ScannerComponent extends Component implements msg{
 
     // definitions
     private static String
@@ -54,7 +54,7 @@ public class ScannerComponent extends Component implements Message{
      *  - pause
      *  - resume
      *  - change the scanning throttle
-     * @param Message
+     * @param msg
      */
     public synchronized void digest_scan(Properties message){
         log(ROUTINE, "Scan request was made");

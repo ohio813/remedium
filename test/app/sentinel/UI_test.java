@@ -8,7 +8,7 @@ package app.sentinel;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import system.Message;
+import system.msg;
 import remedium.Remedium;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -18,7 +18,7 @@ import org.junit.Test;
  *
  * @author Nuno Brito
  */
-public class UI_test implements Message{
+public class UI_test implements msg{
 
     public UI_test() {
     }

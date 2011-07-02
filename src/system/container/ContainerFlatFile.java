@@ -2,7 +2,7 @@
  * This container implementation uses flat files to store and retrieve data.
  *
  * Desired properties:
- *      - Allows to set the max number of records per data file
+ *      - Allows to add the max number of records per data file
  *      - Least amount possible of data files
  *      - Quick to retrieve data
  *          - Should read a record from a DB with 100 000 records
@@ -14,19 +14,22 @@
  *      - Memory efficient
  *          - Overall memory usage shouldn't surpass 30Mb regardless of DB size
  * 
- *
+ * To read the full specification, visit:
+ * http://code.google.com/p/remedium/wiki/ContainerFlatFile
  *
  */
 
 package system.container;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.LogMessage;
-import system.Message;
+import system.log.LogMessage;
+import system.msg;
 
 /**
  *
@@ -40,16 +43,23 @@ public class ContainerFlatFile implements ContainerInterface {
     private long maxRecords = 1000000;
 
     // objects
-    // our array of files
-    private ArrayList<fileRecord> storage = new ArrayList();
-    // our current working file
-    private fileRecord currentFile = null;
+    // our array of files that contain relevant records
+    HashMap<Properties, File> knowledge = new HashMap();
+
+    // an ordered list of files to be checked when reading records
+    String[] readPriority;
+
     // where our files will be located
     private File 
             rootFolder = null,
-            indexFolder = null,
             indexFile = null
             ;
+
+    // our constant keywords
+    final String
+            RANK = "rank";
+
+
 
     private String id; // identification of our files
     private String[] fields; // columns of data
@@ -60,11 +70,11 @@ public class ContainerFlatFile implements ContainerInterface {
             File rootFolder, LogMessage result){
         // preflight checks
         if(utils.text.isEmpty(title)){
-            result.set(Message.ERROR, 0, "Title is empty");
+            result.add(msg.ERROR, "Title is empty");
             return;
         }
         if(fields == null){
-            result.set(Message.ERROR, 1, "Fields are null");
+            result.add(msg.ERROR, "Fields are null");
             return;
             }
 
@@ -80,9 +90,62 @@ public class ContainerFlatFile implements ContainerInterface {
         // instantiate this container
         this.initialization(result);
         // output a success message
-        //result.set(Message.ROUTINE, 2, "All done.");
+        //result.add(msg.ROUTINE, 2, "All done.");
     }
 
+
+
+    /** Initialize the work folder and files */
+    private void initialization(LogMessage result){
+
+        //Verify that target folder is valid and available for operations
+        if (checkFolder(result)==false)
+            return;
+        // Find knowledge files inside the target folder, crawl subfolders
+        if (findKnowledgeFiles(result)==false)
+            return;
+        // Sort these files according to their importance level
+        sortKnowledgeFiles();
+        // Create an index file for our container ID if one does not exist
+        if (this.createIndexFile(result)==false)
+            return;
+
+        for(String out : this.readPriority){
+            System.out.println("-->" + out);
+        }
+
+        // output the final result
+        result.add(msg.ROUTINE, "All done.");
+    }
+
+
+    /**
+     * Sort these files according to their ranking level.
+     * Higher number = higher ranking = first to be processed
+     */
+    private void sortKnowledgeFiles(){
+        // where we will hold our sorted ranking of knowledge
+        String sort = "";
+        // loop all files for each level of rank
+        for(int i = 9; i > 0; i--){
+            // check if any file matches this specific level or not
+            for(Properties current : knowledge.keySet()){
+                // check if verifies or otherwise continue
+                if(current.getProperty(RANK, "1")
+                        .equalsIgnoreCase("" + i)==false)
+                    continue;
+                // we use getPath instead of absolutePath to save RAM memory
+                String name = knowledge.get(current).getPath();
+                // add the name to our list
+                sort = sort.concat(name + ";");
+                
+            }
+        }
+        // output our result to the read Priority list
+        readPriority = sort.split(";");
+    }
+
+    
 
     /** Test if our folders are ready and available */
     private boolean checkFolder(LogMessage result){
@@ -90,8 +153,8 @@ public class ContainerFlatFile implements ContainerInterface {
         if(rootFolder.exists()==false){
             boolean mkdir = rootFolder.mkdir();
             if(mkdir == false){
-                result.set(Message.ERROR, 3, "Unable to create the '"+
-                    rootFolder.getAbsolutePath() + "' folder");
+                result.add(msg.ERROR, "Unable to create the '%1' folder",
+                        rootFolder.getAbsolutePath());
                 return false;
             }
         }
@@ -104,31 +167,14 @@ public class ContainerFlatFile implements ContainerInterface {
                 ||
                 (rootFolder.canWrite()==false)
                 ){
-            result.set(Message.ERROR, 4, "Unable to create the '"+
-                    rootFolder.getAbsolutePath() + "' folder");
+                result.add(msg.ERROR, "Unable to create the '%1' folder",
+                        rootFolder.getAbsolutePath());
             return false;
         }
         // All done
         return true;
     }
 
-
-    /** Initialize the work folder and files */
-    private void initialization(LogMessage result){
-
-        //Verify that target folder is valid and available for operations
-        if (checkFolder(result)==false)
-            return;
-
-        // Find knowledge files inside the target folder, crawl subfolders
-        if (findKnowledgeFiles(result)==false)
-            return;
-
-        
-
-        // output the final result
-        result.set(Message.ROUTINE, 2, "All done.");
-    }
 
 
     /** Read the file name and decompose all the properties mentioned */
@@ -143,9 +189,10 @@ public class ContainerFlatFile implements ContainerInterface {
             String[] out = property.split("-");
             // do safety check on this key/value pair
             if(out.length != 2){
-                message.set(Message.ERROR, 5, "Invalid key/value pair size "
-                        + "of '"+property+"' from '"
-                        + file.getAbsolutePath() + "'");
+                message.add(msg.ERROR,
+                        "Invalid key/value pair size of '%1' from '%2'",
+                        property,
+                        file.getAbsolutePath());
                 return null;
             }
             // get the key and value pair
@@ -156,47 +203,55 @@ public class ContainerFlatFile implements ContainerInterface {
         }
 
         // all done
-        message.set(Message.COMPLETED, "readFilename operation was completed");
+        message.add(msg.COMPLETED, "readFilename operation completed");
         return result;
     }
 
 
     /** Find knowledge files inside the target folder, crawl subfolders */
-    private boolean findKnowledgeFiles(LogMessage result){
+    private boolean findKnowledgeFiles(LogMessage message){
 
         // find all files inside our root folder
         ArrayList<File> list = utils.files.findfiles(rootFolder, 25);
         // iterate all files that were found
         for(File file : list){
+            // we only want knowledge files
+            if( file.getName().substring(0, 2).equals("db")==false)
+                continue;
             // process the file name and get the respective properties
-            Properties currentName = this.readFileName(file, result);
+            Properties currentKnowledge = this.readFileName(file, message);
             // if an error occurred, quit here
-            if(result.getGender()==Message.ERROR)
+            if(message.getResult()==msg.ERROR)
                 return false;
-            System.out.println(currentName.toString());
+            // Get the knowledge files that match our container ID
+            if(currentKnowledge.getProperty("db").equalsIgnoreCase(id)!=true)
+                continue; // if things don't match, keep on moving to the next
+            knowledge.put(currentKnowledge, file);
         }
         // All done
         return true;
     }
 
 
-//    /** Starts the container indexFolder file */
-//    private Boolean startIndexFile(LogMessage result){
-//        // create our indexFolder file if it doesn't exist already
-//        indexFile = new File(indexFolder,"index.txt");
-//        // attempt to create a new file
-//        try {
-//            indexFile.createNewFile();
-//            // something went wrong, output a message and quit
-//        } catch (IOException ex) {
-//            result.set(Message.ERROR, 6, "Unable to create the '"+
-//                    rootFolder.getAbsolutePath() + "' file. "
-//                    + "Reported error: " + ex.toString());
-//            return false;
-//        }
-//        // All done
-//        return true;
-//    }
+    /** Create an index file for our container ID if one does not exist */
+    private Boolean createIndexFile(LogMessage result){
+        // create our indexFolder file if it doesn't exist already
+        indexFile = new File(rootFolder,"index-" + id + ".txt");
+        // attempt to create a new file
+        try {
+            indexFile.createNewFile();
+            // something went wrong, output a message and quit
+        } catch (IOException ex) {
+            result.add(msg.ERROR, "Unable to create the '%1' file. "
+                    + "Reported error: %2",
+                    rootFolder.getAbsolutePath(),
+                    ex.toString()
+                    );
+            return false;
+        }
+        // All done
+        return true;
+    }
 
 
     public Boolean write(String[] fields) {

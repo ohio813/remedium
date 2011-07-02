@@ -6,21 +6,21 @@
  * be provided by all implementations based on our system.
  */
 /*
- * This class expects a thread to be launched that will receive a given Message
+ * This class expects a thread to be launched that will receive a given msg
  * that is marked for going outside of our remedium instance and then track the
  * result.
  *
- * For example, when instance A sends a Message to instance B then B will provide
- * a ticket number with the Message and also provide the status of the requested
+ * For example, when instance A sends a msg to instance B then B will provide
+ * a ticket number with the msg and also provide the status of the requested
  * action.
  *
- * If the status of this Message is PENDING, then this thread running on
+ * If the status of this msg is PENDING, then this thread running on
  * instance A is responsible for asking instance at periodic time intervals
  * how the ticket is going.
  *
  * At each occasion, the reply from B will provide the status until the status
  * result is COMPLETED, TIMEOUT or FAILED. In case of COMPLETED, we place the
- * provided Message on the Queue. After COMPLETED, TIMEOUT or FAILED we will
+ * provided msg on the Queue. After COMPLETED, TIMEOUT or FAILED we will
  * just remove it from our list of messages to track.
  *
  */
@@ -29,13 +29,13 @@ package system.net;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito
  */
-public interface network_interface extends Message{
+public interface network_interface extends msg{
 
     ///////-- Static definitions
     // if we don't know who to contact, call ourselves
@@ -43,7 +43,7 @@ public interface network_interface extends Message{
              // we use a high number, a meme for binary transmissions
             PORT_DEFAULT = "10101";
     
-    //Maximum size of a Message is set to 16kb.
+    //Maximum size of a msg is set to 16kb.
     public static final int MAX_MESSAGE_SIZE = 1024 * 16;
 
     ///////-- System wide methods
@@ -90,20 +90,20 @@ public interface network_interface extends Message{
 
     ///////-- Management methods
     /**
-     * Send  a Message to the Message queue
+     * Send  a msg to the msg queue
      * Accepted parameters:
      *      - HOST - location of remote server, either IP address or URL
      *      - PORT - which port to use (if optional will use default)
      *      - PASSWORD - the validation password to access the server
      *
-     * Accepted Message options:
+     * Accepted msg options:
      *      - FROM - idenfication of sender
      *      - TO - To whom it is destined inside the server
      *
      * Properties that are returned:
      *      - STATUS - indicates the result from the remote server as PENDIN,
      *                 EXECUTED and so on
-     *      - TICKET - returns the ticket number at the Message queue
+     *      - TICKET - returns the ticket number at the msg queue
      *
      *
      */
@@ -111,7 +111,7 @@ public interface network_interface extends Message{
 
     /**
      * An outside client requests to get all messages destined to him.
-     * We will query our Message queue and provide back a reply.
+     * We will query our msg queue and provide back a reply.
      *
      * Typically, if we are A and a client B asks for some information, his
      * request is placed on the queue instead of being replied right away.
@@ -120,7 +120,7 @@ public interface network_interface extends Message{
      * his request.
      *
      * Once they are available, A will deliver the results to B and removes these
-     * messages from the Message queue on A's side.
+     * messages from the msg queue on A's side.
      *
      * If the messages are not requested by B, they are deleted from the queue
      * after a given period of time.

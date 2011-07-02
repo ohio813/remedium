@@ -142,7 +142,7 @@ public class SnapshotTrackerTest {
 //////////////////////
        System.out.println("Test modifying a file");
        // write a short string inside a given file
-       utils.files.SaveStringToFile(fileC.getAbsolutePath(), "ABC");
+       utils.files.SaveStringToFile(fileC, "ABC");
        System.out.println("..Done!");
        // scan for changes
        System.out.println("    Scan files");

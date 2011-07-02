@@ -6,7 +6,7 @@ package system.container;
 
 import java.util.ArrayList;
 import java.util.Properties;
-import system.Message;
+import system.msg;
 import system.core.Component;
 
 /**
@@ -26,7 +26,7 @@ public class INIcontainer {
 
         // start our own
         INIcontainer = hostComponent.createDB
-                ("INI", new String[] {Message.FIELD_KEY, Message.FIELD_VALUE});
+                ("INI", new String[] {msg.FIELD_KEY, msg.FIELD_VALUE});
    }
 
     // Write INI
@@ -52,7 +52,7 @@ public class INIcontainer {
     public String read(String section, String key, String defaultValue){
         // get the record
         ArrayList<Properties> result = INIcontainer.read
-                (Message.FIELD_KEY, section +"/"+ key);
+                (msg.FIELD_KEY, section +"/"+ key);
 
         // preflight check, if result is null then provide an empty string
         if(
@@ -63,7 +63,7 @@ public class INIcontainer {
 
         // get the value
         String value = result.get(0).getProperty
-                (Message.FIELD_VALUE, defaultValue);
+                (msg.FIELD_VALUE, defaultValue);
         // give back the expected value for our question
         return value;
     }
@@ -76,7 +76,7 @@ public class INIcontainer {
     }
 
     public void delete(String section, String key){
-        INIcontainer.delete(Message.FIELD_KEY, section +"/"+ key);
+        INIcontainer.delete(msg.FIELD_KEY, section +"/"+ key);
     }
 
 

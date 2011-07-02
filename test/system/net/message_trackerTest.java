@@ -1,5 +1,5 @@
 /*
- * Verify if the Message tracker test is working as intended. We will pick
+ * Verify if the msg tracker test is working as intended. We will pick
  * on each method and double check the results when using both valid and invalid
  * results. We will also introduce some "impossible" inputs to check how it
  * reacts to unknown circumstances.
@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 
 /**
  *
@@ -36,8 +36,8 @@ public class message_trackerTest {
 
         // set up the options
         Properties parameters = new Properties();
-        parameters.setProperty(Message.FIELD_PORT, "101010");
-        parameters.setProperty(Message.FIELD_ID, testID);
+        parameters.setProperty(msg.FIELD_PORT, "101010");
+        parameters.setProperty(msg.FIELD_ID, testID);
         // run it
         A.start(parameters);
     }
@@ -79,8 +79,8 @@ public class message_trackerTest {
         Properties parameters = new Properties();
         message_tracker instance = new message_tracker(A);
 
-        parameters.setProperty(Message.FIELD_FROM, "A");
-        parameters.setProperty(Message.FIELD_TO, "B");
+        parameters.setProperty(msg.FIELD_FROM, "A");
+        parameters.setProperty(msg.FIELD_TO, "B");
 
         // TICKET value is missing, the add entry should return false
         boolean expResult = false;
@@ -88,7 +88,7 @@ public class message_trackerTest {
         assertEquals(expResult, result);
 
         // We should now have a positive result
-        parameters.setProperty(Message.FIELD_TICKET, "123456");
+        parameters.setProperty(msg.FIELD_TICKET, "123456");
         expResult = true;
         result = instance.addEntry(parameters);
         assertEquals(expResult, result);
@@ -99,7 +99,7 @@ public class message_trackerTest {
         assertEquals(expResult, result);
 
         // Set a new ticket to symbolize a different ticket and expect a positive result
-        parameters.setProperty(Message.FIELD_TICKET, "ABCDEF");
+        parameters.setProperty(msg.FIELD_TICKET, "ABCDEF");
         expResult = true;
         result = instance.addEntry(parameters);
         assertEquals(expResult, result);
@@ -116,14 +116,14 @@ public class message_trackerTest {
 
         // create a bogus entry
         Properties parameters = new Properties();
-        parameters.setProperty(Message.FIELD_FROM, "A");
-        parameters.setProperty(Message.FIELD_TO, "B");
-        parameters.setProperty(Message.FIELD_TICKET, "123456");
+        parameters.setProperty(msg.FIELD_FROM, "A");
+        parameters.setProperty(msg.FIELD_TO, "B");
+        parameters.setProperty(msg.FIELD_TICKET, "123456");
 
         // add the first ticket
         instance.addEntry(parameters);
          // Set a new ticket to symbolize a different ticket
-        parameters.setProperty(Message.FIELD_TICKET, "ABCDEF");
+        parameters.setProperty(msg.FIELD_TICKET, "ABCDEF");
         instance.addEntry(parameters);
 
         // on our test, we must get an hastable with two entries
@@ -140,22 +140,22 @@ public class message_trackerTest {
         message_tracker instance = new message_tracker(A);
         
         String ticket = "ABCDEF";
-        int newStatus = Message.COMPLETED;
+        int newStatus = msg.COMPLETED;
 
         // create a bogus entry
         Properties parameters = new Properties();
-        parameters.setProperty(Message.FIELD_FROM, "A");
-        parameters.setProperty(Message.FIELD_TO, "B");
-        parameters.setProperty(Message.FIELD_TICKET, ticket);
+        parameters.setProperty(msg.FIELD_FROM, "A");
+        parameters.setProperty(msg.FIELD_TO, "B");
+        parameters.setProperty(msg.FIELD_TICKET, ticket);
 
         // add the first ticket
         instance.addEntry(parameters);
         // check the old status
-  //      assertEquals(instance.getTicketStatus(ticket), Message.PENDING);
+  //      assertEquals(instance.getTicketStatus(ticket), msg.PENDING);
         // change the status from PENDINg to COMPLETED
         instance.setTicketStatus(ticket, newStatus);
         // check if the new status is implemented
-  //      assertEquals(instance.getTicketStatus(ticket), Message.COMPLETED);
+  //      assertEquals(instance.getTicketStatus(ticket), msg.COMPLETED);
 
     }
 //

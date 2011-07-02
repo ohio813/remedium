@@ -10,7 +10,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 import system.message_queue;
 
 /**
@@ -19,14 +19,14 @@ import system.message_queue;
  * define what happens at each web request that arrives at our system
  *
  * On this case, we only ensure that received messages meet the security
- * and integrity requirements and then we place them on the system Message queue
+ * and integrity requirements and then we place them on the system msg queue
  *
  * We also provide a ticket that requesting applications can use to keep track
  * of their requests on subsequent calls.
  *
  * @author Nuno Brito, 18th of May 2011 in Pittsburgh, USA.
  */
-public class network_simple_server implements Container, Message {
+public class network_simple_server implements Container, msg {
 
     // should we debug this class or not?
     private boolean debug = false;
@@ -148,7 +148,7 @@ public class network_simple_server implements Container, Message {
             // decode the received input (version 1 expected)
             data = request.getParameter("msg");
 
-            // we've got our Message but it can't be empty
+            // we've got our msg but it can't be empty
             if (utils.text.isEmpty(data)) {
                 log(ERROR, "Received a message but it was empty");
                 return;
@@ -174,7 +174,7 @@ public class network_simple_server implements Container, Message {
 
         // all received messages encode the parameters field as the real object
         // that we want to exchange between instances. Therefore we need to
-        // convert the text from PARAMETERS in order to get the full Message
+        // convert the text from PARAMETERS in order to get the full msg
         // along with any other extra properties that are included
 
         if (!container.containsKey(message_queue.FIELD_PARAMETERS)) {
@@ -183,11 +183,11 @@ public class network_simple_server implements Container, Message {
             return;
         }
 
-        // get the Message that will be placed on the Message queue
+        // get the msg that will be placed on the msg queue
         Properties message = protocols.stringToProperties
                 (container.getProperty(message_queue.FIELD_PARAMETERS));
 
-        // verify if the received Message is valid
+        // verify if the received msg is valid
         if ((message == null)
          || (message.size()==0)
                 )
@@ -197,7 +197,7 @@ public class network_simple_server implements Container, Message {
         }
 
 
-        // before outputting the Message, remove the STATUS field to ease readability
+        // before outputting the msg, remove the STATUS field to ease readability
         Properties out = message;
         out.remove(FIELD_STATUS);
 
@@ -253,7 +253,7 @@ public class network_simple_server implements Container, Message {
             body.close();
 
         } else {
-            // pre-flight check. Is our Message minimally valid?
+            // pre-flight check. Is our msg minimally valid?
             if ((message == null)
                     || !message.containsKey(network.FIELD_TO)
                     || !message.containsKey(network.FIELD_FROM)
@@ -280,10 +280,10 @@ public class network_simple_server implements Container, Message {
             message.setProperty(message_queue.FIELD_STATUS,
                     Integer.toString(network.PENDING));
 
-            // place Message on queue
+            // place msg on queue
             Boolean placeMQ = getRemedium().getMQ().send(message);
 
-            // in case we fail to place this Message on the queue, stop here
+            // in case we fail to place this msg on the queue, stop here
             if (!placeMQ) {
                 log(ERROR,"Failed to place message on the queue: "
                         + message.toString());

@@ -12,14 +12,10 @@
 package system.container;
 
 import java.io.File;
-import system.container.ContainerFlatFile;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import system.LogMessage;
-import static org.junit.Assert.*;
+import system.log.LogMessage;
 
 /**
  *  Rules of the testing game:
@@ -44,7 +40,7 @@ public class ContainerFlatFileTest {
 
     ContainerFlatFile container;
     String[] fields = new String[]{"time_created","unique_key","value"};
-    String id = "test";
+    String id = "crc32";
     String rootTestFolder = "testStorage";
 
 
@@ -73,7 +69,7 @@ public class ContainerFlatFileTest {
         // create the container
         container = new ContainerFlatFile(id, fields, rootFolder, result);
         // output the message
-        System.out.println("  " + result.getMessage());
+        System.out.println("  " + result.getRecent());
         System.out.println("  ..Done!");
         System.out.println("  ..Test if folder exists");
 //        File folder = new File(rootFolder, id);

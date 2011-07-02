@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 31st of March 2011 in Germany.
  */
-public class ProcessManagerTest implements Message {
+public class ProcessManagerTest implements msg {
 
     // objects
     static Remedium

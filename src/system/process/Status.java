@@ -9,13 +9,13 @@
 package system.process;
 
 import java.util.Properties;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 3rd of April 2011 in Germany.3
  */
-public class Status implements Message {
+public class Status implements msg {
 
     private String
             name = "";

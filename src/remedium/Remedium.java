@@ -3,8 +3,8 @@ package remedium;
 import system.core.global;
 import java.util.Properties;
 import system.database;
-import system.log_handler;
-import system.Message;
+import system.log.log_handler;
+import system.msg;
 import system.TimeTracker;
 import system.message_queue;
 import system.net.Locker;
@@ -16,7 +16,7 @@ import system.process.Status;
  *
  * @author Nuno Brito, 28th of May 2011 in Darmstadt, Germany.
  */
-public class Remedium implements Message {
+public class Remedium implements msg {
 
  // components of our system
     private database db = new database();
@@ -193,7 +193,7 @@ public class Remedium implements Message {
             return result;
         }
 
-        // MQ - is the Message queue available?
+        // MQ - is the msg queue available?
         if (!this.mq.hasStarted()) {
             this.mq.setRemedium(this);
             this.mq.start();

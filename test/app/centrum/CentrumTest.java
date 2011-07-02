@@ -11,7 +11,7 @@
 
 package app.centrum;
 
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 17th of May 2011 in Pittsburgh, USA
  */
-public class CentrumTest implements Message {
+public class CentrumTest implements msg {
 
     public CentrumTest() {
     }

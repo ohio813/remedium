@@ -6,9 +6,9 @@ package remedium;
  */
 
 import java.util.Properties;
-import system.Message;
+import system.msg;
 
-public class start implements Message{
+public class start implements msg{
 
     /**
      * @param args the command line arguments

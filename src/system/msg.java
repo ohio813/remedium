@@ -1,6 +1,6 @@
 /*
  * This class contains the constant values that are used to exchange messages
- * at the Message Queue and Network components or other components in the future
+ * at the msg Queue and Network components or other components in the future
  */
 
 package system;
@@ -9,7 +9,7 @@ package system;
  *
  * @author Nuno Brito
  */
-public interface Message {
+public interface msg {
     public static final String
 
     // popular tables
@@ -38,13 +38,13 @@ public interface Message {
             FIELD_ID = "id",
             FIELD_ID_SERIAL = "id_serial",
             FIELD_ID_NAME = "id_name",
-            FIELD_FROM = "mqFROM", // Where does this Message comes from?
+            FIELD_FROM = "mqFROM", // Where does this msg comes from?
             FIELD_TO = "mqTO", // to whom is it destined? (triumvir, ...)
             FIELD_ADDRESS = "ADDRESS",
             FIELD_CREATED = "mqTIMESTAMP", // when was it received?
             FIELD_TICKET = "TICKET", // when was it received?
             FIELD_STATUS = "STATUS", // used for external connection pooling
-            FIELD_PARAMETERS = "mqPARAMETERS", // the Message payload
+            FIELD_PARAMETERS = "mqPARAMETERS", // the msg payload
             FIELD_MINITICKET = "MINITICKET",
             FIELD_TASK = "TASKNAME",
             FIELD_KEY = "pKEY",
@@ -196,7 +196,7 @@ public interface Message {
             FORGET = 6,
             PENDING = 5,
             EXPIRED = 4,
-            TIMEOUT = -1,
+            TIMEOUT = -10,
             REFUSED = -2,
             CONFLICT = -3,
 

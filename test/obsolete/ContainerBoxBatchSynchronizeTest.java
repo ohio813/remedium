@@ -21,7 +21,7 @@
 package obsolete;
 
 import java.util.Properties;
-import system.Message;
+import system.msg;
 import remedium.Remedium;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 5th of June 2011 in Darmstadt, Germany.
  */
-public class ContainerBoxBatchSynchronizeTest  implements Message {
+public class ContainerBoxBatchSynchronizeTest  implements msg {
 
      // objects
     static Remedium

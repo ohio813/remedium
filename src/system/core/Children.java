@@ -7,7 +7,7 @@ package system.core;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import system.Message;
+import system.msg;
 
 /**
  *
@@ -47,11 +47,11 @@ public class Children {
     public final Boolean add(Component child){
         // preflight checks
         if(child == null){
-            instance.log(Message.ERROR, "Add child operation failed. Child component is null");
+            instance.log(msg.ERROR, "Add child operation failed. Child component is null");
             return false;
         }
         if(children.containsKey(child.getTitle())){
-           instance.log(Message.ERROR, "Add child operation failed. Component '"
+           instance.log(msg.ERROR, "Add child operation failed. Component '"
                     +child.getTitle()
                     +"'+is already a child of mine");
             return false;
@@ -60,7 +60,7 @@ public class Children {
         // all checks passed, add this component to the children list
         children.put(child.getTitle(), child);
 
-        instance.log(Message.ROUTINE,"Added '"+child.getTitle()
+        instance.log(msg.ROUTINE,"Added '"+child.getTitle()
                 +"' to the list, we now have "
                 +children.size()+" children."
                 );

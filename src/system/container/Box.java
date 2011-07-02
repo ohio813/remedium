@@ -9,7 +9,7 @@ package system.container;
 import java.util.HashMap;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.Message;
+import system.msg;
 import system.core.Component;
 
 /**
@@ -74,12 +74,12 @@ public class Box {
           String result = "";
             // iterate each one
             for(String container : containers){
-                log(Message.DEBUG,"Synchronizing '"+ container+"'");
+                log(msg.DEBUG,"Synchronizing '"+ container+"'");
                 result = result.concat(
                         this.get(container).webRequest(request, response)
                         +"\n");
             }
-                log(Message.DEBUG,"Synchronization complete");
+                log(msg.DEBUG,"Synchronization complete");
             return result;
     }
 

@@ -19,13 +19,13 @@ import system.core.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 20th of March 2011, Darmstadt, Germany.
  */
-public class IndexerPackager implements Message{
+public class IndexerPackager implements msg{
 
     private long lock = 0;
 
@@ -123,7 +123,7 @@ public class IndexerPackager implements Message{
     }
 
 
-    /** output a log Message, using the assigned role container */
+    /** output a log msg, using the assigned role container */
     private void log(int gender, String message){
         role.log(//lock,
                 gender, message);
@@ -141,7 +141,7 @@ public class IndexerPackager implements Message{
  *
  * @author Nuno Brito, 20th of March of 2011 at Germany.
  */
-class Scheduler extends Thread implements Message{
+class Scheduler extends Thread implements msg{
     private long 
             lock = 0;
 
@@ -162,7 +162,7 @@ class Scheduler extends Thread implements Message{
         role = assignedRole;
     }
 
-    /** send a Message using the assigned role as dispatcher */
+    /** send a msg using the assigned role as dispatcher */
     private void send(Properties msg){
          role.send(lock, msg);
     }
@@ -195,10 +195,10 @@ class Scheduler extends Thread implements Message{
                     String data = results.toString();
                     data = data.substring(1, data.length()-1); //
 
-                    box.setProperty(Message.FIELD_MESSAGE, data);
+                    box.setProperty(msg.FIELD_MESSAGE, data);
 
                     // add this value to ensure we don't miss a single file
-                    box.setProperty(Message.FIELD_COUNT, ""+results.size());
+                    box.setProperty(msg.FIELD_COUNT, ""+results.size());
 
                     // send this box to the other side
                     send(box);

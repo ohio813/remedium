@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import system.Message;
+import system.msg;
 import system.core.Component;
 
 /**
  *
  * @author Nuno Brito, 24th of May 2011, 11000 meters above the Atlantic Ocean
  */
-public class ContainerLog implements Message{
+public class ContainerLog implements msg{
 
     // the objects made available when the class is constructed
     Component component;

@@ -2,21 +2,21 @@
  * This test case will verify if message_tracker is working
  * correctly or not.
  *
- * The purpose of the Message tracker is to manage the incoming
+ * The purpose of the msg tracker is to manage the incoming
  * and outgoing messages from the network component.
  *
  * It will track messages that were sent to another instance
- * and request a status reply to each Message when it is due.
+ * and request a status reply to each msg when it is due.
  *
  * It will also clean any old messages that expire or output
- * an error status. If a Message returns the status of Finished,
+ * an error status. If a msg returns the status of Finished,
  * it will then put the contents of the messsage in the Queue.
  *
  * What we will test?
  *
  * - Add several entries on the ticket list
  * - Get a list of these entries
- * - Dispatch a Message from A to B, simulate reply and test result
+ * - Dispatch a msg from A to B, simulate reply and test result
  */
 package system.net;
 
@@ -24,14 +24,14 @@ import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.Test;
-import system.Message;
+import system.msg;
 import static org.junit.Assert.*;
 
 /**
  *
  * @author Nuno Brito, 18th of May 2011 in Pittsburgh, USA.
  */
-public class network_test implements Message {
+public class network_test implements msg {
 
     // the two instances that will communicate with each other
     Remedium A = new Remedium(),
@@ -87,8 +87,8 @@ public class network_test implements Message {
         A.getMQ().send(message);
 
 
-        // do the waiting part and check if the Message is picked by network
-        // while waiting, you should see the log output of the Message being sent
+        // do the waiting part and check if the msg is picked by network
+        // while waiting, you should see the log output of the msg being sent
         System.out.println("Waiting some seconds..");
         utils.time.wait(5);
         System.out.println("Enough waiting");
@@ -100,19 +100,19 @@ public class network_test implements Message {
         if(AppB.isEmpty())
             fail("There exists no message on the queue of instance B");
 
-        Properties Hello = AppB.get(0); // we have only sent one Message
-        // first we delete the Message on the queue
+        Properties Hello = AppB.get(0); // we have only sent one msg
+        // first we delete the msg on the queue
         B.getMQ().deleteTicket(Hello.getProperty(FIELD_TICKET));
         // change the status of the request to COMPLETED
         Hello.setProperty(FIELD_STATUS, Integer.toString(COMPLETED));
         Hello.setProperty(FIELD_MESSAGE, "Hi there guy, how are things?");
-        // place back the Message on the queue and wait
+        // place back the msg on the queue and wait
         B.getMQ().send(Hello);
 
         // System.out.println(Hello.toString());
 
-        // do the waiting part and check if the Message is picked by network
-        // while waiting, you should see the log output of the Message being sent
+        // do the waiting part and check if the msg is picked by network
+        // while waiting, you should see the log output of the msg being sent
         utils.time.wait(8);
 
         // delete all traces of each instance when shutting down

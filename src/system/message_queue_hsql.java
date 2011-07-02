@@ -1,5 +1,5 @@
 /*
- * The Message queue is fundamental to ensure that our each application
+ * The msg queue is fundamental to ensure that our each application
  * inside our system is capable of communicating with others.
  */
 package system;
@@ -13,14 +13,14 @@ import remedium.Remedium;
 import system.net.protocols;
 
 /**
- * We are basing this Message queue on the HSQL database. In the future
+ * We are basing this msg queue on the HSQL database. In the future
  * we might indeed use a dedicated MQ but for the meanwhile we will be using
  * this one instead.
  *
  *
  * @author Nuno Brito, 18th of May 2011 in Pittsburgh, USA
  */
-public class message_queue_hsql implements message_queue_interface, Message {
+public class message_queue_hsql implements message_queue_interface, msg {
 
     // are we debugging this class?
     private boolean debug = false;
@@ -51,7 +51,7 @@ public class message_queue_hsql implements message_queue_interface, Message {
         // set our status as "RUNNING"
         setStatus(RUNNING);
         // Flush down all messages from this queue
-        // during the flush, recreate the Message table
+        // during the flush, recreate the msg table
         flush();
 
         if (result) {
@@ -112,7 +112,7 @@ public class message_queue_hsql implements message_queue_interface, Message {
      *
      * @param data Set of the INI-style parameters, defined on the header of
      * this class
-     * @return True if the new Message is placed on the queue
+     * @return True if the new msg is placed on the queue
      */
     @Override
     public boolean send(Properties data) {
@@ -121,7 +121,7 @@ public class message_queue_hsql implements message_queue_interface, Message {
             start();
         }
 
-        // pre-flight check, we need to ensure that this Message is valid
+        // pre-flight check, we need to ensure that this msg is valid
         if (  !data.containsKey(FIELD_TO)
            || !data.containsKey(FIELD_FROM)
              //   || !data.containsKey(FIELD_PARAMETERS)
@@ -264,7 +264,7 @@ public class message_queue_hsql implements message_queue_interface, Message {
 
                 // clear the variable holder
                 p = new Properties();
-                // get all our Message fields
+                // get all our msg fields
                 p.setProperty(FIELD_ID, rs.getObject(1).toString());
                 p.setProperty(FIELD_TO, rs.getObject(2).toString());
                 p.setProperty(FIELD_FROM, rs.getObject(3).toString());
@@ -289,7 +289,7 @@ public class message_queue_hsql implements message_queue_interface, Message {
         return answer;
     }
 
-    // after reading a Message, it can be disposed using the Message ID
+    // after reading a msg, it can be disposed using the msg ID
     @Override
     public Boolean delete(String messageID) {
         String expression = "DELETE FROM " + TABLE_MESSAGES + " WHERE "
@@ -299,7 +299,7 @@ public class message_queue_hsql implements message_queue_interface, Message {
         return result;
     }
 
-    // after reading a Message, it can be disposed using the ticket ID
+    // after reading a msg, it can be disposed using the ticket ID
     public Boolean deleteTicket(String ticketID) {
         String expression = "DELETE FROM " + TABLE_MESSAGES + " WHERE "
                 + FIELD_TICKET + " = '" + ticketID + "'";

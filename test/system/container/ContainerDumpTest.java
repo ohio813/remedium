@@ -10,10 +10,10 @@
  *  - Import all records from a given set of files
  */
 
-package system.core;
+package system.container;
 
 import java.io.File;
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 25th of July 2011 in Darmstadt, Germany.
  */
-public class ContainerDumpTest implements Message {
+public class ContainerDumpTest implements msg {
 
 
    // objects

@@ -22,14 +22,14 @@ import java.util.logging.Logger;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import system.database;
-import system.Message;
+import system.msg;
 import system.core.Component;
 
 /**
  *
  * @author Nuno Brito, 19th of March 2011 in Darmstadt, Germany
  */
-public class Container implements Message{
+public class Container implements msg{
 
     // definitions
     protected boolean 
@@ -492,7 +492,7 @@ public class Container implements Message{
             for (; rs.next();) {
                 // clear the variable holder
                 p = new Properties();
-                // read all our Message fields
+                // read all our msg fields
                 for (int i = 1; i < store_fields.length + 1; i++) {
                     p.put(store_fields[i - 1], rs.getObject(i + 1).toString());
                 }

@@ -11,7 +11,7 @@
  * It is a tricky operation, we first write data onto files using temporary
  * names until they are filled up to the max capacity.
  *
- * Then we write the definitive file name that contains info about the contents.
+ * Then, we write the definitive file name that contains info about the contents.
  *
  */
 

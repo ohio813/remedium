@@ -16,7 +16,7 @@ import remedium.Remedium;
  *
  * @author Nuno Brito
  */
-public interface database_interface extends Message{
+public interface database_interface extends msg{
 
 
 // start the database using the default settings
@@ -27,7 +27,7 @@ public interface database_interface extends Message{
  */
     public boolean start(Properties parameters);
 
-// stop the Message queue, flush all messages
+// stop the msg queue, flush all messages
     public boolean stop();
     public boolean stop(Properties parameters);
 
