@@ -16,12 +16,14 @@ The next sections of this chapter define how INIfile was structured and how it c
 == Constructor ==
 
 Before using a INIfile object, it needs to be constructed (initialized). The construction of this object can be invoked using this example:
-{{{ini = new INIfile(file, log);}}}
+{{{
+		ini = new INIfile(file, log);
+}}}
 
 On this example:
-  * INIfile {{{ini}}} is the INI object that we can use to write and read keys/values
-  * File {{{file}}} the file object that we will open for our use
-  * LogMessage {{{log}}} where all log messages will be stored during our operations
+  * INIfile {{{ini}}} - is the INI object that we can use to write and read keys/values
+  * File {{{file}}} - is the file object that we will open for our use
+  * LogMessage {{{log}}} - is where all log messages will be stored during our operations
   
 == Write Key ==
   
@@ -32,7 +34,9 @@ To write a key, one must invoke the method write() of this class. When calling t
   * If a {{{key}}} does not exist when calling this method then it is created, otherwise, the old value is overwriten.
 
 *Example:*
-{{{ini.write("test", "Hello", "World");}}}
+{{{
+		ini.write("test", "Hello", "World");
+}}}
 
 Where:
   * "test" is the section
@@ -59,7 +63,7 @@ Here is an example of how you can detect such errors:
 
 Calling {{{log.getResult()}}} after invoking your INI operation will give us the status result from the last operation. If this result is of type {{{msg.ERROR}}}, then we know that something went wrong. We can get the backtrack of messages calling {{{log.getRecent()}}} to see what happened wrong.
 
-----  
+---- 
   
 = INI style conventions =
 
