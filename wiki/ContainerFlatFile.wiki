@@ -41,9 +41,9 @@ The main driver to adopt flat files is the need to find a solution that avoids a
 
 = Nice to haves =
 
-We can attempt to store a max of a million of records for each file, however, it would be particularly nice to allow other providers to add more data on a folder.
+We can attempt to store a max of a million of records for each file, however, it would be particularly nice to allow other providers adding more data on a folder without our direct intervention.
 
-For example, we create a knowledge container with information gathered by someone about Microsoft Windows files and we include this knowledge inside our own container in a decentralized manner.
+For example, we create a knowledge container with information gathered by someone about Microsoft Windows executables and we include this knowledge inside our own container in a decentralized manner.
 
 The big advantage is allowing providers to make available specialized knowledge about a given subject. 
 
@@ -58,19 +58,17 @@ For this model of data exchange be possible, we can't enforce a specific folder 
 
 = Development approach =
 
-I have recently implemented the Container Dump class that is basically dumping all records from an HSQL database onto flat files. The remarkable speed noted when importing and exporting these records are the main reason why this class is now being implemented.
+I have recently implemented the Container Dump class that is basically dumping all records from an HSQL database onto flat files. The remarkable speed noted when importing and exporting these records are the main reason why the present class is being implemented.
 
-Some of the code and lessons learned from the implementation of Container dump can now be applied to this new class. The page section "Desired properties" is a guideline of performance requirements on my development machine (Toshiba R-630 laptop, i5 CPU x64 with 4Gb of RAM under Windows 7). 
+Some of the code and lessons learned from the implementation of Container dump can now be applied to this new class. The page section "Desired properties" is a guideline of performance requirements for my development machine (Toshiba R-630 laptop, i5 CPU x64 with 4Gb of RAM under Windows 7). 
 
-A test case is being developed along case with this class implementation to ensure that each method and step of this process is tested using a repetitive approach.
+A test case is being developed along with this class implementation to ensure that each method and step of this process is tested using a repetitive and measurable approach.
 
 === Identifying files with knowledge ===
 
-Since under this model all files will be mixed and use a unknown folder structure, we are left with the challenge of identifying the contents of a given knowledge base flat file. We need to do this without reading the contents otherwise this method would become prohibitive to use when these files are numerous and large sized. 
+Since under this model all files will be mixed and use a unknown folder structure, we are left with the challenge of identifying the contents of a given knowledge file. We need to do this task without reading the file contents, otherwise this method becomes prohibitive to use when these knowledge files are numerous and large sized. 
 
-To identify each file, we apply the concept of file name properties that was introduced with the Container Dump class where we add an identifier to the file name. We scan all files inside a given folder and subfolder
-
-This way we scan files very quickly and in the process get file names that contain information about their respective contents.
+To identify each file, we apply the concept of file name properties that was introduced with the Container Dump class. We add all our properties (key and value) to the file name. When scanning all files inside a given folder and subfolder, we also get information about the file contents and save resources (time and CPU effort).
 
 File name information uses Key=Value approach as seen for INI files with no INI sections. There are two reserved characters:
   * {{{-}}} is equivalent to "="
@@ -78,8 +76,31 @@ File name information uses Key=Value approach as seen for INI files with no INI 
 
 An example of this usage: 
 {{{db-crc32_since-1309513994973_until-1309514033984_count-2307_checksum-6970388375f06a91f9b8f133697f94f2a1e0ed54ec1d64cebfb47f43595712bd_v-1.txt}}}
+
 Note how we see different key-value pairs that allow extracting information from the file without needing to read the contents. 
 
+
+=== Types of data files ===
+
+On this section we detail the types of data files available and how they are distinguished from each other.
+
+There exist the following types of data files:
+  * *Index files* - File name starts with the text {{{index}}} and the extension ends in {{{.txt}}}, an example is {{{index-crc32.txt}}}. The identifier on the example is {{{crc32}}} and only exists one index file per identifier on the root folder where containers are stored
+  * *Knowledge files* - File name starts with {{{db}}} and extension ends in {{{.txt}}}. The file name will describe the contents of the file along with other specific properties, such as defining if the file is read-only or read-write and so forth.
+
+  
+=== File name parameters ===
+
+This section describes the parameters that can be included on each file. Some parameters take precendence over others due to the limitation of 256 characters per file name.
+
+List of supported parameters:
+
+  * *v* - Version number of file format. This property is used to provide retro-compatibility as multiple formats surface over time
+  * *rank* - Defines the importance rank of the knowledge inside this file. This is used for defining the reputation of information. When reading a record of information, it will first look on the knowledge files with higher rank. The accepted values range from 9 down to 1
+  * *count* - Provides the number of records inside this knowledge file
+  * *since* - Informs about the date of the most recent record inside the knowledge file (value is defined on the second column of each record)
+  * *until* - Same as {{{since}}} with the difference that informs about the most recent record available
+  * *checksum* - A check sum computation of the file contents using SHA2
 
 ----
 
@@ -100,6 +121,8 @@ This section provides a quick overlook of the meaning and context of terms used 
   * *index key* - The column on the data record that is considered as most relevant. For example, the unique check-sum signature of each file
 
 === Steps of initialization ===
+
+Details the logical execution steps that occur when a container is initialized. We define initialized as the initial kickstart that occurs both when you run the container for the first time or recurring times in the future.
 
   * Verify that target folder is valid and available for operations
   * Find knowledge files inside the target folder, crawl subfolders
@@ -171,8 +194,11 @@ At this moment, there are no checks to verify if there exists enough disk space 
 
 = Progress =
 
-30th June 2011
-  * Initial implementation of new class
-  * Introduced concept of log message object to allow testing the new class without tying it on a remedium component (allows testing exclusively the new class without interference from components)
-1st July 2011
-  * Documentation and progress added on google code
+30th of June 2011
+  * Initial implementation of ContainerFlatfile class
+  * Introduced the class LogMessage object to allow testing the new class without tying it on a remedium component (allows testing exclusively the new class without interference from components)
+1st of July 2011
+  * Initial documentation and progress added on google code
+2nd of July 2011
+  * Introduced the class INIfile to handle index files that help managing the knowledge files
+  
