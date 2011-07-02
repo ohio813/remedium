@@ -16,19 +16,20 @@
  *
  */
 
-package system.core;
+package system.container;
 
 import system.core.Component;
 import system.container.Container;
 import java.util.ArrayList;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import system.core.Component;
 import static org.junit.Assert.*;
 
 /**
@@ -49,7 +50,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 25th of May 2011 in Darmstadt, Germany
  */
-public class containerTest implements Message {
+public class containerTest implements msg {
 
     public containerTest() {
     }

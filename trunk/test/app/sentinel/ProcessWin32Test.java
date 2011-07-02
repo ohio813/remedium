@@ -8,7 +8,7 @@ package app.sentinel;
 
 import java.util.Properties;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import org.junit.Test;
  *
  * @author Nuno Brito, 26th of March 2011 in Germany
  */
-public class ProcessWin32Test implements Message {
+public class ProcessWin32Test implements msg {
 
     public ProcessWin32Test() {
     }

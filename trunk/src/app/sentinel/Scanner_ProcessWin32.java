@@ -12,14 +12,14 @@ import system.core.Component;
 import system.container.Container;
 import java.io.File;
 import java.util.ArrayList;
-import system.Message;
+import system.msg;
 import system.raw.image_win_executable;
 
 /**
  *
  * @author Nuno Brito, 26th of March 2011 in Germany
  */
-public class Scanner_ProcessWin32 implements Message{
+public class Scanner_ProcessWin32 implements msg{
 
  // definitions
 

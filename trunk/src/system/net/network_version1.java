@@ -23,13 +23,13 @@ import java.util.logging.Logger;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 18th of May 2011 in Pittsburgh, USA
  */
-public class network_version1 implements network_interface, Message {
+public class network_version1 implements network_interface, msg {
 
     // turn this variable as true if you want debugging messages visible
     Boolean debug = false;
@@ -106,7 +106,7 @@ public class network_version1 implements network_interface, Message {
         // update our status
         status = RUNNING;
         log(ROUTINE,"Network system has started at port "
-                + parameters.getProperty(Message.FIELD_PORT));
+                + parameters.getProperty(msg.FIELD_PORT));
         networkMappings = new HashMap();
 
         networkThreadProcessInternal.setRemedium(this.getRemedium());
@@ -344,18 +344,18 @@ public class network_version1 implements network_interface, Message {
         }
 
 
-        // all checked and ready to send the Message through the wire
+        // all checked and ready to send the msgbox through the wire
         debug("SENDING: " + message.toString());
 
-        // the composed Message with URL included
+        // the composed msgbox with URL included
         String www =
                 // we are using the HTTP format
                 "http://"
-                // the URL where the Message will be dispatched onto
+                // the URL where the msgbox will be dispatched onto
                 +
                 message.getProperty(FIELD_ADDRESS)
                 + "/"
-                // the ?result parameter contains the content of the Message
+                // the ?result parameter contains the content of the msgbox
                 + "?msg="
                 // translate the Properties object onto a safe string
                 + protocols.propertiesToString(message);
@@ -377,7 +377,7 @@ public class network_version1 implements network_interface, Message {
 
             while ((inputLine = in.readLine()) != null) {
                 // Process each line.
-                //msg = msg + inputLine;
+                //msgbox = msgbox + inputLine;
                 msg = msg.concat(inputLine);
                 debug(inputLine);
             }
@@ -402,7 +402,7 @@ public class network_version1 implements network_interface, Message {
         // convert the result onto a properties object
         Properties result = protocols.stringToProperties(msg);
 
-        // we must ensure that we can transform the received Message onto a 
+        // we must ensure that we can transform the received msgbox onto a
         // properties field
         
         if (result == null) {
@@ -412,7 +412,7 @@ public class network_version1 implements network_interface, Message {
         }
 
 
-        //we need to have received a ticket, otherwise the Message is invalid
+        //we need to have received a ticket, otherwise the msgbox is invalid
         if (!result.containsKey(FIELD_TICKET)) {
             debug("Invalid message since it didn't contained a ticket value in "
                     + result.toString());
@@ -533,11 +533,11 @@ class RunnerThreadProcessInternalRequests extends Thread {
              *
              * So, during the first part of this loop we will dispatch all
              * messages marked to go outside and then we will iterate through
-             * all the entries of the Message tracker to see what has happened
+             * all the entries of the msgbox tracker to see what has happened
              * to them in the meanwhile.
              */
             // Do the first part:
-            // query the Message queue and get the messages marked to go outside
+            // query the msgbox queue and get the messages marked to go outside
             ArrayList<Properties> ext = new ArrayList<Properties>();
             ext = remedium.getMQ().getExternal();
 
@@ -548,25 +548,25 @@ class RunnerThreadProcessInternalRequests extends Thread {
                     && (ext.size() > 0)) {
                 // begin processing messages intended to go outside
                 if(debug)
-                    remedium.log("network",Message.INFO, "Dispatching "
+                    remedium.log("network",msg.INFO, "Dispatching "
                         + ext.size() + " message(s)");
 
                 // loop all messages and send them away
-                for (Properties msg : ext) {
+                for (Properties msgbox : ext) {
                     // showcase what we will be sending on this trip
-                    debug("Dispatching " + msg.toString());
+                    debug("Dispatching " + msgbox.toString());
                     // the holder of the dispatch reply
                     Properties reply = new Properties();
-                    // send Message through thw wire
-                    reply = remedium.getNet().send(msg);
+                    // send msgbox through thw wire
+                    reply = remedium.getNet().send(msgbox);
                     // if the answer is null, something went wrong
                     if ((reply != null)
-                            && (reply.containsKey(Message.FIELD_TICKET))) {
+                            && (reply.containsKey(msg.FIELD_TICKET))) {
                         // start the real action
                         // add the entry to our tracker
                         tracker.addEntry(reply);
-                        // delete this Message from our queue
-                        remedium.getMQ().delete(msg.getProperty(Message.FIELD_ID));
+                        // delete this msgbox from our queue
+                        remedium.getMQ().delete(msgbox.getProperty(msg.FIELD_ID));
                     }
                 }
             }
@@ -578,12 +578,12 @@ class RunnerThreadProcessInternalRequests extends Thread {
 //                Thread.sleep(loopInterval);
 //            } catch (InterruptedException ex) {
 //                // for some reason an exception has occured
-//                remedium.log("network", Message.ERROR, "Something went wrong, please check");
+//                remedium.log("network", msgbox.ERROR, "Something went wrong, please check");
 //                Logger.getLogger(RunnerThreadProcessInternalRequests.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 
             // Do the second part:
-            // go through our tracked Message list and see what happened to them
+            // go through our tracked msgbox list and see what happened to them
             // at the other side of the wire
 
             // get all entries using the Iterator format
@@ -609,33 +609,33 @@ class RunnerThreadProcessInternalRequests extends Thread {
 
 
                 Properties reply = new Properties();
-                // get our question ready to ship as a Message
+                // get our question ready to ship as a msgbox
                 Properties question = entry.prepareTicket();
-                // send Message through the wire
+                // send msgbox through the wire
                 reply = remedium.getNet().send(question);
                 // if the answer is null then something went wrong
                 if ((reply != null)
-                        && (reply.containsKey(Message.FIELD_TICKET))) {
+                        && (reply.containsKey(msg.FIELD_TICKET))) {
 
                     // get the STATUS reply from the other side of the wire
                     // TODO Should we use numbers or text descriptions on status?
                     int statusResult = Integer.parseInt(reply.getProperty(
-                            Message.FIELD_STATUS));
+                            msg.FIELD_STATUS));
 
                     debug("Current state of ticket "
-                            + reply.getProperty(Message.FIELD_TICKET)
+                            + reply.getProperty(msg.FIELD_TICKET)
                             + ": "
                             + utils.text.translateStatus(statusResult));
 
-                    // if the STATUS is equal to COMPLETED, put the Message
+                    // if the STATUS is equal to COMPLETED, put the msgbox
                     // back at our own queue for processing by other apps
-                    if (statusResult == Message.COMPLETED)
+                    if (statusResult == msg.COMPLETED)
                         // to delete the ticket from our list, we must really
-                        // ensure that the Message is placed on the queue first
+                        // ensure that the msgbox is placed on the queue first
                         if (remedium.getMQ().send(reply)){
                         // all done with success, set this ticket as completed
                         tracker.setTicketStatus(entry.ticket,
-                                Message.COMPLETED);
+                                msg.COMPLETED);
                         debug("---------- Ticket " + entry.ticket + " was marked as COMPLETED");
                         // remove the ticket from our tracking list
                         tracker.deleteTicket(entry.ticket);
@@ -644,7 +644,7 @@ class RunnerThreadProcessInternalRequests extends Thread {
             } // while ticketIterator
 
 
-            //TODO Missing to add the clean up tool to the Message tracker
+            //TODO Missing to add the clean up tool to the msgbox tracker
 
         }//while network is running
     }
@@ -702,7 +702,7 @@ class RunnerThreadProcessExternalRequests extends Thread {
             SocketAddress address = new InetSocketAddress(getRemedium().getNet().getPort());
             // Attempt to connect
             getRemedium().getNet().connection.connect(address);
-            // output a Message if necessary
+            // output a msgbox if necessary
             if (getRemedium().getNet().debug) {
                 getRemedium().log(
                         "network",

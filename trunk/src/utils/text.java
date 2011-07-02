@@ -7,7 +7,7 @@ package utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import system.Message;
+import system.msg;
 
 /**
  *
@@ -85,28 +85,31 @@ public class text {
         String s = "";
 
         switch (status) {
-            case Message.COMPLETED:
+            case msg.COMPLETED:
                 s = "COMPLETED";
                 break;
-            case Message.PENDING:
+            case msg.PENDING:
                 s = "PENDING";
                 break;
-            case Message.EXPIRED:
+            case msg.EXPIRED:
                 s = "EXPIRED";
                 break;
-            case Message.TIMEOUT:
+            case msg.TIMEOUT:
                 s = "TIMEOUT";
                 break;
-            case Message.STOPPED:
+            case msg.ERROR:
+                s = "ERROR";
+                break;
+            case msg.STOPPED:
                 s = "STOPPED";
                 break;
-            case Message.RUNNING:
+            case msg.RUNNING:
                 s = "RUNNING";
                 break;
-            case Message.PAUSED:
+            case msg.PAUSED:
                 s = "PAUSED";
                 break;
-            case Message.RESUME:
+            case msg.RESUME:
                 s = "RESUME";
                 break;
 

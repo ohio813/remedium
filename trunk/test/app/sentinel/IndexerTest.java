@@ -12,7 +12,7 @@ package app.sentinel;
 
 import java.io.File;
 import java.util.ArrayList;
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -23,7 +23,7 @@ import org.junit.Test;
  *
  * @author Nuno Brito, 20th of March 2011 at Germany
  */
-public class IndexerTest implements Message {
+public class IndexerTest implements msg {
 
 
     public IndexerTest() {
@@ -102,10 +102,10 @@ public class IndexerTest implements Message {
 
 
 
-                    box.setProperty(Message.FIELD_MESSAGE, data);
+                    box.setProperty(msg.FIELD_MESSAGE, data);
 
                     // add this value to ensure we don't miss a single file
-                    box.setProperty(Message.FIELD_COUNT, ""+results.size());
+                    box.setProperty(msg.FIELD_COUNT, ""+results.size());
 
                     // send this box to the other side
                     instance.getMQ().send(box);

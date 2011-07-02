@@ -2,8 +2,8 @@
  * Test if the Container synchronization is working as intended.
  *
  *      Prerequisites:
- *          - Sentinel component running at localhost:10101 must have indexed data
- *          inside containers.
+ *          - Sentinel component running at localhost:10101 must have
+ *          indexed data inside containers.
  *
  * Container synchronization consists in allowing two remote containers to
  * synchronize the records existing at one place to the other.
@@ -37,9 +37,9 @@
  *      - Check if each listed container was updated on the other side
  */
 
-package system.core;
+package system.container;
 
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -66,9 +66,9 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 02nd of June 2011 in Darmstadt, Germany.
  */
-public class ContainerSynchronizationTest_v2 implements Message {
+public class ContainerSynchronizationTest implements msg {
 
-    public ContainerSynchronizationTest_v2() {
+    public ContainerSynchronizationTest() {
     }
 
    // objects
@@ -206,6 +206,55 @@ public class ContainerSynchronizationTest_v2 implements Message {
         return count;
     }
 
+//     @Test
+//     public void synchronize() {
+//         /**
+//          * Launch the synchronization procedure for instance A to update B
+//          */
+//        System.out.println("Testing synchronization between instance A and "
+//                + "instance B");
+//
+//         // we remotely ask instance A to synchronize with instance B
+//        String request =
+//             "http://" + instanceB.getNet().getAddress()
+//             + "/"
+//             + "+sentinel_analyzer+"
+//             + "?db=crc32"
+//             + "&action=remotesync" // call remote sync, sync is reserved
+//             + "&who=" + instanceA.getNet().getAddress()
+//             + "&since=0"
+//             + "&until=" + instanceB.getTime()
+//             ;
+//
+//        System.out.println("Requesting: " + request);
+//
+//        // get the record data
+//        String result = utils.internet.getTextFile(request);
+//
+//        System.out.println("Confirm that we received a positive message");
+//        // we need a success message
+//        assertEquals(result.contains("Update ok!")
+//                , true);
+//        System.out.println("   ..Done");
+//
+//        // verify that both databases hold equal values
+//        System.out.println("Both databases must hold equal number of records");
+//
+//
+//        String countA = utils.internet.getTextFile
+//             ("http://localhost:10101/"+sentinel_analyzer+"?db=crc32&action=count");
+//        String countB = utils.internet.getTextFile
+//             ("http://localhost:3001/"+sentinel_analyzer+"?db=crc32&action=count");
+//
+//        // the results must be equal now
+//        assertEquals(countA, countB);
+//
+//
+//        System.out.print("End result: " + result);
+//        System.out.print("   ..Done\n");
+// }
+
+
      @Test
      public void batchSynchronize() {
          /**
@@ -226,6 +275,45 @@ public class ContainerSynchronizationTest_v2 implements Message {
         // print the result to the console
        System.out.println(result);
 
+
+         // we remotely ask instance A to synchronize with instance B
+//        String request =
+//             "http://" + instanceB.getNet().getAddress()
+//             + "/"
+//             + sentinel_analyzer
+//             + "?box=crc32"
+//             + "&action=remotesync" // call remote sync, sync is reserved
+//             + "&who=" + instanceA.getNet().getAddress()
+//             + "&since=0"
+//             + "&until=" + instanceB.getTime()
+//             ;
+//
+//        System.out.println("Requesting: " + request);
+//
+////         get the record data
+//       String result = utils.internet.getTextFile(request);
+//
+//        System.out.println("Confirm that we received a positive message");
+//        // we need a success message
+//        assertEquals(result.contains("Update ok!")
+//                , true);
+//        System.out.println("   ..Done");
+//
+//        // verify that both databases hold equal values
+//        System.out.println("Both databases must hold equal number of records");
+//
+//
+//        String countA = utils.internet.getTextFile
+//             ("http://localhost:10101/"+sentinel_analyzer+"?db=crc32&action=count");
+//        String countB = utils.internet.getTextFile
+//             ("http://localhost:3001/"+sentinel_analyzer+"?db=crc32&action=count");
+//
+//        // the results must be equal now
+//        assertEquals(countA, countB);
+//
+//
+//        System.out.print("End result: " + result);
+//        System.out.print("   ..Done\n");
      }
 
 

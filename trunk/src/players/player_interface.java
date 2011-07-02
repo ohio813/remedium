@@ -16,13 +16,13 @@ package players;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito
  */
-public interface player_interface extends Message{
+public interface player_interface extends msg{
 
     ///////-- Static definitions
    

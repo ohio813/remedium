@@ -13,7 +13,7 @@
 package app.sentinel;
 
 import java.util.Properties;
-import system.Message;
+import system.msg;
 import remedium.Remedium;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 16th of April 2011 in Darmstadt, Germany.
  */
-public class scanner_test implements Message{
+public class scanner_test implements msg{
 
     public scanner_test() {
     }
@@ -92,11 +92,11 @@ public class scanner_test implements Message{
         testAction(message, START, "Scanning");
         message.remove(FIELD_DIR); // no need to repeat this one again
       // pause the scanning
-//        testAction(Message, PAUSED, "paused");
+//        testAction(msg, PAUSED, "paused");
 //      // resume the scanning
-//        testAction(Message, RESUME, "resumed");
+//        testAction(msg, RESUME, "resumed");
 //      // stop the scanning
-//        testAction(Message, STOPPED, "stopped");
+//        testAction(msg, STOPPED, "stopped");
 
       // wait for the Indexer to finish his stuff
         waitForIndexer();
@@ -104,7 +104,7 @@ public class scanner_test implements Message{
 
 
     /**
-     * Dispatch a Message and evaluate the result
+     * Dispatch a msg and evaluate the result
      */
     private void testAction(Properties msg, int Action, String expectedResult){
 

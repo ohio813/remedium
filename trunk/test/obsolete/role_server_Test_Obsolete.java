@@ -4,14 +4,14 @@
  *
  * Steps for this test:
  *  - start two instances of remedium, one of them as centrum server
- *  - simulate the shipping of a Message targeted to the server
+ *  - simulate the shipping of a msg targeted to the server
  */
 
 package obsolete;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import system.Message;
+import system.msg;
 import remedium.Remedium;
 import java.util.Properties;
 import org.junit.AfterClass;
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito
  */
-public class role_server_Test_Obsolete implements Message{
+public class role_server_Test_Obsolete implements msg{
 
     // objects
     static Remedium
@@ -103,7 +103,7 @@ public class role_server_Test_Obsolete implements Message{
     @Test
     public void testHello() {
 
-        // let's send a fake Message from B to A
+        // let's send a fake msg from B to A
         Properties message = new Properties();
 
         // the fields that we need to place here
@@ -138,11 +138,11 @@ public class role_server_Test_Obsolete implements Message{
         try { Thread.sleep(time_to_wait * 1000); } catch (InterruptedException ex) {
             Logger.getLogger(role_server_Test_Obsolete.class.getName()).log(Level.SEVERE, null, ex); }
 
-        // our Message must appear in the log of instanceA
+        // our msg must appear in the log of instanceA
         assertEquals(true,
                 instanceA.logContains(centrum_server, "Hello B guy, welcome aboard")
                 );
-        // our Message must appear in the log of instanceA when returning back
+        // our msg must appear in the log of instanceA when returning back
         assertEquals(true,
                 instanceA.logContains(centrum_server, "Hello B guy, welcome back")
                 );

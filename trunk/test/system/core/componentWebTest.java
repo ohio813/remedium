@@ -7,7 +7,7 @@ package system.core;
 import system.core.Component;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -18,7 +18,7 @@ import org.junit.Test;
  *
  * @author Nuno Brito, 3rd of April 2011 at Germany
  */
-public class componentWebTest implements Message {
+public class componentWebTest implements msg {
 
     public componentWebTest() {
     }

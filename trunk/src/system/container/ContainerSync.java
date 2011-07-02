@@ -15,7 +15,7 @@ package system.container;
 //import java.sql.Statement;
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
-import system.Message;
+import system.msg;
 import system.core.Component;
 import system.database;
 
@@ -74,12 +74,12 @@ public class ContainerSync {
              + "&until=" + until
              ;
 
-        log(Message.INFO, "Requesting: " + request);
+        log(msg.INFO, "Requesting: " + request);
 
         // get the record data
         String result = utils.internet.getTextFile(request);
 
-        log(Message.DEBUG, "Downloaded fresh data, processing it now");
+        log(msg.DEBUG, "Downloaded fresh data, processing it now");
 
         // now do the updating part
         
@@ -99,7 +99,7 @@ public class ContainerSync {
 
         result = "Update ok! Counted " + i + " records";
 
-        log(Message.DEBUG, result);
+        log(msg.DEBUG, result);
         return result;
     }
 
@@ -142,7 +142,7 @@ public class ContainerSync {
          if (!container.isRunning()) {
             String error = "Get operation failed. The storage instance is not "
                     + "running";
-            log(Message.ERROR, error);
+            log(msg.ERROR, error);
             return "Error. " + error;
         }
 
@@ -167,12 +167,12 @@ public class ContainerSync {
 
        // No records? No need to continue
        if(count == 0){
-           log(Message.ROUTINE, "No records to provide");
+           log(msg.ROUTINE, "No records to provide");
            return "No records to provide";
        }
 
        // if they are less than 10 000, show them as web page
-       log(Message.DEBUG,"Dispatching " + count +" records to " +who);
+       log(msg.DEBUG,"Dispatching " + count +" records to " +who);
 
        // (for the moment ignore the 10 000 records restriction)
 
@@ -212,10 +212,10 @@ public class ContainerSync {
 //        // expression to get our records
 //         String expression =
 //                "SELECT * FROM " + container.getName() + " WHERE "
-//                + Message.FIELD_DATE_CREATED
+//                + msg.FIELD_DATE_CREATED
 //                + " > '" + since + "'"
 //                + " AND "
-//                + Message.FIELD_DATE_CREATED
+//                + msg.FIELD_DATE_CREATED
 //                + " < '" + until + "'"
 //                ;
 //
@@ -231,7 +231,7 @@ public class ContainerSync {
 //
 //            for (; rs.next();) {
 //                String record = "";
-//                // read all our Message fields
+//                // read all our msg fields
 //                for (int i = 1; i < container.getStoreFields().length + 1; i++) {
 //                    // add each record, split it using a ";"
 //                  record = record.concat(rs.getObject(i + 1).toString())+";";
@@ -245,7 +245,7 @@ public class ContainerSync {
 //            }
 //            st.close(); // NOTE!! if you stop a statement the ResultSet is lost
 //        } catch (SQLException ex) {
-//            log(Message.ERROR,"Synchronization failed. An exception occured "
+//            log(msg.ERROR,"Synchronization failed. An exception occured "
 //                    + "when calling " + expression);
 //            return "Error, exception occured";
 //        } finally{

@@ -6,19 +6,19 @@
 package system.net;
 
 import java.util.Properties;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito
  */
-public class ticketType implements Message {
+public class ticketType implements msg {
 
     public String
             ticket, // the ticket number
-            to, // to whom the Message recipient is located
-            from, // from who does the Message comes from?
-            address, // where the Message recipient is located
+            to, // to whom the msg recipient is located
+            from, // from who does the msg comes from?
+            address, // where the msg recipient is located
             interval = "1",   // wait at least n seconds before next call
             timeout = "600"; // how many seconds should we wait for our request
                              // to be completed? (using 10 minutes as default)
@@ -32,29 +32,29 @@ public class ticketType implements Message {
             status;  // current update status of this entry
 
    /**
-    * Prepares our ticket as a proper Message object
+    * Prepares our ticket as a proper msg object
     */
    public Properties prepareTicket(){
         Properties output = new Properties();
-            output.setProperty(Message.FIELD_TO, to);
-            output.setProperty(Message.FIELD_FROM, from);
-            output.setProperty(Message.FIELD_TICKET, ticket);
-            output.setProperty(Message.FIELD_ADDRESS, address);
-            output.setProperty(Message.FIELD_PARAMETERS,
+            output.setProperty(msg.FIELD_TO, to);
+            output.setProperty(msg.FIELD_FROM, from);
+            output.setProperty(msg.FIELD_TICKET, ticket);
+            output.setProperty(msg.FIELD_ADDRESS, address);
+            output.setProperty(msg.FIELD_PARAMETERS,
                     protocols.propertiesToString(output));
         return output;
    }
 
 
    /**
-    * Evaluates if this Message still hasn't expired
+    * Evaluates if this msg still hasn't expired
     */
    public boolean isValid(){
         long timeNow = System.currentTimeMillis();
         long timeExpired = Long.parseLong(timeout)*1000;
         long expireDate = timeExpired + sendDate;
         //System.out.println(timeExpired +" + "+sendDate+" ("+expireDate+") > " + timeNow);
-   return ( expireDate > timeNow) && (status != Message.COMPLETED);
+   return ( expireDate > timeNow) && (status != msg.COMPLETED);
    }
 
    /**

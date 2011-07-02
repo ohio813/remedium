@@ -6,7 +6,7 @@
 package obsolete;
 
 import app.centrum.CentrumManager;
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -32,16 +32,16 @@ public class clientTypeTest_Obsolete {
         // Create a dummy set of data
         Properties client = new Properties();
 
-        client.setProperty(Message.FIELD_NAME, "Hello");
-        client.setProperty(Message.FIELD_URL, "localhost");
-        client.setProperty(Message.FIELD_UPDATED,
+        client.setProperty(msg.FIELD_NAME, "Hello");
+        client.setProperty(msg.FIELD_URL, "localhost");
+        client.setProperty(msg.FIELD_UPDATED,
                 Long.toString(System.currentTimeMillis()));
         // set the score result
-        client.setProperty(Message.FIELD_CPU,"none");
-        client.setProperty(Message.FIELD_RAM,"none");
-        client.setProperty(Message.FIELD_DISK,"none");
-        client.setProperty(Message.FIELD_BANDWIDTH,"none");
-        client.setProperty(Message.FIELD_UPTIME,"none");
+        client.setProperty(msg.FIELD_CPU,"none");
+        client.setProperty(msg.FIELD_RAM,"none");
+        client.setProperty(msg.FIELD_DISK,"none");
+        client.setProperty(msg.FIELD_BANDWIDTH,"none");
+        client.setProperty(msg.FIELD_UPTIME,"none");
 
 //        // write the data
 //        assertEquals(true, instance.write(client));

@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import system.Message;
+import system.msg;
 import system.core.Component;
 import system.database;
 
@@ -103,7 +103,7 @@ public class ContainerDump {
     /** Do all the initial checks to see if everything is ok*/
     private boolean doPreflightChecks(final File root, final File folder){
             if(root.exists()==false) { // no root folder? quit here.
-            log(Message.ERROR,"Dump toFolder operation failed: "
+            log(msg.ERROR,"Dump toFolder operation failed: "
                     + "Root folder does not exist '"+root.getAbsolutePath()
                     +"'");
             return false;
@@ -115,7 +115,7 @@ public class ContainerDump {
             utils.files.deleteDir(folder);
             // double check if the folder was really deleted
             if(folder.exists()){
-                log(Message.ERROR,"Dump toFolder operation failed: "
+                log(msg.ERROR,"Dump toFolder operation failed: "
                     + "Work folder is not clean '"+folder.getAbsolutePath()
                     +"'");
             return false;
@@ -126,14 +126,14 @@ public class ContainerDump {
         Boolean result = utils.files.mkdirs(folder.getAbsolutePath());
 
         if(result == false){
-                log(Message.ERROR,"Dump toFolder operation failed: "
+                log(msg.ERROR,"Dump toFolder operation failed: "
                     + "Work folder was not created '"+folder.getAbsolutePath()
                     +"'");
             return false;
             }
         // check if this folder really exists
         if((folder.exists()==false) || (folder.isFile())){
-            log(Message.ERROR,"Dump toFolder operation failed: "
+            log(msg.ERROR,"Dump toFolder operation failed: "
                     + "Failed to create '"+folder.getAbsolutePath() +"'");
             return false;
         }
@@ -163,7 +163,7 @@ public class ContainerDump {
 
             for (; rs.next();) {
                 String record = "";
-                // read all our Message fields
+                // read all our msg fields
                 for (int i = 1; i < pos + 1; i++)
                 { // add each record, split it using a ";"
                   record = record.concat(rs.getObject(i + 1).toString())+";";
@@ -179,7 +179,7 @@ public class ContainerDump {
             }
             st.close(); // NOTE!! if you stop a statement the ResultSet is lost
         } catch (SQLException ex) {
-                        log(Message.ERROR,"Dump toFolder operation failed: "
+                        log(msg.ERROR,"Dump toFolder operation failed: "
                     + "SQL exception when calling " + expression);
             return false;
         } finally{

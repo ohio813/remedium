@@ -8,7 +8,7 @@ package obsolete;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.Properties;
-import system.Message;
+import system.msg;
 import remedium.Remedium;
 import java.util.ArrayList;
 import org.junit.AfterClass;
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito
  */
-public class massHelloTest_Obsolete implements Message{
+public class massHelloTest_Obsolete implements msg{
 
     // definitions
     private final static int

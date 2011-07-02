@@ -233,13 +233,14 @@ public static boolean deleteDir(File dir) {
      * @version 1.0
      * @date 2010/06/06
     */
-   public static boolean SaveStringToFile(String inputFile, String inputString){
+   public static boolean SaveStringToFile(File inputFile, String inputString){
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(inputFile));
             out.write(inputString);
             out.close();
             }
             catch (IOException e){
+                System.out.println(e.getMessage());
                 return false;
             }
         return true;

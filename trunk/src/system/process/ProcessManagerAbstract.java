@@ -49,13 +49,13 @@ import java.util.Hashtable;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 3rd of April 2011 in Germany.
  */
-public abstract class ProcessManagerAbstract implements Message{
+public abstract class ProcessManagerAbstract implements msg{
 
     // definitions
     private Boolean debug = false;

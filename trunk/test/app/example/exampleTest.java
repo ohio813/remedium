@@ -7,7 +7,7 @@
 
 package app.example;
 
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -18,7 +18,7 @@ import org.junit.Test;
  *
  * @author Nuno Brito, 20th of March 2011 at Germany
  */
-public class exampleTest implements Message {
+public class exampleTest implements msg {
 
     public exampleTest() {
     }

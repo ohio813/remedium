@@ -23,7 +23,7 @@
 
 package app.sentinel;
 
-import system.Message;
+import system.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito, 29th of May 2011 in Darmstadt, Germany.
  */
-public class SentinelTest implements Message {
+public class SentinelTest implements msg {
 
     public SentinelTest() {
     }

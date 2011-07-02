@@ -1,7 +1,7 @@
 /*
  * Component is a template class for any other classes that are
  * used as system components. Examples of classes that fit this
- * category are: Database, Network, Log, Message Queue and so forth.
+ * category are: Database, Network, Log, msg Queue and so forth.
  *
  * The purpose is to ensure that these components of the system
  * follow a standard class that provides services such as error
@@ -32,7 +32,7 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.Message;
+import system.msg;
 import system.database;
 import system.net.protocols;
 import system.process.Status;
@@ -43,7 +43,7 @@ import system.html.HtmlGenerator;
  * @author Nuno Brito 3rd of April 2011 in Darmstadt, Germany.
  */
 public abstract class Component extends Thread
-        implements Message
+        implements msg
         {
 
     // definitions
@@ -358,7 +358,7 @@ public abstract class Component extends Thread
         if (!debug) {
             return false;
         }
-        // send a Message using the default way
+        // send a msg using the default way
         send(message);
         return true;
     }
@@ -562,7 +562,7 @@ public abstract class Component extends Thread
 
     }
 
-   /** Default Message that appears when no injected method is available */
+   /** Default msg that appears when no injected method is available */
     public void doDefaultMessage(Properties msg) {
         log(DEBUG,"doDefaultMessage: Got message from "
                 + msg.getProperty(FIELD_FROM));
@@ -638,7 +638,7 @@ public abstract class Component extends Thread
     }
 
 
-    ///////////////////// Message queue related fields
+    ///////////////////// msg queue related fields
 
     /* Send a message to a specific task in a specific component*/
     public final void send(String toComponent,
@@ -653,7 +653,7 @@ public abstract class Component extends Thread
 
 
      /**
-     * This is the send Message to Queue command that is sent from a given
+     * This is the send msg to Queue command that is sent from a given
      * application, it is intended to be used only by roles so that we can
      * control the informations that are passed onto the queue.
      */
@@ -670,7 +670,7 @@ public abstract class Component extends Thread
         // we ensure that the ID tag is not faked, force the FROM field to be
         // from the component itself and not some other component.
         message.setProperty(FIELD_FROM, getCanonicalName() );
-        // send the Message
+        // send the msg
         instance.getMQ().send(message);
     }
 
@@ -699,7 +699,7 @@ public abstract class Component extends Thread
             Method meth = cls.getMethod(this.getMethodNameFromMessage(msg),
                     partypes);
 
-            // sets the Message (Properties) as parameter
+            // sets the msg (Properties) as parameter
             Object arglist[] = new Object[1];
             arglist[0] = msg;
 
@@ -724,7 +724,7 @@ public abstract class Component extends Thread
 
     /**
      * Extract the identification name of the role that is being contacted
-     * If FIELD_TASK exists on the Message, it will return that name instead.
+     * If FIELD_TASK exists on the msg, it will return that name instead.
      */
     private String getMethodNameFromMessage(Properties msg) {
         String ret = "digest";
@@ -768,7 +768,7 @@ public abstract class Component extends Thread
            )
             return; // no point in proceeding if there are no messages
 
-            //TODO this only handles one Message per round
+            //TODO this only handles one msg per round
             // perhaps we should limit the search to the first 100
             // messages? This would smooth peak request times
             Properties message = messages.get(0);
@@ -784,7 +784,7 @@ public abstract class Component extends Thread
 //                           + ticket
 //                        );
 
-                // if this was a Message from the outside, convert
+                // if this was a msg from the outside, convert
                 // the object
                 String params =
                         message.getProperty(FIELD_PARAMETERS, "");
@@ -793,14 +793,14 @@ public abstract class Component extends Thread
                 // we need to copy the ID
                     String id = message.getProperty(FIELD_ID);
                 // then convert the parameters onto a full object
-                   // System.out.println("---------"+Message.toString());
+                   // System.out.println("---------"+msg.toString());
                   message = protocols.stringToProperties(params);
                   // we need to restore these two values to make valid as before
                   message.setProperty(FIELD_PARAMETERS, params);
                   message.setProperty(FIELD_ID, id);
                 }
 
-                // calls the method mentioned in the Message
+                // calls the method mentioned in the msg
                 digest(message);
 
                 // Delete the message after digestion

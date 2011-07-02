@@ -1,17 +1,17 @@
 /*
- * This test case will verify the expected functioning of the Message queue
+ * This test case will verify the expected functioning of the msg queue
  * based on HSQL.
  *
  * We will:
-    - Start the Message queue
+    - Start the msg queue
  *  - Dispatch a few messages
- *  - Read a specific Message
- *  - Delete another Message
+ *  - Read a specific msg
+ *  - Delete another msg
  *  - Flush all messages on the queue
  *  - Close the server
  *
  * All these operations must use the functions specified on the Interface that
- * was written for the Message queue.
+ * was written for the msg queue.
  *
  * The idea is to ensure that we can also use this test case to both follow the
  * standard definition and also to ensure that everyone follows the interface
@@ -42,13 +42,13 @@ public class message_queue_hsql_test {
     @BeforeClass
     public static void setUpClass() throws Exception {
         Properties parameters = new Properties();
-        parameters.setProperty(Message.FIELD_ID, "MQ");
+        parameters.setProperty(msg.FIELD_ID, "MQ");
         main = new Remedium();
         main.start(parameters);
      
 
         /**
-         * The Message queue must be able of starting on its own. This means
+         * The msg queue must be able of starting on its own. This means
          * that when we call "start", it must also be able of starting the
          * database system if it isn't already running.
          */
@@ -60,7 +60,7 @@ public class message_queue_hsql_test {
     @AfterClass
     public static void tearDownClass() throws Exception {
         /**
-         * Ideally, if we are stopping the Message Queue service and no other
+         * Ideally, if we are stopping the msg Queue service and no other
          * service is using the database system, then it would be nice if our
          * database system could be closed.
          *
@@ -81,7 +81,7 @@ public class message_queue_hsql_test {
      public void testSend() {
      // add dummy data
          /**
-          * On this case we are creating a Message. We define four fields
+          * On this case we are creating a msg. We define four fields
           * as the bare minimum to ensure that it reaches the destination.
           * We don't define static fields to ensure that we can add more
           * features as needed on the future.
@@ -92,7 +92,7 @@ public class message_queue_hsql_test {
             dummy.put(message_queue.FIELD_CREATED, "CreatedAt");
             dummy.put(message_queue.FIELD_PARAMETERS, "TheParameters");
 
-            // place this Message on our queue
+            // place this msg on our queue
             assertEquals(true,
                         main.getMQ().send(dummy)
                         );
@@ -121,7 +121,7 @@ public class message_queue_hsql_test {
       * Now we'll test the reading
       *
       * If you note with attention on the previous code, we have sent two
-      * Message targeted to "ToRex", one was FromRambo and the other is
+      * msg targeted to "ToRex", one was FromRambo and the other is
       * FromTRex
       *
       * So, we need to ensure that they are read when someone queues for

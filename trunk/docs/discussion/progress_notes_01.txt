@@ -1,9 +1,18 @@
 - Added LogMessage class, allows classes that require using the log functions from a component to become independent from components. Log messages became objects that can be handled without need for components.
 - Added ContainerFlatFile, replaces the HSQL container that is default on remedium to reduce the RAM usage when indexing a large of data
 - Created the specification document for the ContainerFlatFile (http://code.google.com/p/remedium/wiki/ContainerFlatFile)
+- Added LogRecord class and respective test case. Allows to store several log record objects inside a log message class.
+- Modification on SaveStringToFile(File inputFile, String inputString). inputFile is now a file object instead of String to prevent ambiguities. Developers could mistake accidentaly the order of parameters
+- Added INIFile class along with respective Test case and initial documentation
+- Added CodingRules.wiki to our Wiki. This page provides tips about coding for developers
+
+
 
 --- TODO ---
-- Load data dumped from Instance A onto Instance B
+- LogMessage should hold a set of messages instead of a single message. This allows to export several messages while processing a method
+- LogMessage should record the time when each log is added to the object, this allows to establish a time line
+- LogMessage should write the log to disk using the FlatFile container to save memory resources
+
 
 
 --- MISSING ---

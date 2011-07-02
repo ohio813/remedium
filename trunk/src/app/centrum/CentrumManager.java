@@ -19,13 +19,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import system.Message;
+import system.msg;
 
 /**
  *
  * @author Nuno Brito, 17th of May 2011 in Pittsburgh, USA.
  */
-public class CentrumManager implements Message {
+public class CentrumManager implements msg {
 
     private HashMap<String, CentrumClient> clients = new HashMap();
 
