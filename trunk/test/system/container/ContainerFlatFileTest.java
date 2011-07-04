@@ -12,10 +12,14 @@
 package system.container;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Properties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import system.log.LogMessage;
+import static org.junit.Assert.*;
+
 
 /**
  *  Rules of the testing game:
@@ -39,7 +43,8 @@ public class ContainerFlatFileTest {
 
 
     ContainerFlatFile container;
-    String[] fields = new String[]{"time_created","unique_key","value"};
+    String[] fields = new String[]{"uid","time_created"
+            ,"unique_key","update","author"};
     String id = "crc32";
     String rootTestFolder = "testStorage";
 
@@ -76,6 +81,37 @@ public class ContainerFlatFileTest {
 //        assertTrue(folder.exists());
         System.out.println("  ..Done!");
 
+        System.out.println(" Test reading some keys");
+
+        // using normal speed
+//        ArrayList<Properties> out = container.read("uid", "1378181933");
+//        System.out.println(out.size());
+//        out = container.read("uid", "a15b8069cb910a4fbc6f6672ce58637a");
+//        System.out.println(out.size());
+//        out = container.read("uid", "27968542wewe49");
+//        System.out.println(out.size());
+
+        // using turbo speed
+        String[] fast = container.read("1378181933");
+        System.out.println(fast[0]);
+        fast = container.read("a15b8069cb910a4fbc6f6672ce58637a");
+        System.out.println(fast[0]);
+        fast = container.read("27968542wewe49");
+        System.out.println(fast[0]);
+
+        
+        System.out.println("  ..Done!");
+
+
+
+        System.out.println(" Test writing some keys");
+        // write the test field
+        boolean
+          success = container.write(new String[]{"11", "22", "33", "44", "55"});
+        // was the result successful?
+        if(success == false)
+            fail(container.getLog().getRecent());
+        System.out.println(container.getLog().getRecent());
         System.out.println(" ..Done!");
      }
 

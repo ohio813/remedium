@@ -211,8 +211,7 @@ public class ContainerDump {
             // test if the his file is valid or not
             if(validFile(importFile)){
                 // read all lines from our file
-                String lines = 
-                        utils.files.readAsString(importFile.getAbsolutePath());
+                String lines = utils.files.readAsString(importFile);
 
                 int i = 0;
                 // iterate all lines inside the text file, use \n as separator

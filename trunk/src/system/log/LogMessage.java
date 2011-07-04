@@ -29,13 +29,14 @@ public class LogMessage {
     LogRecord mostRecent; // the most recent log record on our records
     long counter = 0; // the counter of logged messages
     HashMap<String, LogRecord> list = new HashMap();
-    
+
     /** Add a new message to our log */
-    public void add(final int gender, final String message,
+    public void add(String who, final int gender, final String message,
             final String... args){
         // transfer the data to the most recent log record we have
         mostRecent = new LogRecord();
         mostRecent.set(gender, message, args);
+        mostRecent.setWho(who);
         // increase the counter
         counter++;
         // add this log onto our list, we use the counter as reference

@@ -97,6 +97,9 @@ public class text {
             case msg.TIMEOUT:
                 s = "TIMEOUT";
                 break;
+            case msg.REFUSED:
+                s = "REFUSED";
+                break;
             case msg.ERROR:
                 s = "ERROR";
                 break;

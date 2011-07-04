@@ -54,7 +54,7 @@ public class INIfileTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        System.out.println("Testing the Flat File Container");
+        System.out.println("Testing the INI file class");
         // create our folder if it does not exist already
         folder = new File(rootFolder);
         if(folder.exists()==false)
@@ -101,6 +101,38 @@ public class INIfileTest {
            }
            System.out.println(" " + log.getRecent());
         System.out.println(" ..Done!");
+
+        // test reading a key that exists
+        System.out.println(" Test reading a key/value that exists");
+            String result = ini.read("mars", "wake3");
+            System.out.println(" Result -->" + result + "<--");
+            assertEquals("3545d3",result);
+        System.out.println(" ..Done!");
+
+        // test reading a key that does not exist
+        System.out.println(" Test reading a key/value that does not exist");
+            result = ini.read("marsExpress", "wake3");
+            System.out.println(" Result -->" + result + "<--");
+            assertEquals("",result);
+        System.out.println(" ..Done!");
+
+        // test reading the lines from a given section
+        System.out.println(" Test reading the lines from a section");
+            result = ini.readSectionLines("mars");
+            System.out.println(" Result -->" + result + "<--");
+        assertTrue(result.length() > 0);
+        System.out.println(" ..Done!");
+
+        // test writing lines to a given section
+        System.out.println(" Test writing lines to a section");
+                    assertTrue(ini.writeSectionLine("mars","Hello There!!"));
+                    ini.writeSectionLine("nuno","Hello There!!");
+        System.out.println(" ..Done!");
+
+//        // test deleting a section
+//        System.out.println(" Test deleting a section");
+//                    assertTrue(ini.deleteSection("mars"));
+//        System.out.println(" ..Done!");
 
     }
 }
