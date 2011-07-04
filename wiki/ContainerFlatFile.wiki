@@ -124,12 +124,15 @@ This section provides a quick overlook of the meaning and context of terms used 
 
 Details the logical execution steps that occur when a container is initialized. We define initialized as the initial kickstart that occurs both when you run the container for the first time or recurring times in the future.
 
-  * Verify that target folder is valid and available for operations
-  * Find knowledge files inside the target folder, crawl subfolders
-  * Get the knowledge files that match our container ID
-  * Sort these files according to their importance level. Higher number = higher importance = first to be processed
-    * If no importance level is provided, use 1 as default (lowest score)
-  * Create an index file for our container ID if one does not exist
+In parenthesis are the methods employed for each step at the ContainerFlatFile class.
+
+Method initialization()
+  * Verify that target folder is valid and available for operations (checkFolder())
+  * Find knowledge files inside the target folder, crawl subfolders (findKnowledgeFiles())
+  * Get the knowledge files that match our container ID (findKnowledgeFiles())
+  * Sort these files according to their importance level. Higher number = higher importance = first to be processed (sortKnowledgeFiles())
+    * If no importance level is provided, use 1 as default (lowest score) (sortKnowledgeFiles())
+  * Create an index file for our container ID if one does not exist (createIndexFile())
   * We save time if there have been no content changes since the last start, first we check if there have been changes on a superficial level
     * Check if the knowledge file is mentioned on the index file
       * In case the knowledge file is mentioned, verify details such as check-sum of the file and date of last modification to check if any changes occurred
@@ -137,10 +140,10 @@ Details the logical execution steps that occur when a container is initialized. 
       * Otherwise, proceed with reading of knowledge
   * For each knowledge file, evaluate the following properties:
     * File name describes this file as read-only or read-write?
-    * Compute current check-sum of knowledge file
+    * Compute current check-sum of knowledge file (check())
     * Get absolute file path and date of last modification
     * Get the number of records present in file
-    * Verify if the number of columns on each record matches our expected size
+    * Verify if the number of columns on each record matches our expected size (check())
   * Write the properties about each knowledge file on the index file, according to their order of importance
   * From the processed knowledge files, create a list of files that will accept new records to be added
     * If no knowledge files are available to add new records, create a new knowledge file and mark it as available

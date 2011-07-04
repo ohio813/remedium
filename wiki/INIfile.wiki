@@ -73,6 +73,13 @@ This chapter details the behavior of our INIfile class when interpreting the INI
 
 Following the INI style convention, a title given for a {{{key}}} can only exist once on each {{{section}}}. If more than one {{{key}}} with the same title exists, the first {{{key}}} will be used for reading and writing values.
 
+=== Differences of letter cases ===
+
+When calling operations that read values from the INI file, it is not necessary to match the Upper/Lower cases for *section* and *key* titles.
+
+We only apply strict upper/lower casing as specific by the developer on the *values* that are written.
+
+
 === Rules about sections ===
 
   * Don't use {{{=}}} inside the section titles
