@@ -40,6 +40,8 @@ public class LogMessageTest {
 
     static LogMessage log;
 
+    static String who = "test";
+
     public LogMessageTest() {
     }
 
@@ -58,10 +60,10 @@ public class LogMessageTest {
     public void hello() {
 
         System.out.println(" Logging a few messages");
-            log.add(msg.ACCEPTED, "Hello");
-            log.add(msg.ACCEPTED, "World!");
-            log.add(msg.ACCEPTED, "What's");
-            log.add(msg.ACCEPTED, "up?");
+            log.add(who, msg.ACCEPTED, "Hello");
+            log.add(who, msg.ACCEPTED, "World!");
+            log.add(who, msg.ACCEPTED, "What's");
+            log.add(who, msg.ACCEPTED, "up?");
         System.out.println("Done!");
 
         System.out.println(" Counting the messages, expecting a certain value");
@@ -70,7 +72,7 @@ public class LogMessageTest {
         System.out.println("Done!");
 
         System.out.println(" Testing to add a new message with parameters %1");
-            log.add(msg.MAINTENANCE, "Is %1 different from %2?", "A","B");
+            log.add(who, msg.MAINTENANCE, "Is %1 different from %2?", "A","B");
             String result = "Is A different from B?";
             assertEquals(log.getRecent(), result);
         System.out.println("Done!");

@@ -126,6 +126,11 @@ public interface msg {
             CHANGE_STATUS = "change_status",
             APPS = "apps",
 
+   // container related
+            RANK = "rank",
+            COUNT = "count",
+            CHECKSUM = "checksum",
+
             SPLIT = ",\\s", // the character used to split strings
             //SPLIT = "##", // the character used to split strings
     // typical roles

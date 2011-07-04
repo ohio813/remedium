@@ -31,7 +31,7 @@ public class files {
          * @version 1.0
          * @date 2010/06/07
         */
-        public static String readAsString(final String textFile){
+        public static String readAsString(final File textFile){
 
             StringBuffer result = null;
             BufferedReader br = null;

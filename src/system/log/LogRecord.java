@@ -15,6 +15,7 @@ package system.log;
 public class LogRecord{
 
     private String
+            who,      // who wrote this record?
             message;  // text of the message
     private int
             gender,   // is this an INFO, DEBUG, ERROR message?
@@ -39,6 +40,10 @@ public class LogRecord{
     public void set(final int gender, final String message){
         this.message = message;
         this.gender = gender;
+    }
+
+    public void setWho(String who) {
+        this.who = who;
     }
 
     public String[] getArgs() {
