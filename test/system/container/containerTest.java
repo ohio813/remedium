@@ -192,7 +192,7 @@ public class containerTest implements msg {
          Container out = component.box.get("test");
 
          // Calling the getStoreFields() method
-         String[] fields = out.getStoreFields();
+         String[] fields = out.getFields();
 
          System.out.println("Found the following fields: ");
          for (String field : fields)

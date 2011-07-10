@@ -136,20 +136,65 @@ public class text {
 
 
 
-/** get the string ready for output as debug */
- public static String doFormat(String title, String value){
-     return title + " = " +value+ "; ";
- }
-/** convert an int value to hex */
- public static String getHex(final String title, final int value){
-     String result = java.lang.Integer.toHexString (value);
-     return doFormat(title, "0x"+result.toUpperCase());
- }
-/** convert a Long value to hex */
-public static String getHex(final String title, final long value){
-     String result = java.lang.Long.toHexString (value);
-      return doFormat(title, "0x"+result.toUpperCase());
- }
+    /** get the string ready for output as debug */
+     public static String doFormat(String title, String value){
+         return title + " = " +value+ "; ";
+     }
+
+    /** convert an int value to hex */
+     public static String getHex(final String title, final int value){
+         String result = java.lang.Integer.toHexString (value);
+         return doFormat(title, "0x"+result.toUpperCase());
+     }
+
+    /** convert a Long value to hex */
+    public static String getHex(final String title, final long value){
+         String result = java.lang.Long.toHexString (value);
+          return doFormat(title, "0x"+result.toUpperCase());
+     }
+
+    /** Add a new element to a static String array */
+     public static String[] stringArrayAdd(final String[] input,
+             final String newText){
+         String result = "";
+         // iterate all elements
+         for(String current : input)
+             if(current.length() > 0)
+             result = result.concat(current + ";");
+         result = result.concat(newText + ";");
+         // write back our list
+        return result.split(";");
+     }
+
+   /** Remove an element from a static String array */
+     public static String[] stringArrayRemove(final String[] input,
+             final String removeText){
+        String result = "";
+        for(String current : input){
+            if (current.equalsIgnoreCase(removeText))
+                continue;
+            else
+                result = result.concat(current + ";");
+        }
+       // write back our list
+        return result.split(";");
+     }
+
+
+   /** Remove an element from a static String array */
+     public static String[] stringPrune(final String[] input){
+        String result = "";
+        for(String current : input){
+            if (current.isEmpty())
+                continue;
+            else
+                result = result.concat(current + ";");
+        }
+       // write back our list
+        return result.split(";");
+     }
+
+
 
 
     /** Picks a string and makes it URL safe */

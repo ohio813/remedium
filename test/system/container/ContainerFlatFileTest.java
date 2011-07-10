@@ -12,8 +12,6 @@
 package system.container;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Properties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,11 +40,15 @@ import static org.junit.Assert.*;
 public class ContainerFlatFileTest {
 
 
-    ContainerFlatFile container;
-    String[] fields = new String[]{"uid","time_created"
-            ,"unique_key","update","author"};
-    String id = "crc32";
-    String rootTestFolder = "testStorage";
+    String[] fields = new String[] // 5 fields
+        {"uid","time_created", "unique_key", "update", "author"};
+    String id = "test";
+    static String rootTestFolder = "testStorage";
+
+    // setup our container
+    static ContainerFlatFile
+            container;
+
 
 
     public ContainerFlatFileTest() {
@@ -55,6 +57,23 @@ public class ContainerFlatFileTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         System.out.println("Testing the Flat File Container");
+   // first step: remove any previous tests
+        System.out.println(" Deleting the work folder");
+        File file = new File(rootTestFolder);
+        utils.files.deleteDir(file);
+        if(file.exists())
+            fail("Failed to delete the work folder");
+        System.out.println(" ..Done");
+
+        // wait at least one second before proceeding
+        utils.time.wait(1);
+
+   // second step: create a fresh new folder
+        System.out.println(" Creating the work folder");
+            utils.files.mkdirs(file);
+        if(file.exists()==false)
+            fail("Failed to create the work folder");
+        System.out.println(" ..Done");
     }
 
     @AfterClass
@@ -63,8 +82,8 @@ public class ContainerFlatFileTest {
     }
 
    
-     @Test
-     public void startContainer() {
+    @Test
+    public void initializationTest() {
         System.out.println(" Test instantiating the container");
 
         // the reply object
@@ -76,43 +95,109 @@ public class ContainerFlatFileTest {
         // output the message
         System.out.println("  " + result.getRecent());
         System.out.println("  ..Done!");
-        System.out.println("  ..Test if folder exists");
-//        File folder = new File(rootFolder, id);
-//        assertTrue(folder.exists());
-        System.out.println("  ..Done!");
+    }
 
-        System.out.println(" Test reading some keys");
 
-        // using normal speed
-//        ArrayList<Properties> out = container.read("uid", "1378181933");
-//        System.out.println(out.size());
-//        out = container.read("uid", "a15b8069cb910a4fbc6f6672ce58637a");
-//        System.out.println(out.size());
-//        out = container.read("uid", "27968542wewe49");
-//        System.out.println(out.size());
-
-        // using turbo speed
-        String[] fast = container.read("1378181933");
-        System.out.println(fast[0]);
-        fast = container.read("a15b8069cb910a4fbc6f6672ce58637a");
-        System.out.println(fast[0]);
-        fast = container.read("27968542wewe49");
-        System.out.println(fast[0]);
-
+     @Test
+     public void initialWriteReadTest() {
         
+//       first step: write a key onto our structure
+         System.out.println(" Test writing");
+            container.write(new String[]{"1","A","3","4","5"});
+            container.write(new String[]{"2","B","3","4","5"});
+            container.write(new String[]{"3","C","3","4","5"});
+            container.write(new String[]{"4","D","3","4","5"});
+            container.write(new String[]{"5","E","3","4","5"});
+         System.out.println(" ..Done!");
+
+
+//      second step: test the read of these values
+         System.out.println(" Test counting");
+            long count = container.count();
+            if(count != 5)
+                fail("We have " + count + " instead of the expected record "
+                        + "count");
+         System.out.println(" ..Done!");
+
+
+//      second step: test the read of one specific value
+         System.out.println("  Test reading after write");
+            String[] record = container.read("4");
+            String out = record[1];
+            assertEquals(out, "D");
+         System.out.println("  ..Done!");
+
+
+//       third step: write a key onto our structure
+         System.out.println(" Test overwriting");
+            container.write(new String[]{"1","A","AA","4","5"});
+            container.write(new String[]{"2","B","BB","4","5"});
+            container.write(new String[]{"3","C","CC","4","5"});
+            container.write(new String[]{"4","D","XX","4","5"});
+            container.write(new String[]{"5","E","ZZ","4","5"});
+         System.out.println(" ..Done!");
+
+//      second step: test the read of one specific value
+         System.out.println("  Test reading after overwrite");
+            record = container.read("2");
+            out = record[2];
+            assertEquals(out, "BB");
+         System.out.println("  ..Done!");
+          }
+
+
+    @Test
+    public void writeToLimitTest() {
+        // we're going to write as many keys as allowed to keep inside a file
+        System.out.println(" Test the limits of storage for each file");
+        // get the maximum of files allowed
+        long max = 10000;//container.getMaxRecordsAllowed()  * 5;
+        System.out.println("  Creating " + max + " records..");
+        long count = 6;
+        long timeBegin = System.currentTimeMillis();
+        long timePrevious = timeBegin;
+        for(int i = 6; i < max + 1; i++){
+        // do a nice progress output to let us know how it is going
+            if(count == container.getMaxRecordsAllowed()){
+                long timeResult = System.currentTimeMillis() - timePrevious;
+                timePrevious = System.currentTimeMillis();
+                String timeCount = utils.time.timeNumberToHumanReadable(timeResult);
+                System.out.println("   " + i 
+                        + " records and " + timeCount
+                        + " per file."
+                        + " (" + (i * 100)/max+ "% processed in "
+                        + utils.time.timeNumberToHumanReadable
+                         (System.currentTimeMillis() - timeBegin)
+                        + ")");
+                // reset the counter
+                count = 0;
+            }
+            count++;
+            container.write(new String[]{"" + i,"A","AA","4","5"});
+        }
         System.out.println("  ..Done!");
 
+        // do the time calculation to know how long it took
+        long timeEnd = System.currentTimeMillis();
 
+        long timeResult = timeEnd - timeBegin;
+        String timeCount = utils.time.timeNumberToHumanReadable(timeResult);
 
-        System.out.println(" Test writing some keys");
-        // write the test field
-        boolean
-          success = container.write(new String[]{"11", "22", "33", "44", "55"});
-        // was the result successful?
-        if(success == false)
-            fail(container.getLog().getRecent());
-        System.out.println(container.getLog().getRecent());
-        System.out.println(" ..Done!");
-     }
+        System.out.println("  Write operation took " + timeCount
+                + " to write " + max + " records");
+        // 10 minutes -> 100 000 records
+        // (10 * 60 * 1000)
+        // 21 seconds -> 10 000 records
+        long timeToGoal = (timeResult * 100000) / max;//(10 * 60 * 1000) ;
 
+        System.out.println("  Comparing to objective: \n"
+                + "    " + utils.time.timeNumberToHumanReadable(timeToGoal)
+                + " to write 100 000 records");
+
+        // verify if the number of records is correct
+        System.out.println("  Testing number of created records");
+        System.out.println("  Created " + container.count() + " records");
+//            assertEquals(container.count(), max);
+        System.out.println("  ..Done!");
+    }
 }

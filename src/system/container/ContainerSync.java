@@ -2,7 +2,7 @@
  * This class provides data synchronization between remote containers.
  *
  * We place all the synchronization related method on this location to keep
- * the Container class readable, otherwise it would host a gigantic number of
+ * the ContainerHSQL class readable, otherwise it would host a gigantic number of
  * lines that would become unbearable to manage.
  *
  * We also ease the task of using other synchronization providers in the future.
@@ -28,7 +28,7 @@ public class ContainerSync {
 
     // the objects made available when the class is constructed
     private Component component;
-    private Container container;
+    private ContainerHSQL container;
     private database db;
 
     private Boolean
@@ -36,7 +36,7 @@ public class ContainerSync {
 
     /** This public constructor associates this class to a container */
     public ContainerSync(Component assignedComponent,
-                        Container assignedContainer, database assignedDB){
+                        ContainerHSQL assignedContainer, database assignedDB){
         //preflight checks
         if(assignedContainer == null){
             System.out.println("ContainerLog error: Assigned container "
@@ -253,7 +253,7 @@ public class ContainerSync {
 //                st.close();
 //                rs.close();
 //            } catch (SQLException ex) {
-//                Logger.getLogger(Container.class.getName())
+//                Logger.getLogger(ContainerHSQL.class.getName())
 //                        .log(Level.SEVERE, null, ex);
 //            }
 //        }

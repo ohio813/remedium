@@ -23,7 +23,6 @@
 package system.container;
 
 import system.core.Component;
-import system.container.Container;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import system.msg;
@@ -73,7 +72,7 @@ public class containerBoxTest implements msg {
 
     static Component component;
            
-    Container
+    ContainerHSQL
            container1, // test container
            container2; // test container
 
@@ -176,7 +175,7 @@ public class containerBoxTest implements msg {
    // Add containers to our box
    System.out.println("Test adding our container to the box");
 
-   Container output = component.box.add(container1);
+   ContainerHSQL output = component.box.add(container1);
    assertNotNull(output);
 
    output = component.box.add(container2);
@@ -204,7 +203,7 @@ public class containerBoxTest implements msg {
       System.out.println("Repeating the get method for a container that does"
               + " not exist");
 
-      Container output = component.box.get("100");
+      ContainerHSQL output = component.box.get("100");
         assertNull(output);
 
       System.out.println("  ..Done\n");

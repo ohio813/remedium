@@ -32,14 +32,14 @@ public class ContainerDump {
     private boolean debug = true;
 
     private Component component;
-    private Container container;
+    private ContainerHSQL container;
     private database db = null;
     private ContainerFile file;
 
 
     /** Public constructor */
     public ContainerDump(Component assignedComponent,
-                        Container assignedContainer, database assignedDB){
+                        ContainerHSQL assignedContainer, database assignedDB){
         //preflight checks
         if(assignedContainer == null){
             System.out.println("ContainerLog error: Assigned container "
@@ -138,7 +138,7 @@ public class ContainerDump {
             return false;
         }
 
-        // create the Container file
+        // create the ContainerHSQL file
         file = new ContainerFile(folder, container.getName());
 
         return true;
@@ -187,7 +187,7 @@ public class ContainerDump {
                 st.close();
                 rs.close();
             } catch (SQLException ex) {
-                Logger.getLogger(Container.class.getName())
+                Logger.getLogger(ContainerHSQL.class.getName())
                         .log(Level.SEVERE, null, ex);
             }
         }

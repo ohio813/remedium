@@ -64,11 +64,17 @@ public class LogRecord{
     private String convert(){
         String result = message.replace("%", "%!%");
         int count = 1;
+      try{
         while(result.contains("%!%")){
             result = result.replace("%!%"+count, args[count-1]);
             count++;
         }
+      }catch(Exception e){
+        result = result.replace("%!%", "%");
+      } finally{
+          // all done
         return result;
+      }
     }
 
     /** Gets our message. If it has arguments, they are converted.*/
