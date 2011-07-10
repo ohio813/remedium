@@ -35,7 +35,6 @@ public class files {
 
             StringBuffer result = null;
             BufferedReader br = null;
-
             try {
             FileReader f = new FileReader(textFile);
             br = new BufferedReader(f);
@@ -222,6 +221,13 @@ public static boolean deleteDir(File dir) {
         File docs = new File(folder);
         result = docs.mkdirs();
 
+        return result;
+    }
+
+  /** create a folder along with respective parent folders if needed */
+   public static Boolean mkdirs(File docs){
+       boolean result = false;
+        result = docs.mkdirs();
         return result;
     }
 

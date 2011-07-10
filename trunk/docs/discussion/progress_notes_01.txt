@@ -1,6 +1,12 @@
-
+- Modified LogRecord to handle cases where a user does not use messages with the correct increment of percentages. Example: %1, %3 instead of %1, %2
+- Stabilizing the ContainerFlatFile class. Several defects corrected, class can be considered as minimally functional. (performance needs to meet requirements)
 
 --- TODO ---
+- ContainerFlatFile
+    - Provide method for creating a new file
+        - Still needs to add file dynamically to our knowledge container
+
+
 - Serious defect exposed by INIfileTest. Minimal functionality not affected. (Read/Write INI keys)
 - LogMesssage getRecent() should output an error message if one occured on a past set of messages
 - LogMessage should hold a set of messages instead of a single message. This allows to export several messages while processing a method

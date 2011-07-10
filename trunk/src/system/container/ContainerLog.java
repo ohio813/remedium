@@ -35,14 +35,14 @@ public class ContainerLog implements msg{
             isLog  = false,   // should this container be tracked or not?
             logStarted = false;  // has the log tracking started or not?
 
-    private Container
+    private ContainerHSQL
             logDB; // where we keep track of changes
 
 
     
     /** This public constructor associates this class to a container */
     public ContainerLog(Component assignedComponent,
-                        Container assignedContainer){
+                        ContainerHSQL assignedContainer){
         //preflight checks
         if(assignedContainer == null){
             System.out.println("ContainerLog error: Assigned container "
@@ -87,7 +87,7 @@ public class ContainerLog implements msg{
 
             //log(DEBUG,"Wrote log");
         } catch (IOException ex) {
-            Logger.getLogger(Container.class.getName()).log(Level.SEVERE,
+            Logger.getLogger(ContainerHSQL.class.getName()).log(Level.SEVERE,
                     null, ex);
         }
 
@@ -97,7 +97,7 @@ public class ContainerLog implements msg{
     private void kickstartLog(){
         // part related to the log tracking, create our special container
         // inside this one
-        logDB = new Container(component, store_name + "_log",
+        logDB = new ContainerHSQL(component, store_name + "_log",
                     new String[]{FIELD_CREATED, FIELD_CONTENT}, false, true);
 
         logStarted = true;

@@ -21,7 +21,7 @@
 
 package system.core;
 
-import system.container.Container;
+//import system.container.ContainerHSQL;
 import system.container.INIcontainer;
 import system.container.Box;
 import java.io.IOException;
@@ -32,6 +32,8 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.container.Container;
+import system.log.LogMessage;
 import system.msg;
 import system.database;
 import system.net.protocols;
@@ -626,9 +628,14 @@ public abstract class Component extends Thread
 
     ///// Container related procedures
 
+//    /** Create a storage container with no checks*/
+//    public final ContainerHSQL createDB(String title, String[] fields){
+//        return new ContainerHSQL(this, title, fields);
+//    }
     /** Create a storage container with no checks*/
     public final Container createDB(String title, String[] fields){
-        return new Container(this, title, fields);
+        LogMessage result = new LogMessage();
+        return new Container(title, fields, this.instance.getStorage(), result);
     }
 
     /** write on the storage container */

@@ -1,5 +1,6 @@
 package remedium;
 
+import java.io.File;
 import system.core.global;
 import java.util.Properties;
 import system.database;
@@ -43,6 +44,8 @@ public class Remedium implements msg {
    private long 
            remLock = utils.math.RandomInteger(1, 9999999);
 
+   private String storageLocation = "storage";
+   private File storage = new File (storageLocation);
 
  // settings
     private String
@@ -95,6 +98,10 @@ public class Remedium implements msg {
     /** Provides back our system time */
     public long getTime(){
         return this.timeTracker.getTime();
+    }
+
+    public File getStorage() {
+        return storage;
     }
 
     public Remedium() {

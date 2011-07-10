@@ -66,8 +66,6 @@ public class LogMessage {
         if(since > counter){// we can't provide requests that haven't occured
             return false;
         }
-
-
         // setup our count variable
         long count = since;
         // iterate all records

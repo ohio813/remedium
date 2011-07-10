@@ -36,6 +36,9 @@ public interface ContainerInterface {
     /** Get the public store name */
     public String getName();
 
+    /** Get the public store name */
+    public String[] getFields();
+
     /** Is this container running or not? */
     public boolean isRunning();
 

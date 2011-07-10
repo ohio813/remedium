@@ -63,7 +63,7 @@ public class Box {
             // iterate each one
             for(String container : containers){
                 // update the SyncAuthorize status
-                this.get(container).setSyncAuthorize(newState);
+//                this.get(container).setSyncAuthorize(newState);
             }
     }
 
@@ -96,9 +96,9 @@ public class Box {
     public boolean dump(String where){
      // We will dump all the records of each container on their own sub folders
         for(Container container : containerBox.values()){
-         Boolean result = container.dump.toFolder(where);
-         if(result == false)
-             return false;
+//         Boolean result = container.dump.toFolder(where);
+//         if(result == false)
+//             return false;
      }
         return true;
     }
@@ -107,9 +107,9 @@ public class Box {
     public boolean dumpImport(String where){
      // We grab all the records for each container from files on their folders
         for(Container container : containerBox.values()){
-         Boolean result = container.dump.fromFolder(where);
-         if(result == false)
-             return false;
+//         Boolean result = container.dump.fromFolder(where);
+//         if(result == false)
+//             return false;
      }
         return true;
     }
