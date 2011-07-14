@@ -3,8 +3,9 @@
  * provided value without changes across a short amount of time.
  */
 
-package system;
+package system.core;
 
+import utils.TimeTracker;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

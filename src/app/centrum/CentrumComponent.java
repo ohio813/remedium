@@ -17,7 +17,7 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.UpdateTracker;
+import utils.UpdateTracker;
 
 /**
  *

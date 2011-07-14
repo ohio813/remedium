@@ -25,7 +25,7 @@ package system.container;
 import system.core.Component;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.msg;
+import system.mq.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -72,7 +72,7 @@ public class containerBoxTest implements msg {
 
     static Component component;
            
-    ContainerHSQL
+    Container
            container1, // test container
            container2; // test container
 
@@ -175,7 +175,7 @@ public class containerBoxTest implements msg {
    // Add containers to our box
    System.out.println("Test adding our container to the box");
 
-   ContainerHSQL output = component.box.add(container1);
+   Container output = component.box.add(container1);
    assertNotNull(output);
 
    output = component.box.add(container2);
@@ -203,7 +203,7 @@ public class containerBoxTest implements msg {
       System.out.println("Repeating the get method for a container that does"
               + " not exist");
 
-      ContainerHSQL output = component.box.get("100");
+      Container output = component.box.get("100");
         assertNull(output);
 
       System.out.println("  ..Done\n");

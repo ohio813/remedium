@@ -23,13 +23,13 @@ package system.log;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.msg;
+import system.mq.msg;
 
 /**
  *
  * @author Nuno Brito, 14th April 2011 in Darmstadt, Germany
  */
-public class log_handler implements msg{
+public class logHandler implements msg{
 
     // settings
     //Boolean debug = true; // true if you want debugging messages
@@ -48,7 +48,7 @@ public class log_handler implements msg{
             filterIncludeGender = new Properties();
 
 
-    public log_handler(Remedium rem){
+    public logHandler(Remedium rem){
         // preflight checks
         if(rem == null){
             System.out.println("[log_handler] We can't initiate with "

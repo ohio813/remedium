@@ -13,14 +13,8 @@
 package system.container;
 
 import java.io.File;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import system.msg;
+import system.mq.msg;
 import system.core.Component;
-import system.database;
 
 /**
  *
@@ -32,14 +26,13 @@ public class ContainerDump {
     private boolean debug = true;
 
     private Component component;
-    private ContainerHSQL container;
-    private database db = null;
+    private Container container;
     private ContainerFile file;
 
 
     /** Public constructor */
     public ContainerDump(Component assignedComponent,
-                        ContainerHSQL assignedContainer, database assignedDB){
+                        Container assignedContainer){
         //preflight checks
         if(assignedContainer == null){
             System.out.println("ContainerLog error: Assigned container "
@@ -56,8 +49,6 @@ public class ContainerDump {
         // map the provided objects to the objects of this class
         component = assignedComponent;
         container = assignedContainer;
-        this.db = assignedDB;
-
     }
 
 
@@ -146,55 +137,56 @@ public class ContainerDump {
 
     /** This method will proceed with the dumping onto a selected folder */
     private Boolean performDump(){
-        // expression to get our records
-        String expression = "SELECT * FROM " + container.getName();
-        // initialize our variables
-        Statement st = null;
-        ResultSet rs = null;
-        //run our query
-        try {
-            st = db.conn.createStatement(); // statement objects can be reused with
-            rs = st.executeQuery(expression); // run the query
-
-            // grab the indexing date of this record
-            long date = 0;
-            // position where the last column is located
-            int pos = container.getStoreFields().length;
-
-            for (; rs.next();) {
-                String record = "";
-                // read all our msg fields
-                for (int i = 1; i < pos + 1; i++)
-                { // add each record, split it using a ";"
-                  record = record.concat(rs.getObject(i + 1).toString())+";";
-                }
-
-                try{
-                // get the date value, must be placed at the penultimate column
-                date = Long.parseLong(rs.getObject(3).toString());
-                }catch(Exception e){}
-                // add this file to our file record manager
-                file.add(record, date);
-
-            }
-            st.close(); // NOTE!! if you stop a statement the ResultSet is lost
-        } catch (SQLException ex) {
-                        log(msg.ERROR,"Dump toFolder operation failed: "
-                    + "SQL exception when calling " + expression);
-            return false;
-        } finally{
-            try {
-                st.close();
-                rs.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ContainerHSQL.class.getName())
-                        .log(Level.SEVERE, null, ex);
-            }
-        }
-        // close down the file container
-        boolean result = file.close();
-        // all done
-        return result;
+//        // expression to get our records
+//        String expression = "SELECT * FROM " + container.getName();
+//        // initialize our variables
+//        Statement st = null;
+//        ResultSet rs = null;
+//        //run our query
+//        try {
+//            st = db.conn.createStatement(); // statement objects can be reused with
+//            rs = st.executeQuery(expression); // run the query
+//
+//            // grab the indexing date of this record
+//            long date = 0;
+//            // position where the last column is located
+//            int pos = container.getFields().length;
+//
+//            for (; rs.next();) {
+//                String record = "";
+//                // read all our msg fields
+//                for (int i = 1; i < pos + 1; i++)
+//                { // add each record, split it using a ";"
+//                  record = record.concat(rs.getObject(i + 1).toString())+";";
+//                }
+//
+//                try{
+//                // get the date value, must be placed at the penultimate column
+//                date = Long.parseLong(rs.getObject(3).toString());
+//                }catch(Exception e){}
+//                // add this file to our file record manager
+//                file.add(record, date);
+//
+//            }
+//            st.close(); // NOTE!! if you stop a statement the ResultSet is lost
+//        } catch (SQLException ex) {
+//                        log(msg.ERROR,"Dump toFolder operation failed: "
+//                    + "SQL exception when calling " + expression);
+//            return false;
+//        } finally{
+//            try {
+//                st.close();
+//                rs.close();
+//            } catch (SQLException ex) {
+//                Logger.getLogger(Container.class.getName())
+//                        .log(Level.SEVERE, null, ex);
+//            }
+//        }
+//        // close down the file container
+//        boolean result = file.close();
+//        // all done
+//        return result;
+        return true;
     }
 
      public final void log(int gender, String message) {

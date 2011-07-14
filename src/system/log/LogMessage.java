@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class LogMessage {
 
     
-    LogRecord mostRecent; // the most recent log record on our records
+    LogRecord mostRecent = new LogRecord(); // the most recent log record on our records
     long counter = 0; // the counter of logged messages
     HashMap<String, LogRecord> list = new HashMap();
 

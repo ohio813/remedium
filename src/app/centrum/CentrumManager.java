@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
-import system.msg;
+import system.mq.msg;
 
 /**
  *

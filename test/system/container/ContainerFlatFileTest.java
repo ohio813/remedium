@@ -151,7 +151,7 @@ public class ContainerFlatFileTest {
         // we're going to write as many keys as allowed to keep inside a file
         System.out.println(" Test the limits of storage for each file");
         // get the maximum of files allowed
-        long max = 10000;//container.getMaxRecordsAllowed()  * 5;
+        long max = container.getMaxRecordsAllowed() * 3;
         System.out.println("  Creating " + max + " records..");
         long count = 6;
         long timeBegin = System.currentTimeMillis();
@@ -197,7 +197,33 @@ public class ContainerFlatFileTest {
         // verify if the number of records is correct
         System.out.println("  Testing number of created records");
         System.out.println("  Created " + container.count() + " records");
-//            assertEquals(container.count(), max);
+            assertEquals(container.count(), max);
+        System.out.println("  ..Done!");
+    }
+
+    @Test
+    public void deleteTest() {
+
+        long initialCount = container.count();
+
+        // test deleting some records and see the result
+        System.out.println(" Test deleting some records and see the result");
+            container.delete("uid", "1");
+            container.delete("uid", "3");
+            container.delete("uid", "5");
+            container.delete("uid", "7");
+            container.delete("uid", "9");
+        System.out.println(" ..Done!");
+
+        // verify if the number of records is correct
+        System.out.println("  Testing number of deleted records");
+            System.out.println("  Counting " + container.count() + " records");
+            assertEquals(container.count(), initialCount - 5);
+        System.out.println("  ..Done!");
+
+        // test deleting some records and see the result
+        System.out.println("  Test deleting all records and files");
+            container.deleteKnowledgeFiles();
         System.out.println("  ..Done!");
     }
 }

@@ -49,7 +49,7 @@ import java.util.Hashtable;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.msg;
+import system.mq.msg;
 
 /**
  *
@@ -72,7 +72,7 @@ public abstract class ProcessManagerAbstract implements msg{
             instance;
 
     /** the constructor for our class */
-    public ProcessManagerAbstract(Remedium assignedInstance, long remLock){
+    public ProcessManagerAbstract(Remedium assignedInstance){
         // preflight check
         if(assignedInstance == null){
             System.out.println("Process Manager failed to start. Cannot"

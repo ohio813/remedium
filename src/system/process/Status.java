@@ -9,7 +9,7 @@
 package system.process;
 
 import java.util.Properties;
-import system.msg;
+import system.mq.msg;
 
 /**
  *

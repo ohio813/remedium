@@ -6,7 +6,7 @@ package remedium;
  */
 
 import java.util.Properties;
-import system.msg;
+import system.mq.msg;
 
 public class start implements msg{
 

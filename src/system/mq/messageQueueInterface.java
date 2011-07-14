@@ -6,7 +6,7 @@
  * to forcefully be reflected down on each implementation of the code.
  * 
  */
-package system;
+package system.mq;
 
 import java.util.ArrayList;
 import java.util.Properties;
@@ -16,7 +16,7 @@ import remedium.Remedium;
  *
  * @author Nuno Brito
  */
-public interface message_queue_interface {
+public interface messageQueueInterface {
 
     public static final String // table name inside our databasde
             TABLE_MESSAGES = "messages";
@@ -45,8 +45,9 @@ public interface message_queue_interface {
 
     // after reading a message, it can be disposed using the message ID
     public Boolean delete(String messageID);
-    //TODO Missing to add support for multiple delete
-    // public Boolean delete(ArrayList<int>);
+
+    // after reading a msg, it can be disposed using the ticket ID
+    public Boolean deleteTicket(String ticketID);
 
     // send a message on the queue
     public boolean send(Properties data);

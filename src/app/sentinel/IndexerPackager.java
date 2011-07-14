@@ -19,7 +19,7 @@ import system.core.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
-import system.msg;
+import system.mq.msg;
 
 /**
  *

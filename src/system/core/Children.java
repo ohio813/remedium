@@ -7,7 +7,7 @@ package system.core;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import system.msg;
+import system.mq.msg;
 
 /**
  *

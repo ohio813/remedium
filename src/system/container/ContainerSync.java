@@ -15,9 +15,8 @@ package system.container;
 //import java.sql.Statement;
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
-import system.msg;
+import system.mq.msg;
 import system.core.Component;
-import system.database;
 
 /**
  *
@@ -28,15 +27,14 @@ public class ContainerSync {
 
     // the objects made available when the class is constructed
     private Component component;
-    private ContainerHSQL container;
-    private database db;
+    private Container container;
 
     private Boolean
             allowSyncAuthorize = true;
 
     /** This public constructor associates this class to a container */
     public ContainerSync(Component assignedComponent,
-                        ContainerHSQL assignedContainer, database assignedDB){
+                        Container assignedContainer){
         //preflight checks
         if(assignedContainer == null){
             System.out.println("ContainerLog error: Assigned container "
@@ -53,7 +51,6 @@ public class ContainerSync {
         // map the provided objects to the objects of this class
         component = assignedComponent;
         container = assignedContainer;
-        this.db = assignedDB;
     }
 
 

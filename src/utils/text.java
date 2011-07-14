@@ -7,7 +7,7 @@ package utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import system.msg;
+import system.mq.msg;
 
 /**
  *
@@ -73,6 +73,20 @@ public class text {
     }
 
     
+    /** Provides the index number of a given string inside an array.
+     Returns -1 if the string was not found, 0 equals to the first item and
+     so forth.*/
+    public static int arrayIndex(String find, final String[] fields){
+        int result = -1;
+        int count = 0;
+            for(String field : fields){
+                if(field.equalsIgnoreCase(find))
+                    return count;
+                count++;
+            }
+        return result;
+    }
+
     
     /**
      * Provide a textual representation of our system status value

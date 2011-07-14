@@ -22,6 +22,7 @@
 package system.core;
 
 //import system.container.ContainerHSQL;
+import java.io.File;
 import system.container.INIcontainer;
 import system.container.Box;
 import java.io.IOException;
@@ -34,8 +35,8 @@ import org.simpleframework.http.Response;
 import remedium.Remedium;
 import system.container.Container;
 import system.log.LogMessage;
-import system.msg;
-import system.database;
+import system.mq.msg;
+//import system.database;
 import system.net.protocols;
 import system.process.Status;
 import system.html.HtmlGenerator;
@@ -79,8 +80,8 @@ public abstract class Component extends Thread
     protected
             Properties settings;  // allow extensions to set this value
 
-    private database // our private database instance
-            db = new database();
+//    private database // our private database instance
+//            db = new database();
 
     protected int
             WAIT_TIME = 4; // how long between time loops here?
@@ -478,9 +479,9 @@ public abstract class Component extends Thread
 
 
     /** return the database assigned to this component */
-    public database getDB(){
-        return this.db;
-    }
+//    public database getDB(){
+//        return this.db;
+//    }
 
  /////// SETTERS
 
@@ -505,40 +506,40 @@ public abstract class Component extends Thread
     }
 
 
-    private Boolean startDB(){
-
-        db.setRemedium(instance);
-
-        Properties data = new Properties();
-
-        String safePath = this.getCanonicalName().replace("/",
-                ""+java.io.File.separatorChar);
-
-        safePath = 
-                  instance.getDB().getDefaultFolder()
-                + ""+ java.io.File.separatorChar
-                + instance.getNet().getPort()
-                + ""+ java.io.File.separatorChar
-                + safePath;
-
-        // create the storage folder specific to this component
-        utils.files.mkdirs(safePath);
-
-        // set the database directory to match this one
-        data.setProperty(DIR, safePath );
-
-
-        // DB - do we need to start up the database system by ourselves?
-        if (!this.db.hasStarted()) {
-            this.db.start(data);
-        }
-
-        if (!this.db.hasStarted()) {
-            log(ERROR, "Failed to start database system");
-            return false;
-        }
-        return true;
-    }
+//    private Boolean startDB(){
+//
+//        db.setRemedium(instance);
+//
+//        Properties data = new Properties();
+//
+//        String safePath = this.getCanonicalName().replace("/",
+//                ""+java.io.File.separatorChar);
+//
+//        safePath =
+//                  instance.getDB().getDefaultFolder()
+//                + ""+ java.io.File.separatorChar
+//                + instance.getNet().getPort()
+//                + ""+ java.io.File.separatorChar
+//                + safePath;
+//
+//        // create the storage folder specific to this component
+//        utils.files.mkdirs(safePath);
+//
+//        // set the database directory to match this one
+//        data.setProperty(DIR, safePath );
+//
+//
+//        // DB - do we need to start up the database system by ourselves?
+//        if (!this.db.hasStarted()) {
+//            this.db.start(data);
+//        }
+//
+//        if (!this.db.hasStarted()) {
+//            log(ERROR, "Failed to start database system");
+//            return false;
+//        }
+//        return true;
+//    }
 
 ////////// Questions
 
@@ -555,7 +556,7 @@ public abstract class Component extends Thread
         onStop();
 
         //Close depending services:
-        db.stop(settings);
+//        db.stop(settings);
 
 
         process.setStatus(STOPPED);
@@ -583,7 +584,7 @@ public abstract class Component extends Thread
         setOperationalStatus(STARTING);
 
         // start our internal services:
-        startDB();
+//        startDB();
 
         // kick start our INI container using the DB
          ini = new INIcontainer(this);
@@ -635,13 +636,20 @@ public abstract class Component extends Thread
     /** Create a storage container with no checks*/
     public final Container createDB(String title, String[] fields){
         LogMessage result = new LogMessage();
-        return new Container(title, fields, this.instance.getStorage(), result);
+        return new Container(title, fields, this.getStorage(), result);
+    }
+
+    /** Get the storage folder for this component */
+    public final File getStorage(){
+        // create the folder as a subfolder inside our dedicated storage area
+        File result = new File(this.instance.getStorage(),
+                this.getCanonicalName());
+    return result;
     }
 
     /** write on the storage container */
     public final void writeDB(Container container, String[] fields){
-        container.write(//compLock,
-                fields);
+        container.write(fields);
     }
 
 

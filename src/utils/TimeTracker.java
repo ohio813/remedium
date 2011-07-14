@@ -10,7 +10,7 @@
  * battery and CPU noise on laptops.
  */
 
-package system;
+package utils;
 
 /**
  *
