@@ -18,12 +18,10 @@
 
 package system.container;
 
-import system.core.Component;
-import system.container.Container;
 import java.util.ArrayList;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.msg;
+import system.mq.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -181,11 +179,11 @@ public class containerTest implements msg {
 
    System.out.println("  ..Done\n");
 
-     }
-
-
-     @Test
-     public void testGetStoreFields() {
+//     }
+//
+//
+//     @Test
+//     public void testGetStoreFields() {
          System.out.println("Testing the getStoreFields() method");
 
          // get our container from the box

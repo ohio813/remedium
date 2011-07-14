@@ -19,7 +19,7 @@
  *
  */
 
-package system;
+package system.mq;
 
 import remedium.Remedium;
 import java.util.ArrayList;
@@ -32,29 +32,25 @@ import static org.junit.Assert.*;
  *
  * @author Nuno Brito
  */
-public class message_queue_hsql_test {
+public class messageQueueHsqlTest {
 
     static Remedium main = null;
 
-    public message_queue_hsql_test() {
+    public messageQueueHsqlTest() {
     }
 
     @BeforeClass
     public static void setUpClass() throws Exception {
         Properties parameters = new Properties();
         parameters.setProperty(msg.FIELD_ID, "MQ");
+        parameters.setProperty(msg.APPS, "none"); // authorized apps to start
+        // startup our instance
         main = new Remedium();
+        // add filters to the produce less messages
+        addFilters(main);
+        // start our instance
         main.start(parameters);
      
-
-        /**
-         * The msg queue must be able of starting on its own. This means
-         * that when we call "start", it must also be able of starting the
-         * database system if it isn't already running.
-         */
-     assertEquals(false,
-        main.getMQ().start()
-                  );
     }
 
     @AfterClass
@@ -87,10 +83,10 @@ public class message_queue_hsql_test {
           * features as needed on the future.
           */
             Properties dummy = new Properties();
-            dummy.put(message_queue.FIELD_TO, "ToSomeone");
-            dummy.put(message_queue.FIELD_FROM, "FromSomeone");
-            dummy.put(message_queue.FIELD_CREATED, "CreatedAt");
-            dummy.put(message_queue.FIELD_PARAMETERS, "TheParameters");
+            dummy.put(msg.FIELD_TO, "ToSomeone");
+            dummy.put(msg.FIELD_FROM, "FromSomeone");
+            dummy.put(msg.FIELD_CREATED, "CreatedAt");
+            dummy.put(msg.FIELD_PARAMETERS, "TheParameters");
 
             // place this msg on our queue
             assertEquals(true,
@@ -98,21 +94,35 @@ public class message_queue_hsql_test {
                         );
 
             // send more messages, just change them slightly
-            dummy.put(message_queue.FIELD_FROM, "FromFred");
+            dummy.put(msg.FIELD_FROM, "FromFred");
             main.getMQ().send(dummy);
-            dummy.put(message_queue.FIELD_FROM, "FromFlintsone");
+            System.out.println(main.getMQ().getLog().getRecent());
+
+            dummy.put(msg.FIELD_FROM, "FromFlintsone");
             main.getMQ().send(dummy);
-            dummy.put(message_queue.FIELD_FROM, "FromRambo");
+            System.out.println(main.getMQ().getLog().getRecent());
+
+            dummy.put(msg.FIELD_FROM, "FromRambo");
             main.getMQ().send(dummy);
+            System.out.println(main.getMQ().getLog().getRecent());
+
             // now change the destination as well
-            dummy.put(message_queue.FIELD_TO, "ToRex");
+            dummy.put(msg.FIELD_TO, "ToRex");
             main.getMQ().send(dummy);
-            dummy.put(message_queue.FIELD_FROM, "FromTRex");
+            System.out.println(main.getMQ().getLog().getRecent());
+
+            dummy.put(msg.FIELD_FROM, "FromTRex");
             main.getMQ().send(dummy);
-            dummy.put(message_queue.FIELD_TO, "ToSantaClaus");
+            System.out.println(main.getMQ().getLog().getRecent());
+
+            dummy.put(msg.FIELD_TO, "ToSantaClaus");
             main.getMQ().send(dummy);
-            dummy.put(message_queue.FIELD_TO, "ToSharktocupus");
+            System.out.println(main.getMQ().getLog().getRecent());
+
+            dummy.put(msg.FIELD_TO, "ToSharktocupus");
             main.getMQ().send(dummy);
+            System.out.println(main.getMQ().getLog().getRecent());
+            
      }
 
      @Test
@@ -156,21 +166,34 @@ public class message_queue_hsql_test {
      assertEquals(true,  // end result needs to be true
          main.getMQ().delete
                     (message.getProperty
-                       (message_queue.FIELD_ID)
+                       (msg.FIELD_ID)
                     )
                  );
 
         // if something went wrong, cause an exception
         System.out.println("    - message from "
-                + message.get(message_queue.FIELD_FROM)
+                + message.get(msg.FIELD_FROM)
                 + " deleted.");
      }
 
+     System.out.println();
      // repeat the test query to grab messages destined to "ToSomeone"
      get = main.getMQ().get("ToSomeone");
      // we should have deleted all messages on the queue and result should be 0
      assertEquals(true, get.isEmpty());
 
+     }
+
+           private static void addFilters(Remedium instance){
+      // start by filtering messages before any instance begins
+          instance.getLog().filterIncludeGender(msg.DEBUG);
+          instance.getLog().filterIncludeGender(msg.ERROR);
+
+          instance.getLog().filterExcludeGender(msg.INFO);
+          instance.getLog().filterExcludeGender(msg.ROUTINE);
+
+          instance.getLog().filterExcludeComponent("network");
+          instance.getLog().filterExcludeComponent("main");
      }
 
 }

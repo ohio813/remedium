@@ -18,8 +18,8 @@ import remedium.Remedium;
 public class ProcessManager extends ProcessManagerAbstract{
 
     /** the constructor for this class */
-    public ProcessManager(Remedium instance, long remLock){
-        super(instance, remLock); // call the class above this one
+    public ProcessManager(Remedium instance){
+        super(instance); // call the class above this one
     }
 
 }

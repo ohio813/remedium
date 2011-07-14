@@ -10,8 +10,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.msg;
-import system.message_queue;
+import system.mq.msg;
 
 /**
  *
@@ -177,7 +176,7 @@ public class network_simple_server implements Container, msg {
         // convert the text from PARAMETERS in order to get the full msg
         // along with any other extra properties that are included
 
-        if (!container.containsKey(message_queue.FIELD_PARAMETERS)) {
+        if (!container.containsKey(msg.FIELD_PARAMETERS)) {
             log(ERROR, "We received a message but did not found the "
                     + "message container");
             return;
@@ -185,7 +184,7 @@ public class network_simple_server implements Container, msg {
 
         // get the msg that will be placed on the msg queue
         Properties message = protocols.stringToProperties
-                (container.getProperty(message_queue.FIELD_PARAMETERS));
+                (container.getProperty(msg.FIELD_PARAMETERS));
 
         // verify if the received msg is valid
         if ((message == null)
@@ -213,11 +212,11 @@ public class network_simple_server implements Container, msg {
         //insert code to handle versions here.
 ////////////// is this a request or a ticket update?  //////////////////////////
         if ( // ensure that we have a real ticket request
-                (message.containsKey(network.FIELD_TICKET))
-                && (message.getProperty(network.FIELD_TICKET).length() > 0)) {
+                (message.containsKey(Network.FIELD_TICKET))
+                && (message.getProperty(Network.FIELD_TICKET).length() > 0)) {
 
             // set our default ticket number
-            ticket = message.getProperty(network.FIELD_TICKET);
+            ticket = message.getProperty(Network.FIELD_TICKET);
 
             log(ROUTINE,"STATUS request was made for ticket "
                     + ticket);
@@ -255,9 +254,9 @@ public class network_simple_server implements Container, msg {
         } else {
             // pre-flight check. Is our msg minimally valid?
             if ((message == null)
-                    || !message.containsKey(network.FIELD_TO)
-                    || !message.containsKey(network.FIELD_FROM)
-                    //|| !message.containsKey(network.FIELD_MESSAGE)
+                    || !message.containsKey(Network.FIELD_TO)
+                    || !message.containsKey(Network.FIELD_FROM)
+                    //|| !message.containsKey(Network.FIELD_MESSAGE)
                     ) {
                 log(ERROR,"Received a message, but it was incomplete: "
                         + message.toString());
@@ -274,11 +273,11 @@ public class network_simple_server implements Container, msg {
             // set our ticket number for this messsage
             ticket = Long.toString(time);
                     //Integer.toString(utils.math.RandomInteger(100000, 99999));
-            message.setProperty(message_queue.FIELD_TICKET, ticket);
+            message.setProperty(msg.FIELD_TICKET, ticket);
             // set the status to PENDING
 
-            message.setProperty(message_queue.FIELD_STATUS,
-                    Integer.toString(network.PENDING));
+            message.setProperty(msg.FIELD_STATUS,
+                    Integer.toString(Network.PENDING));
 
             // place msg on queue
             Boolean placeMQ = getRemedium().getMQ().send(message);

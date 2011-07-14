@@ -29,7 +29,7 @@ package system.net;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.msg;
+import system.mq.msg;
 
 /**
  *
@@ -137,7 +137,7 @@ public interface network_interface extends msg{
 
     public ArrayList<Properties> get(String clientName); // use default settings
 
-    public void setRemedium(Remedium remedium, long assignedRemLock);
+    public void setRemedium(Remedium remedium);
 
     public Remedium getRemedium();
 

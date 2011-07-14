@@ -15,7 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import remedium.Remedium;
-import system.msg;
+import system.mq.msg;
 
 /**
  *

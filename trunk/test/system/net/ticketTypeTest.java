@@ -4,7 +4,7 @@
 
 package system.net;
 
-import system.net.network;
+import system.net.Network;
 import system.net.ticketType;
 import java.util.Properties;
 import org.junit.After;
@@ -57,7 +57,7 @@ public class ticketTypeTest {
         instance.ticket = "123456";
 
         Properties result = instance.prepareTicket();
-        assertEquals("Nuno", result.getProperty(network.FIELD_FROM));
+        assertEquals("Nuno", result.getProperty(Network.FIELD_FROM));
     }
 
     /**

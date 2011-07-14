@@ -13,7 +13,7 @@
 package app.sentinel;
 
 import java.util.Properties;
-import system.msg;
+import system.mq.msg;
 import remedium.Remedium;
 import org.junit.After;
 import org.junit.AfterClass;

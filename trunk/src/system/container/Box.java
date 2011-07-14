@@ -9,7 +9,7 @@ package system.container;
 import java.util.HashMap;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.msg;
+import system.mq.msg;
 import system.core.Component;
 
 /**

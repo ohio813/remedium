@@ -7,7 +7,7 @@
 package app.sentinel;
 
 import java.io.File;
-import system.msg;
+import system.mq.msg;
 
 /**
  *

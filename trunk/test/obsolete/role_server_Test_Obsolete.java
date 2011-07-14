@@ -11,7 +11,7 @@ package obsolete;
 
 import java.util.logging.Logger;
 import java.util.logging.Level;
-import system.msg;
+import system.mq.msg;
 import remedium.Remedium;
 import java.util.Properties;
 import org.junit.AfterClass;

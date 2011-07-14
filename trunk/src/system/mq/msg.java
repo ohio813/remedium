@@ -3,7 +3,7 @@
  * at the msg Queue and Network components or other components in the future
  */
 
-package system;
+package system.mq;
 
 /**
  *
@@ -201,6 +201,7 @@ public interface msg {
             FORGET = 6,
             PENDING = 5,
             EXPIRED = 4,
+            IGNORED = 3,
             TIMEOUT = -10,
             REFUSED = -2,
             CONFLICT = -3,

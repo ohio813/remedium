@@ -1,5 +1,5 @@
 /*
- * This is the implementation of the network interface using the simple web
+ * This is the implementation of the Network interface using the simple web
  * framework and HSQL
  */
 package system.net;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
-import system.msg;
+import system.mq.msg;
 
 /**
  *
@@ -33,7 +33,7 @@ public class network_version1 implements network_interface, msg {
 
     // turn this variable as true if you want debugging messages visible
     Boolean debug = false;
-    // network port used by our system (use the default value unless specified otherwise
+    // Network port used by our system (use the default value unless specified otherwise
     String network_port = PORT_DEFAULT;
     // status of our system (use STOPPED as default)
     int status = STOPPED;
@@ -52,10 +52,14 @@ public class network_version1 implements network_interface, msg {
     private HashMap<String, ArrayList<Properties>> networkMappings = null;
     public Connection connection = null;//new SocketConnection(container);
     private Remedium remedium;
-    private long remLock = 0;
+
+    /** Public constructor */
+    public network_version1(Remedium assignedInstance){
+        this.remedium = assignedInstance;
+    }
 
     /**
-     * Generic start of the network system using default values, for more
+     * Generic start of the Network system using default values, for more
      * ellaborated start, do set the properties as documented.
      * @return
      */
@@ -65,7 +69,7 @@ public class network_version1 implements network_interface, msg {
         return start(parameters);
     }
 
-    /** start our network interface
+    /** start our Network interface
      *  Supported parameters:
      *         - PORT - sets the port to use, by default is PORT_DEFAULT
      *         - PASSWORD - sets a password to validate incoming requests
@@ -74,7 +78,7 @@ public class network_version1 implements network_interface, msg {
     @Override
     public boolean start(Properties parameters) {
         /**
-         * On this method we will initialize the network system. Contrary to
+         * On this method we will initialize the Network system. Contrary to
          * popular belief, we won't start listening to any given port right away
          * but rather prepare only the basic settings.
          * 
@@ -132,7 +136,7 @@ public class network_version1 implements network_interface, msg {
     }
 
     /**
-     * At our network system, we don't require to be listening at a given port if
+     * At our Network system, we don't require to be listening at a given port if
      * our client is only intended to dispatch messages. If on the other hand
      * we are expected to receive them, this method must return a true value.
      */
@@ -223,7 +227,7 @@ public class network_version1 implements network_interface, msg {
     }
 
     /**
-     * Generic way of stopping the network system using default values
+     * Generic way of stopping the Network system using default values
      */
     @Override
     public boolean stop() {
@@ -238,7 +242,7 @@ public class network_version1 implements network_interface, msg {
     public boolean stop(Properties parameters) {
         debug("Stopping the network system");
         try {
-            // if we are listning to a port, cut the network connection
+            // if we are listning to a port, cut the Network connection
             if (isListening()) {
                 getRemedium().getNet().connection.close();
             }
@@ -324,7 +328,7 @@ public class network_version1 implements network_interface, msg {
     }
 
     /**
-     * This version of the send() method will use version 1 of the network
+     * This version of the send() method will use version 1 of the Network
      * protocol when no specific version is specified.
      */
     @Override
@@ -457,10 +461,9 @@ public class network_version1 implements network_interface, msg {
     }
 
     @Override
-    public void setRemedium(Remedium remedium, long assignedRemLock) {
+    public void setRemedium(Remedium remedium) {
         this.remedium = remedium;
-        this.remLock = assignedRemLock;
-        networkThreadProcessExternal.setRemedium(remedium, assignedRemLock);
+        networkThreadProcessExternal.setRemedium(remedium);
     }
 
     @Override
@@ -524,7 +527,7 @@ class RunnerThreadProcessInternalRequests extends Thread {
 //        }
 
 
-        // repeat a long loop while our network component is running
+        // repeat a long loop while our Network component is running
         while (remedium.getNet().isRunning()) {
             /**
              * There are two distinct actions that take place during this loop:
@@ -578,7 +581,7 @@ class RunnerThreadProcessInternalRequests extends Thread {
 //                Thread.sleep(loopInterval);
 //            } catch (InterruptedException ex) {
 //                // for some reason an exception has occured
-//                remedium.log("network", msgbox.ERROR, "Something went wrong, please check");
+//                remedium.log("Network", msgbox.ERROR, "Something went wrong, please check");
 //                Logger.getLogger(RunnerThreadProcessInternalRequests.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 
@@ -594,7 +597,7 @@ class RunnerThreadProcessInternalRequests extends Thread {
                 // assign the next entry
                 ticketType entry = ticketIterator.next();
 
-                log(network.ROUTINE,
+                log(Network.ROUTINE,
                         "Checking if ticket " + entry.ticket
                         + " is valid to dispatch");
 
@@ -646,7 +649,7 @@ class RunnerThreadProcessInternalRequests extends Thread {
 
             //TODO Missing to add the clean up tool to the msgbox tracker
 
-        }//while network is running
+        }//while Network is running
     }
 
 
@@ -659,7 +662,7 @@ class RunnerThreadProcessInternalRequests extends Thread {
 
     private void debug(String message) {
         if (debug) {
-            log(network.DEBUG, message);
+            log(Network.DEBUG, message);
         }
     }
 }
@@ -667,23 +670,18 @@ class RunnerThreadProcessInternalRequests extends Thread {
 class RunnerThreadProcessExternalRequests extends Thread {
 
     private Remedium remedium = null;
-    private long remLock = 0;
 
-    public RunnerThreadProcessExternalRequests(Remedium remedium,
-            long assignedRemLock ) {
+    public RunnerThreadProcessExternalRequests(Remedium remedium) {
         super();
         this.remedium = remedium;
-        this.remLock = assignedRemLock;
     }
 
     RunnerThreadProcessExternalRequests() {
         super();
     }
 
-    public void setRemedium(Remedium remedium,
-            long assignedRemLock ) {
+    public void setRemedium(Remedium remedium) {
         this.remedium = remedium;
-        this.remLock = assignedRemLock;
     }
 
     public Remedium getRemedium() {
@@ -706,18 +704,18 @@ class RunnerThreadProcessExternalRequests extends Thread {
             if (getRemedium().getNet().debug) {
                 getRemedium().log(
                         "network",
-                        network.INFO,
+                        Network.INFO,
                         "Listening for requests on port "
                         + getRemedium().getNet().getPort());
             }
 
             // update our status to "LISTENING"
-            getRemedium().getNet().setStatus(network.LISTENING);
+            getRemedium().getNet().setStatus(Network.LISTENING);
         } //run
         catch (IOException ex) {
             Logger.getLogger(RunnerThreadProcessExternalRequests.class.getName()).log(Level.SEVERE, null, ex);
-            //update global status of our network system
-            getRemedium().getNet().setStatus(network.ERROR);
+            //update global status of our Network system
+            getRemedium().getNet().setStatus(Network.ERROR);
             return;
         }
     }//run

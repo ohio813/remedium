@@ -2,7 +2,7 @@
  * This class helps to track time elapsed between recurring events.
  */
 
-package system;
+package utils;
 
 /**
  *

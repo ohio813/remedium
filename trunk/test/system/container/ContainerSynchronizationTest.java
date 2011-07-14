@@ -39,7 +39,7 @@
 
 package system.container;
 
-import system.msg;
+import system.mq.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;

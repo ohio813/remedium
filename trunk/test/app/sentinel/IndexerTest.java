@@ -12,7 +12,7 @@ package app.sentinel;
 
 import java.io.File;
 import java.util.ArrayList;
-import system.msg;
+import system.mq.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;

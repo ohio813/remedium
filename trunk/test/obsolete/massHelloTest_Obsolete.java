@@ -8,7 +8,7 @@ package obsolete;
 import java.util.logging.Logger;
 import java.util.logging.Level;
 import java.util.Properties;
-import system.msg;
+import system.mq.msg;
 import remedium.Remedium;
 import java.util.ArrayList;
 import org.junit.AfterClass;

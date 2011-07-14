@@ -11,7 +11,8 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import system.msg;
+import system.log.LogMessage;
+import system.mq.msg;
 import system.core.Component;
 
 /**
@@ -35,14 +36,14 @@ public class ContainerLog implements msg{
             isLog  = false,   // should this container be tracked or not?
             logStarted = false;  // has the log tracking started or not?
 
-    private ContainerHSQL
+    private Container
             logDB; // where we keep track of changes
 
 
     
     /** This public constructor associates this class to a container */
     public ContainerLog(Component assignedComponent,
-                        ContainerHSQL assignedContainer){
+                        Container assignedContainer){
         //preflight checks
         if(assignedContainer == null){
             System.out.println("ContainerLog error: Assigned container "
@@ -87,7 +88,7 @@ public class ContainerLog implements msg{
 
             //log(DEBUG,"Wrote log");
         } catch (IOException ex) {
-            Logger.getLogger(ContainerHSQL.class.getName()).log(Level.SEVERE,
+            Logger.getLogger(Container.class.getName()).log(Level.SEVERE,
                     null, ex);
         }
 
@@ -95,10 +96,12 @@ public class ContainerLog implements msg{
 
     /** Kick start our log tracking if this wasn't available before */
     private void kickstartLog(){
+        LogMessage result = new LogMessage();
         // part related to the log tracking, create our special container
         // inside this one
-        logDB = new ContainerHSQL(component, store_name + "_log",
-                    new String[]{FIELD_CREATED, FIELD_CONTENT}, false, true);
+        logDB = new Container(store_name + "_log",
+                    new String[]{FIELD_CREATED, FIELD_CONTENT},
+                    this.component.getInstance().getStorage(), result);
 
         logStarted = true;
     }

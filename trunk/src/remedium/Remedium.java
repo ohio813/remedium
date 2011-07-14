@@ -3,13 +3,11 @@ package remedium;
 import java.io.File;
 import system.core.global;
 import java.util.Properties;
-import system.database;
-import system.log.log_handler;
-import system.msg;
-import system.TimeTracker;
-import system.message_queue;
-import system.net.Locker;
-import system.net.network;
+import system.log.logHandler;
+import system.mq.MessageQueue;
+import system.mq.msg;
+import utils.TimeTracker;
+import system.net.Network;
 import system.process.ProcessManager;
 import system.process.Status;
 
@@ -20,32 +18,23 @@ import system.process.Status;
 public class Remedium implements msg {
 
  // components of our system
-    private database db = new database();
-    private message_queue mq = new message_queue();
+    private MessageQueue mq = new MessageQueue(this);
     private ProcessManager processManager;
-    private network net = new network();
-    private log_handler log = new log_handler(this);
+    private Network net = new Network(this);
+    private logHandler log = new logHandler(this);
 
 
     protected TimeTracker timeTracker = new TimeTracker();
 
+    // the backbone of our structure
     private SystemRem sys;
 
  // application initializer
-    //private apps.global apps = new apps.global();
     private system.core.global apps;
-//    private ArrayList<Application> applications = null;
     private Properties properties = new Properties();
 
- // ID's
-   protected Locker
-           lock; // provides protection for public methods
-
-   private long 
-           remLock = utils.math.RandomInteger(1, 9999999);
-
-   private String storageLocation = "storage";
-   private File storage = new File (storageLocation);
+    private String storageLocation = "storage";
+    private File storage = new File (storageLocation);
 
  // settings
     private String
@@ -56,12 +45,15 @@ public class Remedium implements msg {
             myAddress = "http://localhost",
             defaultApp = "manager"; // the app that we start as default/root
 
-
     private int
             status = STOPPED; // intial instance status
 
     private boolean
             debug = true; // should we output error messages or not?
+
+    public boolean isDebug() {
+        return debug;
+    }
 
     /**
      * Get the public ID of this instance
@@ -88,13 +80,7 @@ public class Remedium implements msg {
     public TimeTracker getTimeTracker() {
         return timeTracker;
     }
-
     
-
-    public boolean isDebug() {
-        return debug;
-    }
-
     /** Provides back our system time */
     public long getTime(){
         return this.timeTracker.getTime();
@@ -108,16 +94,9 @@ public class Remedium implements msg {
         this(new Properties());
     }
 
-    public Remedium(Properties data) {
+    public Remedium(final Properties data) {
+        // assign our properties to the "data" object
         this.properties = data;
-
-        db.setRemedium(this);
-        mq.setRemedium(this);
-        //manager.setRemedium(this);
-        net.setRemedium(this, remLock);
-        //apps.setRemedium(this);
-
-//        applications = new ArrayList<Application>();
     }
 
     // start using only default parameters
@@ -130,7 +109,7 @@ public class Remedium implements msg {
      * Optionally, you can add parameters to modify the default settings.
      *
      * Accepted parameters on the data container:
-     *  - PORT - sets the port for the network components
+     *  - PORT - sets the port for the Network components
      *  - DIR - sets the default directory where work files are stored
      *  - ID - sets the identifier tag for this instance
      *  - DELETE - deletes the database or other resources when closing down
@@ -171,34 +150,20 @@ public class Remedium implements msg {
             properties.setProperty(DELETE, "");
         }
 
-        // if we have a provided lock key, then use this value
-        if (data.containsKey(LOCK)) {
-            // use a key specified at start time
-            long assignedLock = Long.parseLong(data.getProperty(LOCK));
-            lock = new Locker(assignedLock,IDname);
-            remLock = assignedLock;
-        }else
-            lock = new Locker(remLock, IDname); // generate use a random key
-
-
+        
 ///////////////// kick start components and applications of our system
 
         // debut the Process Manager
-        processManager = new ProcessManager(this, remLock);
+        processManager = new ProcessManager(this);
         // check that we are available
         if(processManager == null)
             log(ERROR,"Process Manager failed to start");
 
 
-        // DB - do we need to start up the database system by ourselves?
-        if (!this.db.hasStarted()) {
-            this.db.start(data);
-        }
+        
 
-        if (!this.db.hasStarted()) {
-            log(ERROR, "Failed to start database system");
-            return result;
-        }
+        // set our working folder
+        storage = new File(this.storage, getPort(this.properties));
 
         // MQ - is the msg queue available?
         if (!this.mq.hasStarted()) {
@@ -212,9 +177,9 @@ public class Remedium implements msg {
         }
 
      
-        // NET - is the network service available?
+        // NET - is the Network service available?
         if (!this.net.hasStarted()) {
-            this.net.setRemedium(this, remLock);
+            this.net.setRemedium(this);
             this.net.start(data);
         }
 
@@ -275,7 +240,6 @@ public class Remedium implements msg {
         // let's close down our system
         net.stop();
         mq.stop();
-        db.stop(parameters);
         log.stop(properties);
 
         // reset some settings just in case someone starts this instance again
@@ -291,16 +255,11 @@ public class Remedium implements msg {
         return apps;
     }
 
-    /** No security checks here, we should really solve this.....*/
-    public database getDB() {
-        return db;
-    }
-
-    public message_queue getMQ() {
+    public MessageQueue getMQ() {
         return mq;
     }
 
-    public network getNet() {
+    public Network getNet() {
         return net;
     }
 
@@ -308,7 +267,7 @@ public class Remedium implements msg {
         return processManager;
     }
 
-    public log_handler getLog() {
+    public logHandler getLog() {
         return log;
     }
 
@@ -354,17 +313,8 @@ public class Remedium implements msg {
     }
 
 
-    /**
-     *
-     * @param unlock The key necessary to unlock this method
-     * @return
-     */
    public ProcessManager getProcess(){
-       
-       //if(lock.check(unlock))
             return processManager;
-//       else
-//            return null;
    }
 
     /**
@@ -384,13 +334,6 @@ public class Remedium implements msg {
     }
 
 
-//    /** @return the applications that we have registered in our system */
-//    public ArrayList<Application> getApplications() {
-//        synchronized (this.applications) {
-//            return applications;
-//        }
-//    }
-
     /** get the Web address of this instance */
     public String getMyAddress() {
         // get the current address registered on the instance
@@ -404,35 +347,26 @@ public class Remedium implements msg {
 
     /** get the default app name and location */
     public String getDefaultApp() {
-        return //getMyAddress()+"/"+
-                defaultApp;
+        return defaultApp;
     }
 
-
-
-
-    /**
-     * Add a new application to the list of applications that
-     * are associated with this instance.
-     *
-     * Once the application is added, we will also try to launch
-     * it, this means that all Roles associated with the application
-     * will also be launched as well.
-     */
-//    public synchronized Boolean addApplication(Application application) {
-//        log(INFO,"Adding application '" + application.getTitle() + "'");
-//        //TODO process manager registration is not working, please fix
-//        //application.registerRoles();
-//        Boolean result = this.applications.add(application);
-//        application.start();
-//        return result;
-//    }
-
-    /** Ask a true/false question to our local properties. The answer defaults
-     * to false if it was not found. If it was found, returns a true/false
-     * result.
-     */
-    public Boolean is(String question){
-       return properties.getProperty(question,"false").equalsIgnoreCase("true");
+    private String getPort(Properties settings){
+    // if there is a port definition, use it if this is a valid number
+            if(settings.containsKey(FIELD_PORT)){
+                //change the current folder
+                String temp = // do a filter to prevent malicious inputs
+                    utils.text.findRegEx(
+                        settings.getProperty(FIELD_PORT)
+                        ,"[0-9]+$", 0); // only accept 0-9 chars
+                if((temp != null)
+                 && (temp.length()>0)){ // if the result is bigger than zero, use it
+                    log(INFO,"Using "+temp+" as database storage folder ("
+                            +settings.getProperty(FIELD_PORT)+")");
+                    // do the change
+                    return temp;
+                }
+            }
+            return "";
     }
+
 }

@@ -10,7 +10,7 @@
 
 package utils;
 
-import system.msg;
+import system.mq.msg;
 import system.log.LogMessage;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

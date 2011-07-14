@@ -6,7 +6,7 @@ package system.container;
 
 import java.util.ArrayList;
 import java.util.Properties;
-import system.msg;
+import system.mq.msg;
 import system.core.Component;
 
 /**

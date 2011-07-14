@@ -29,7 +29,7 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import system.log.LogMessage;
-import system.msg;
+import system.mq.msg;
 
 /**
  *
@@ -391,16 +391,48 @@ public class ContainerFlatFile implements ContainerInterface {
         writePriority = utils.text.stringArrayAdd(writePriority, identifier);
         // add knowledge to our array list
         knowledge.put(identifier, result);
-
-// useful for setting up a breakpoint during looped code execution
-//         if(test  > 1)
-//            System.out.println();
-//        else
-//            test++;
-
         // return our result
         return result;
     }
+
+    /** Remove a given knowledge file from our internal lists */
+    public void deleteKnowledgeFiles(){
+        for(String identifier : this.readPriority){
+        // get the current knowledge
+        KnowledgeFile current = this.knowledge.get(identifier);
+        // if it does not exist, quit here
+        if(current == null){
+            log(msg.IGNORED, "deleteKnowledgeFile operation: Could not find"
+                    + " knowledge file '%1'", identifier);
+            return;
+        }
+
+        try{
+            // now delete the knowledge file
+            boolean delete = current.getFile().delete();
+            // was this successful?
+            if(delete==false){
+                  log(msg.ERROR, "deleteKnowledgeFile operation failed: "
+                    + "Could not delete file '%1'",
+                    current.getFile().getPath());
+            }
+            }
+        catch (Exception e){}
+        
+        // check if it exists or not
+        if(current.getFile().exists()){
+            log(msg.ERROR, "deleteKnowledgeFile operation failed: "
+                    + "Could not delete file '%1'",
+                    current.getFile().getPath());
+        }
+        // delete from our knowledge base
+        this.removeKnowledge(identifier);
+        }
+        // reset our counters
+        readPriority = new String[]{};
+        writePriority = new String[]{};
+    }
+
 
     /** Remove a given knowledge file from our internal lists */
     private void removeKnowledge(String identifier){
@@ -604,15 +636,9 @@ public class ContainerFlatFile implements ContainerInterface {
     public ArrayList<Properties> read(String field, String find) {
         // create our object
         ArrayList<Properties> result = new ArrayList();
-       
+
         // get the column number
-        int pos = -1; // sets the position of the field to look data
-        int temp = -1; // used as temporary reference
-        for(String title : fields){ // iterate all fields
-            temp++;
-            if(title.equalsIgnoreCase(field)) // compare each one
-                pos = temp; // if it matches set the position with this number
-        }
+        int pos = utils.text.arrayIndex(field, fields);
         // have we found something?
         if(pos == -1){
             log(msg.ERROR,"Read operation failed: Field '%1' was not found.",
@@ -634,7 +660,7 @@ public class ContainerFlatFile implements ContainerInterface {
                     // split each record into fields
                     String[] data = record.split(";");
                     // does it match what we want?
-                    if(data[0].equalsIgnoreCase(find)){
+                    if(data[pos].equalsIgnoreCase(find)){
                         // add this record to our result
                         result.add(convertRecordToProperties(data));
                     }
@@ -645,8 +671,8 @@ public class ContainerFlatFile implements ContainerInterface {
     }
 
     /** This is a clean and mean version of read. It will only retrieve
-     the first records that it finds and the index key is assumed as being
-     the first column. It is case-sensitive, IT IS FAST.*/
+     the first record that matches our index key, assumed as being
+     the first column on the records. It is case-sensitive, IT IS FAST.*/
     public String[] read(String find) {
         if(knowledge.isEmpty())
             return new String[]{""};
@@ -701,9 +727,60 @@ public class ContainerFlatFile implements ContainerInterface {
     }
 
     /** Delete a given record from our container **/
-    public boolean delete(String field, String key) {
-       // throw new UnsupportedOperationException("Not supported yet.");
-        return true;
+    public boolean delete(String field, String find) {
+        // empty knowledge? No need to continue
+        if(knowledge.isEmpty()){
+            log(msg.INACTIVE, "Delete operation not accepted: No knowledge"
+                    + " files available to process.");
+            return false;
+        }
+        // grab the index number of the field that we want
+        int fieldIndex = utils.text.arrayIndex(field, fields);
+        // if it is -1 then fail this operation
+        if(fieldIndex < 0){
+            log(msg.ERROR, "Delete operation failed: Field %1 was not found.",
+                    field);
+            return false;
+        }
+        
+        //Iterate through the knowledge files of our container for the record(s)
+        for(String reference : this.readPriority){
+            // get the current knowledge file pointer
+            KnowledgeFile current = this.knowledge.get(reference);
+            // get the file pointer
+            File file = current.getFile();
+            // read all lines from our file
+                String lines = //TODO remove this and don't read the whole file
+                        utils.files.readAsString(file);
+                int i = 0;
+                // iterate all lines inside the text file, use \n as separator
+                for(String record : lines.split("\n")){
+                    ++i;
+                    // split each record into fields
+                    String[] data = record.split(";");
+                    // does it match what we want?
+                    if(data[fieldIndex].equals(find)){
+                        // delete this record
+                        //lines = lines.replaceFirst(record + "\n", "");
+                        lines = lines.replaceAll(record + "\n", "");
+                        // save the result back to the file
+                        boolean result = 
+                                utils.files.SaveStringToFile(file, lines);
+                        // ensure we decrease the record count
+                        if(result == true){
+                            // decrease the record count
+                            current.decCount();
+                        }
+                        // output our end result
+                        return result;
+                    }
+                }
+        }
+        log(msg.ERROR, "Delete operation failed: Record %1 was not found on "
+                + "field %2"
+                , find
+                , field);
+        return false;
     }
 
     /** Return the number of records available in our container */
@@ -721,7 +798,7 @@ public class ContainerFlatFile implements ContainerInterface {
     }
 
     public String getName() {
-        return this.who;
+        return this.id;
     }
 
     public boolean isRunning() {
@@ -732,10 +809,28 @@ public class ContainerFlatFile implements ContainerInterface {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public String webRequest(Request request, Response response) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /** Drop all our records */
+    public void drop() {
+        String[] target = this.readPriority;
+        for(String reference : target){
+            this.removeKnowledge(reference);
+        }
     }
 
+    public String webRequest(Request request, Response response) {
+
+         String action = utils.internet.getHTMLparameter(request, "action");
+        String result = "";
+
+   // count the number of records on this container
+        if(action.equalsIgnoreCase("count")){
+            result = "" + this.count();
+            log(msg.INFO,"DB webRequest. Action 'count', we have " + result
+                    + " records inside our container");
+            return result;
+        }
+        return result;
+    }
 
     /** central logger for this class */
     private void log(final int gender, final String message,
@@ -760,11 +855,6 @@ public class ContainerFlatFile implements ContainerInterface {
         // output the result, not clean but efficient
         return out.split(";");
     }
-
-
-
-
-
 }
 
 
@@ -817,5 +907,7 @@ class KnowledgeFile{
         this.count++;
     }
 
-
+    public void decCount() {
+        this.count--;
+    }
 }

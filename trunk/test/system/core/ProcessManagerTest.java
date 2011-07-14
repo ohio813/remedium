@@ -13,14 +13,16 @@
  *      - Sentinel application must be enabled and launched, we use it as example
  *
  */
-package system;
+package system.core;
 
+import system.mq.msg;
 import system.process.Status;
 import remedium.Remedium;
 import java.util.Properties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import system.mq.msg;
 import static org.junit.Assert.*;
 
 /**
