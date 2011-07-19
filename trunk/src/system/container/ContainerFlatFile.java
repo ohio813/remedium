@@ -743,6 +743,9 @@ public class ContainerFlatFile implements ContainerInterface {
             return false;
         }
         
+        // store the number of deleted records across our knowledge base
+        long deletedCounter = 0;
+
         //Iterate through the knowledge files of our container for the record(s)
         for(String reference : this.readPriority){
             // get the current knowledge file pointer
@@ -766,21 +769,40 @@ public class ContainerFlatFile implements ContainerInterface {
                         // save the result back to the file
                         boolean result = 
                                 utils.files.SaveStringToFile(file, lines);
+                        System.out.println();
                         // ensure we decrease the record count
                         if(result == true){
                             // decrease the record count
                             current.decCount();
+                            // increase the counter of deleted records
+                            deletedCounter++;
                         }
-                        // output our end result
+                        else {
+                        // Something went wrong, output our end result
                         return result;
+                        }
+                        // continue the loop until we complete the iterations
                     }
                 }
         }
+
+        if(deletedCounter == 0){
+            // no records were found, this is a problem
         log(msg.ERROR, "Delete operation failed: Record %1 was not found on "
                 + "field %2"
                 , find
                 , field);
         return false;
+        }else {
+            // display the number of records that we have deleted
+        log(msg.COMPLETED, "Delete operation: %1 records with id '%2' where deleted"
+                + " from field '%3'"
+                , "" + deletedCounter
+                , find
+                , field);
+         System.out.println("--->" + this.logger.getRecent());
+        return true;
+        }
     }
 
     /** Return the number of records available in our container */
