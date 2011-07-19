@@ -1,9 +1,4 @@
-- Moved UpdateTracker to the "utils" package
-- Rename package "System" to "System.mq" where "mq" stands for Message Queue
-- Removed support for ContainerHSQL under the Component class
-- Remmoved HSQL libraries from the project class path
-- Implemented the "delete" method inside the ContainerFlatFile class
-- Created package "old" where message queue classes were placed
+
 
 
 --- TODO ---
