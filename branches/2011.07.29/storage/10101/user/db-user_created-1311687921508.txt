@@ -1,0 +1,6 @@
+admin;admin;admin;admin,public; ;1311943931561;127.0.0.1;
+admin1;admin1;admin;test,public,private,admin,guest,whatever,egos_web; ;1311689995848;127.0.0.1;
+admin3;admin3;admin;admin,public; ;1311689995848;127.0.0.1;
+admin4;admin4;admin;test,public,private,admin,guest,whatever,emcasa,notrabalho,3pp_license; ;1311689995848;127.0.0.1;
+user;user;123;public; ;1311836967802;127.0.0.1;
+nuno;nuno;123;public; ;1311842789861; ;
