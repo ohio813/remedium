@@ -1,7 +1,54 @@
-
-
+- ContainerFlatFile
+    - Corrected delete() method. It was not properly deleting the entries made on MessageQueueFlatFile test case.
+    - Container now creates all folders required to start from scratch with nothing other than the executable
+- MessageQueueFlatFile
+    - Added random number to the ID entry. Using timestamp created conflicts per times
+- File component
+    - Redesigned file and directory listing. It is now based on database and accouting file downloads
+    - Supporting file permission to access/download based on user tags
+    - Download filename is now present while downloading files
+- Removed the "remlock" parameter from the constructor at the example component (redundant)
+- Added the User component, intends to allows users register and maintain an account at our system to services that require access to authenticated credentials
+- Each component can now verify if a given web user is logged inside the system or not
+- Added Java Docs for the simpleWebServer library
+- Added method "findFolders" to the "files" class. Added test case for this method at the FilesTest JUnit class.
+- We are now including the icon image inside the jar file, no more need for an external image
+- Added a LogComponent, we can now see the log output messages from a web browser as http://localhost:10101/log
+- Process Manager
+    - The shutdown button is hidden from public access, only available to administrators
+- User
+    - The component is now creating an admin account by default at startup from scratch
+    - Created backend for administration of users
+        - Allows editing and deleting users when logged as administrator
+    - After registration, user is logged inside system
 
 --- TODO ---
+- Container
+    ***- Replace the full string read with line by line approach (see if it solves memory issue)
+
+- User
+    ***- Prevent multiple login attempts (increase time delay on each wrong attempt)
+    ***- Prevent multiple registrations (only one register per IP address)
+
+- File server
+    - Add dynamic licenses support
+    - Add an extra field for licenses, if present then show them to user
+    - Add a back end for administration
+        -
+    - Clean files that are no longer present on database
+    - Add icons to each file displayed
+    - Add metrics
+        - Files downloaded recently
+        - Files downloaded by each user
+        - Bandwidth served
+
+
+- Sentinel
+    - Show statistics to guests, only allow authorized users to start processes
+
+
+- Remove the About Tab - It is not being used as intended
+- Integrate SDK with web component
 - Serious defect exposed by INIfileTest. Minimal functionality not affected. (Read/Write INI keys)
 - LogMesssage getRecent() should output an error message if one occured on a past set of messages
 - LogMessage should hold a set of messages instead of a single message. This allows to export several messages while processing a method
@@ -24,8 +71,6 @@
 - Missing to compute the score in a separate thread.
 - We need to add numbers onto messages to ease translation effort.
     - The log component can manage translation support
-    - Need a solution to work with variables %1, %2,
-    - perhaps log(DEBUG,1000,"Found %"+ count + " records"); => test,1000,"Encontrei %1 registos"
     - Log manager records message codes in original language and provides translation when available
     - This method also eases Test cases, allow to look for an exact message code instead of text that can be modified in the future
 

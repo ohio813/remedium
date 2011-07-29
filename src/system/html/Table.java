@@ -43,7 +43,7 @@ public class Table extends HtmlObject{
     }
 
     /** Add another column to the table */
-    public void addColumn(String... columnValues){
+    public void addLine(String... columnValues){
         // iterate all column values
         String result = "";
         for(String column : columnValues)

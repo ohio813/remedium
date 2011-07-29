@@ -7,11 +7,11 @@ package utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
- * @author Nuno Brito
+ * @author Nuno Brito, 24th of July 2011 in Darmstadt, Germany
  */
 public class text {
 
@@ -129,6 +129,12 @@ public class text {
             case msg.RESUME:
                 s = "RESUME";
                 break;
+            case msg.INFO: s =  "info"; break;
+            case msg.DEBUG: s =  "debug"; break;
+            case msg.EXTRA: s =  "extra"; break;
+            case msg.ROUTINE: s = "routine"; break;
+            case msg.WARNING: s =  "warning"; break;
+            case msg.ACCEPTED: s =  "ACCEPTED"; break;
 
             default:
                 s = Integer.toString(status);
@@ -209,7 +215,19 @@ public class text {
      }
 
 
-
+   /** Replaces empty elemets with space to ensure compatibility with
+    * string.split */
+     public static String[] stringClean(final String[] input){
+        String result = "";
+        for(String current : input){
+            if (current.isEmpty())
+                result = result.concat(" " + ";");
+            else
+                result = result.concat(current + ";");
+        }
+       // write back our list
+        return result.split(";");
+     }
 
     /** Picks a string and makes it URL safe */
     public static String quickEncode(String input){

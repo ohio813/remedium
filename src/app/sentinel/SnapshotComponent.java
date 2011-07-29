@@ -21,6 +21,7 @@ import java.util.HashMap;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 
 /**
  *
@@ -51,7 +52,7 @@ public class SnapshotComponent extends Component{
 
     @Override
     public void onStart() {
-        log(INFO,"Snapshot service is ready");
+        log(msg.INFO,"Snapshot service is ready");
     }
 
     @Override
@@ -64,7 +65,7 @@ public class SnapshotComponent extends Component{
 
     @Override
     public void onStop() {
-        log(INFO,"Stopping");
+        log(msg.INFO,"Stopping");
     }
 
     @Override

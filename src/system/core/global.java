@@ -10,9 +10,11 @@ package system.core;
 import app.centrum.CentrumComponent;
 import app.sentinel.SentinelComponent;
 import app.files.FileServer;
+import app.user.UserComponent;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 import system.process.ManagerComponent;
 
 /**
@@ -31,7 +33,7 @@ public class global extends Component {
            for(String comp : AcceptedComponents.split(";")){
                // Record our accepted components, they are listed using ;
                this.settings.setProperty(comp, "");
-               log(DEBUG,"Allowing component '"+comp+"' to start");
+               log(msg.DEBUG,"Allowing component '"+comp+"' to start");
            }
        // save the full list of allowed components
        this.settings.setProperty("components", AcceptedComponents);}
@@ -43,8 +45,13 @@ public class global extends Component {
      /** Check if component is allowed to start. If not components are
       specified then it should allow all components to start */
      private boolean isAllowed(String who){
-        Boolean result = settings.containsKey(who)
-                || settings.getProperty("components").contentEquals("");
+        Boolean result = false;
+         try{
+         if(settings.containsKey(who))
+             result = true;
+         if(settings.getProperty("components").contentEquals(""))
+             result = true;
+         }catch (Exception e){}
         return result;
      }
 
@@ -52,12 +59,12 @@ public class global extends Component {
   /** Kickstart authorized components to start */
   private void startComponents(){
 
-    if(isAllowed(sentinel)){
+    if(isAllowed(msg.sentinel)){
          SentinelComponent sentinelComponent = new SentinelComponent(getInstance());
          sentinelComponent.getCanonicalName();
          }
 
-    if(isAllowed("fileserver")){
+    if(isAllowed("file")){
          FileServer fileServer = new FileServer(getInstance());
          fileServer.getCanonicalName();
          }
@@ -76,6 +83,7 @@ public class global extends Component {
         CentrumComponent centrum1 = new CentrumComponent(getInstance(), null);
         centrum1.getCanonicalName();
          }
+
 
      }
 

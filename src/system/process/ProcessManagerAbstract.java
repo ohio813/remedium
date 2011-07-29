@@ -49,7 +49,7 @@ import java.util.Hashtable;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *

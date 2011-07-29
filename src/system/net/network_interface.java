@@ -29,7 +29,7 @@ package system.net;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *

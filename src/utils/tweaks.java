@@ -7,17 +7,17 @@ package utils;
 import java.io.File;
 import java.util.Properties;
 import remedium.Remedium;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
  * @author Nuno Brito, 29th of May 2011 in Darmstadt, Germany.
  */
-public class tweaks implements msg {
+public class tweaks {
 
       /** Remove the system tray icon from public sight*/
       public static void removeTrayIcon(String URL){
-          String address = "http://"+URL+"/"+trayicon+"?action=hide";
+          String address = "http://"+URL+"/"+msg.trayicon+"?action=hide";
           utils.internet.getTextFile(address);
       }
 
@@ -30,7 +30,7 @@ public class tweaks implements msg {
 //                   Base64.GZIP | Base64.DO_BREAK_LINES | Base64.URL_SAFE
 //                    );
 
-          String address = "http://"+cleanURL+"/"+trayicon+"?notification="
+          String address = "http://"+cleanURL+"/"+msg.trayicon+"?notification="
                   + utils.text.quickEncode(message);
 
           //System.out.println(address);
@@ -42,7 +42,7 @@ public class tweaks implements msg {
           // some dumb people (me for example) use this with and without http
           String cleanURL = URL.replace("http://", "");
           // create the correct URL
-          String address = "http://"+cleanURL+"/"+trayicon+"?update="
+          String address = "http://"+cleanURL+"/"+msg.trayicon+"?update="
                   + utils.text.quickEncode(message);
           // send out the message
           //System.out.println(address);
@@ -90,22 +90,22 @@ public class tweaks implements msg {
         Properties message = new Properties();
 
       // the fields that we need to place here
-        message.setProperty(FIELD_FROM, sentinel_gui);
-        message.setProperty(FIELD_TO, sentinel_scanner);
-        message.setProperty(FIELD_TASK, "scan");
-        message.setProperty(FIELD_DIR, where);
-        message.setProperty(FIELD_DEPTH,  "5");
+        message.setProperty(msg.FIELD_FROM, msg.sentinel_gui);
+        message.setProperty(msg.FIELD_TO, msg.sentinel_scanner);
+        message.setProperty(msg.FIELD_TASK, "scan");
+        message.setProperty(msg.FIELD_DIR, where);
+        message.setProperty(msg.FIELD_DEPTH,  "5");
 
    // After waiting, we need to ensure that we have started the scanning
         System.out.println("Starting a base line scan");
-        message.setProperty(SCAN, ""+START);
+        message.setProperty(msg.SCAN, "" + msg.START);
       // send it away to the MQ
         instance.getMQ().send(message);
 
         // wait some time
         utils.time.wait(Seconds);
         // stop the fun
-        message.setProperty(SCAN, ""+STOPPED);
+        message.setProperty(msg.SCAN, "" + msg.STOPPED);
         instance.getMQ().send(message);
         // wait a few seconds to finish processing the last bits
         System.out.println("Stopped scanning, we should have some data now.");

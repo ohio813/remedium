@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.Test;
-import system.mq.msg;
+import system.mqueue.msg;
 import static org.junit.Assert.*;
 
 /**

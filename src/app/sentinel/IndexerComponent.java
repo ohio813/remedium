@@ -17,6 +17,7 @@ import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
 import system.html.Table;
+import system.mqueue.msg;
 import utils.AverageTracker;
 import utils.Graph;
 
@@ -24,7 +25,7 @@ import utils.Graph;
  *
  * @author Nuno Brito, 27th of March 2011 in Germany
  */
-public class IndexerComponent extends Component{
+public class IndexerComponent extends Component implements msg{
 
 
     AverageTracker // calculates an average of processed files
@@ -517,13 +518,13 @@ public class IndexerComponent extends Component{
         Table store = new Table();
         store.setTitle("Data collected");
         store.setLineVisible(true);
-        store.addColumn("file names","" + counter.get("name"));
-        store.addColumn("win32 files","" + counter.get("win32"));
-        store.addColumn("directories","" + counter.get("path"));
-        store.addColumn("MD5 hashes","" + counter.get("md5"));
-        store.addColumn("CRC32 hashes","" + counter.get("crc32"));
-        store.addColumn("SHA1 hashes","" + counter.get("sha1"));
-        store.addColumn("SHA2 hashes","" + counter.get("reference"));
+        store.addLine("file names","" + counter.get("name"));
+        store.addLine("win32 files","" + counter.get("win32"));
+        store.addLine("directories","" + counter.get("path"));
+        store.addLine("MD5 hashes","" + counter.get("md5"));
+        store.addLine("CRC32 hashes","" + counter.get("crc32"));
+        store.addLine("SHA1 hashes","" + counter.get("sha1"));
+        store.addLine("SHA2 hashes","" + counter.get("reference"));
         store.add("cellspacing", "9");
 
 
@@ -531,12 +532,12 @@ public class IndexerComponent extends Component{
         Table operations = new Table();
         operations.setTitle("Operations");
         operations.setLineVisible(true);
-        operations.addColumn("Received files",""+counterFile);
-        operations.addColumn("Processed files",""+processedFiles);
-        operations.addColumn("On queue to process",""+fileList.size());
+        operations.addLine("Received files",""+counterFile);
+        operations.addLine("Processed files",""+processedFiles);
+        operations.addLine("On queue to process",""+fileList.size());
 
         // add the average processing of files
-        operations.addColumn("Average files per minute",""
+        operations.addLine("Average files per minute",""
                 + this.calculateAverage(processedFiles)
                 );
         operations.add("cellspacing", "9");
@@ -556,14 +557,14 @@ public class IndexerComponent extends Component{
                 //+ "width=\"100%\" "
                 + "id=\""+utils.math.RandomInteger(0, 9999)+"\" "
                 + "alt=\"\">";
-        graph.addColumn(image);
+        graph.addLine(image);
 
         // generate a new image
         calculateGraph();
 
         // Prepare the end result with all tables included
         Table result = new Table();
-        result.addColumn(
+        result.addLine(
                 store.getText(),
                 operations.getText(),
                 graph.getText()

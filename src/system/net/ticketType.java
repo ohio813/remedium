@@ -6,7 +6,7 @@
 package system.net;
 
 import java.util.Properties;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *

@@ -17,13 +17,14 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 import utils.UpdateTracker;
 
 /**
  *
  * @author Nuno Brito, 17th of May 2011 in Pittsburgh, USA.
  */
-public class CentrumComponent extends Component{
+public class CentrumComponent extends Component implements msg{
 
     // settings
    static private int
@@ -84,12 +85,12 @@ public class CentrumComponent extends Component{
         awakeTriumvir();
 
         // all done
-        log(INFO,"Centrum server has started");
+        log(msg.INFO,"Centrum server has started");
     }
 
     @Override
     public void onRecover() {
-        log(INFO,"boinc");
+        log(msg.INFO,"boinc");
     }
 
 

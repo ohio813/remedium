@@ -12,7 +12,7 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.mq.msg;
+import system.mqueue.msg;
 
 public class ScannerComponent extends Component implements msg{
 
@@ -105,14 +105,15 @@ public class ScannerComponent extends Component implements msg{
 
 
     /** public version of setStatus with a roleLock key */
-    public void setOperationalStatus(long lock, int newStatus) {
-        if(lock != this.compLock) return;
-        setOperationalStatus(newStatus);
-    }
+//    public void setOperationalStatus(int newStatus) {
+////        if(lock != this.compLock) return;
+//        setOperationalStatus(newStatus);
+//    }
     /** get the status of our role, protected with a key */
-    public synchronized int getStatus(long lock) {
-        if(lock == this.compLock) return getOperationalStatus();
-        else return -1;
+    public synchronized int getStatus() {
+//        if(lock == this.compLock)
+            return getOperationalStatus();
+//        else return -1;
     }
 
     /** set the folder and respective subfolders that will be scanned */
@@ -125,19 +126,22 @@ public class ScannerComponent extends Component implements msg{
         return true;
     }
     /** get which folder we want to scan */
-    public synchronized String getWhere(long lock) {
-        if(lock == this.compLock) return where;
-        else return "";
+    public synchronized String getWhere() {
+//        if(lock == this.compLock)
+            return where;
+//        else return "";
     }
     /** throttle is intentional delay added on scanning process to save CPU */
-    public synchronized int getThrottle(long lock) {
-        if(lock == this.compLock) return throttle;
-        else return -1;
+    public synchronized int getThrottle() {
+//        if(lock == this.compLock)
+            return throttle;
+//        else return -1;
     }
     /** How deep in subfolder levels are we allowed to go?  */
-    public synchronized int getDepth(long lock) {
-        if(lock == this.compLock) return depth;
-        else return -1;
+    public synchronized int getDepth() {
+//        if(lock == this.compLock)
+            return depth;
+//        else return -1;
     }
 
     /** This method ensures that we only start the scan when the operational
@@ -151,7 +155,7 @@ public class ScannerComponent extends Component implements msg{
 
         setOperationalStatus(RUNNING);
 
-        scannerThread = new Scanner_ThreadType(compLock, this);
+        scannerThread = new Scanner_ThreadType(this);
         scannerThread.start();
     }
 

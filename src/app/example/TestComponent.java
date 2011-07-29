@@ -1,6 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
  */
 
 package app.example;
@@ -9,6 +7,7 @@ import system.core.Component;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 
 /**
  *
@@ -16,15 +15,14 @@ import remedium.Remedium;
  */
 public class TestComponent extends Component{
 
-    public TestComponent(Remedium assignedInstance, long assignedRemLock,
-            Component assignedFather){
+    public TestComponent(Remedium assignedInstance, Component assignedFather){
         // call the super component!
          super(assignedInstance, assignedFather);
      }
 
     @Override
     public void onStart() {
-        log(INFO,"Starting fresh");
+        log(msg.INFO,"Starting fresh");
     }
 
     @Override
@@ -38,7 +36,7 @@ public class TestComponent extends Component{
 
     @Override
     public void onStop() {
-        log(INFO,"Stopping");
+        log(msg.INFO,"Stopping");
     }
 
     @Override

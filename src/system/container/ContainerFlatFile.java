@@ -29,7 +29,7 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import system.log.LogMessage;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
@@ -37,10 +37,10 @@ import system.mq.msg;
  */
 public class ContainerFlatFile implements ContainerInterface {
 
-    // should we output debug messages?
-    //private boolean debug = true;
     // maximum number of accepted records per file
     private long maxRecords = 1000;
+
+    private int maxSize     = 10000000;    // split big from small files here
 
     //private int test = 1;
 
@@ -88,16 +88,13 @@ public class ContainerFlatFile implements ContainerInterface {
         this.id = title;
         // define who we are
         this.who = "db-" + title;
-
-        // convert the fields to prevent external exposure of this object
-        String out = "";
-        for(String field: fields){
-            out = out.concat(field + ";");
-        }
-        this.fields = out.split(";");
+        // clean empty fields and assign our available fields in the database
+        this.fields = utils.text.stringPrune(fields);
+        // the folder where all our storage files are placed
         this.rootFolder = rootFolder;
         // instantiate this container
         if(initialization()==false){
+            // something went wrong, exit here
             result.add(who, msg.ERROR, "Failed to initialize");
             return;
         }
@@ -105,8 +102,25 @@ public class ContainerFlatFile implements ContainerInterface {
         long plus = 0;
         // iterate all knowledge files
             for(String reference : readPriority){
+                // get the knowledge file with a given name
                 KnowledgeFile current = knowledge.get(reference);
-                plus += current.getCount();
+                // initialize our variable
+                long value = 0;
+                      try{
+                        // get the count of records inside this database
+                        value = current.getCount();
+                        // ensure that we report the exception
+                      } catch (Exception e){
+                      // output an error message
+                      log(msg.ERROR, "ContainerFlatFile: Failed to initialize"
+                              + " the getCount() method on file '%1'",
+                              current.getFile().getPath()
+                              );
+                      }
+                finally{
+                // add it up to the overall count
+                plus += value;
+                }
             }
         // output a success message
         result.add(who, msg.COMPLETED, "Container has started, %1 records are "
@@ -118,7 +132,6 @@ public class ContainerFlatFile implements ContainerInterface {
 
     /** Initialize the work folder and files */
     private boolean initialization(){
-
         //Verify that target folder is valid and available for operations
         if (checkFolder()==false)
             return false;
@@ -127,10 +140,8 @@ public class ContainerFlatFile implements ContainerInterface {
             return false;
         // Sort these files according to their importance level
         sortKnowledgeFiles();
-       
         // Process each Knowledge file that was found
         processKnowledgeFiles();
-        
         // All done
         return true;
     }
@@ -153,12 +164,9 @@ public class ContainerFlatFile implements ContainerInterface {
                         .equalsIgnoreCase("" + i)==false)
                     continue;
                 // we use the pointer to save RAM memory
-                String name =
-                        //current.getFile().getPath();
-                        current.toString();
+                String name = current.toString();
                 // add the name to our list
                 sort = sort.concat(name + ";");
-                
             }
         }
         // output our result to the read Priority list
@@ -178,7 +186,7 @@ public class ContainerFlatFile implements ContainerInterface {
     private boolean checkFolder(){
     // check if the root folder exists or not, if not then create one
         if(rootFolder.exists()==false){
-            boolean mkdir = rootFolder.mkdir();
+            boolean mkdir = rootFolder.mkdirs();
             if(mkdir == false){
                 log(msg.ERROR, "Unable to create the '%1' folder",
                         rootFolder.getAbsolutePath());
@@ -240,7 +248,7 @@ public class ContainerFlatFile implements ContainerInterface {
     private boolean findKnowledgeFiles(){
 
         // find all files inside our root folder
-        ArrayList<File> list = utils.files.findfiles(rootFolder, 25);
+        ArrayList<File> list = utils.files.findFiles(rootFolder, 25);
         // iterate all files that were found
         for(File file : list){
             // we only want knowledge files
@@ -322,8 +330,10 @@ public class ContainerFlatFile implements ContainerInterface {
         // first test: Do we have the correct format of data?
 
         // read all lines from our file
-                String lines =
-                        utils.files.readAsString(file);
+                String lines = "";
+       
+            lines = utils.files.readAsString(file);
+
         long i = 0;
         int size = fields.length;
 
@@ -340,7 +350,7 @@ public class ContainerFlatFile implements ContainerInterface {
                                 "Knowledge file '%1' has a data field sized"
                                 + " in %2 while we are expecting %3. Error"
                                 + " occurred in line %4",
-                                "" + file.getAbsolutePath(),
+                                "" + file.getPath(),
                                 "" + data.length,
                                 "" + size,
                                 "" + i
@@ -387,7 +397,7 @@ public class ContainerFlatFile implements ContainerInterface {
         String identifier = newKnowledge.toString();
         // add to the readPriority list
         readPriority = utils.text.stringArrayAdd(readPriority, identifier);
-       // repeat same action for write priority
+        // repeat same action for write priority
         writePriority = utils.text.stringArrayAdd(writePriority, identifier);
         // add knowledge to our array list
         knowledge.put(identifier, result);
@@ -445,10 +455,13 @@ public class ContainerFlatFile implements ContainerInterface {
     }
 
     /** Write this record onto our containers */
-    public Boolean write(final String[] fields) {
+    public Boolean write(String[] fields) {
         // preflight checks
        if(writePreCheck(fields)==false)
            return false;
+       // prepare our fields
+       fields = utils.text.stringClean(fields);
+
         // empty knowledge? create a new file
         if(knowledge.isEmpty()){
             this.createKnowledgeFile();
@@ -569,15 +582,30 @@ public class ContainerFlatFile implements ContainerInterface {
     /** returns the first available knowledge file. Creates a new one 
      *  if none availble */
     private KnowledgeFile getFreeKnowledgeFile(){
-
-
         // iterate all know knowledge files
        if(writePriority.length > 0)
         for(String reference : writePriority){
             // get the current knowledge file pointer
             KnowledgeFile current = knowledge.get(reference);
+            // get the record counter
+            long counter = 0;
+            // count records
+            try{
+                counter = current.getCount();
+            }catch (Exception e){
+                // output an error message to warn that something went wrong
+                log(msg.ERROR, "getFreeKnowledgeFile operation failed. "
+                        + "Unable to count records of '%1' with error '%2'",
+                        current.getFile().getPath(),
+                        e.toString()
+                        );
+            }
             // respect our limitation of records per file
-            if(current.getCount() >= this.maxRecords){
+            if(
+                    (counter >= this.maxRecords)
+                    ||
+                    (current.getFile().length() > this.maxSize)
+                    ){
                 writePriority = utils.text.stringArrayRemove
                         (writePriority, reference);
                 continue; // move onto the next one
@@ -619,8 +647,6 @@ public class ContainerFlatFile implements ContainerInterface {
                fields[0], file.getPath() );
             // finish here and quit
             return true;
-//        }
-//        return false;
     }
 
 
@@ -660,11 +686,18 @@ public class ContainerFlatFile implements ContainerInterface {
                     // split each record into fields
                     String[] data = record.split(";");
                     // does it match what we want?
+                   try{
                     if(data[pos].equalsIgnoreCase(find)){
                         // add this record to our result
                         result.add(convertRecordToProperties(data));
                     }
+                    }
+                   catch (Exception e){
+                   //System.out.println("Testing data pos");
+                   }
                 }
+          // clear our variable
+          lines = "";
         }
         // All done
         return result;
@@ -674,7 +707,7 @@ public class ContainerFlatFile implements ContainerInterface {
      the first record that matches our index key, assumed as being
      the first column on the records. It is case-sensitive, IT IS FAST.*/
     public String[] read(String find) {
-        if(knowledge.isEmpty())
+        if(knowledge.isEmpty()) // return a variable with zero entries
             return new String[]{""};
         //Iterate through the knowledge files of our container for the record(s)
         for(String reference : this.readPriority){
@@ -701,6 +734,36 @@ public class ContainerFlatFile implements ContainerInterface {
         return new String[]{""};
     }
 
+    /** Bad, Bad thing. We will read all the entries from our knowledege files.
+     This will not work on machines with low memory..
+     */
+    public  ArrayList<String[]> readAll() {
+        // create our object
+        ArrayList<String[]> result = new ArrayList();
+
+        //Iterate through the knowledge files of our container for the record(s)
+        for(String reference : this.readPriority){
+            // get the current knowledge file pointer
+            KnowledgeFile current = this.knowledge.get(reference);
+            // get the file pointer
+            File file = current.getFile();
+            // read all lines from our file
+                String lines = utils.files.readAsString(file);
+                int i = 0;
+                // iterate all lines inside the text file, use \n as separator
+                for(String record : lines.split("\n")){
+                    ++i;
+                    // split each record into fields
+                    String[] data = record.split(";");
+                        // add this record to our result
+                        result.add(data);
+                }
+          // clear our variable
+          lines = "";
+        }
+        // All done
+        return result;
+    }
 
 
     /** Converts a given record onto a Properties object */
@@ -764,12 +827,10 @@ public class ContainerFlatFile implements ContainerInterface {
                     // does it match what we want?
                     if(data[fieldIndex].equals(find)){
                         // delete this record
-                        //lines = lines.replaceFirst(record + "\n", "");
-                        lines = lines.replaceAll(record + "\n", "");
+                        lines = lines.replace(record + "\n", "");
                         // save the result back to the file
                         boolean result = 
                                 utils.files.SaveStringToFile(file, lines);
-                        System.out.println();
                         // ensure we decrease the record count
                         if(result == true){
                             // decrease the record count
@@ -800,7 +861,6 @@ public class ContainerFlatFile implements ContainerInterface {
                 , "" + deletedCounter
                 , find
                 , field);
-         System.out.println("--->" + this.logger.getRecent());
         return true;
         }
     }

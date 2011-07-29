@@ -19,15 +19,13 @@ import system.core.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
  * @author Nuno Brito, 20th of March 2011, Darmstadt, Germany.
  */
 public class IndexerPackager implements msg{
-
-    private long lock = 0;
 
     // list of file records
     private ArrayList<File> 
@@ -49,57 +47,48 @@ public class IndexerPackager implements msg{
      * Start our instance and setup the unlock code for public methods
      */
     @SuppressWarnings("CallToThreadStartDuringObjectConstruction")
-    public IndexerPackager(long unlock, Component assignedRole){
-        if(lock!=0) return; // prevent any weird thing from happening here
-        lock = unlock;
+    public IndexerPackager(Component assignedRole){
         // get our nice role
         role = assignedRole;
 
-        schedule = new Scheduler(lock, this, role); // create the clean up lady
+        schedule = new Scheduler(this, role); // create the clean up lady
         schedule.start();
 
     }
 
     /** Add a new file to our list */
-    public void addFile(long unlock, File file){
-        if(lock != unlock) return;
+    public void addFile(File file){
         fileList.add(file);
         counterFile++;
     }
     /** Add a new file to our list */
-    public void addFatFile(long unlock, File file){
-        if(lock != unlock) return;
+    public void addFatFile(File file){
         fatFileList.add(file);
         counterFatFile++;
     }
     /** Add a new folder to our list */
-    public void addFolder(long unlock, File file){
-        if(lock != unlock) return;
+    public void addFolder(File file){
         folderList.add(file);
         counterFolder++;
     }
 
     /** Get the number of files in our list */
-    public int getFileCount(long unlock){
-        if(lock != unlock) return -1;
+    public int getFileCount(){
         return counterFile;
     }
     
    /** Get the number of fat files in our list */
-    public int getFatFileCount(long unlock){
-        if(lock != unlock) return -1;
+    public int getFatFileCount(){
         return counterFatFile;
     }
 
     /** Get the number of folders in our list */
-    public int getFolderCount(long unlock){
-        if(lock != unlock) return -1;
+    public int getFolderCount(){
         return counterFolder;
     }
 
     /** Get an array of our files up to a specified limit */
-    public ArrayList<File> getFiles(long unlock, int maxFetch){
-        if(lock != unlock) return null;
+    public ArrayList<File> getFiles(int maxFetch){
 
         // the holder of our results
         ArrayList<File> result = new ArrayList<File>();
@@ -142,8 +131,6 @@ public class IndexerPackager implements msg{
  * @author Nuno Brito, 20th of March of 2011 at Germany.
  */
 class Scheduler extends Thread implements msg{
-    private long 
-            lock = 0;
 
     private IndexerPackager pack;
     private Component role;
@@ -154,17 +141,16 @@ class Scheduler extends Thread implements msg{
             maxFetch     = 10000; // how many records do we want per loop?
 
     /** constructor */
-    public Scheduler(long unlock, IndexerPackager assignedPackager,
+    public Scheduler(IndexerPackager assignedPackager,
             Component assignedRole){
         // set up our lock key for public methods
-        lock = unlock;
         pack = assignedPackager;
         role = assignedRole;
     }
 
     /** send a msg using the assigned role as dispatcher */
     private void send(Properties msg){
-         role.send(lock, msg);
+         role.send(msg);
     }
 
     /** Set up a properties object to carry our data onto the processing role */
@@ -186,7 +172,7 @@ class Scheduler extends Thread implements msg{
             // only dispatch files when we are running
           if(role.getProcess().getStatus() == RUNNING ){
               // get a new batch of files to dispatch
-            ArrayList<File> results = pack.getFiles(lock, maxFetch);
+            ArrayList<File> results = pack.getFiles(maxFetch);
             // if we have files, send them over the wire
             if((results != null)
                     &&(results.size() > 0)){

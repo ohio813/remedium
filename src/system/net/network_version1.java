@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import org.simpleframework.http.core.Container;
 import org.simpleframework.transport.connect.Connection;
 import org.simpleframework.transport.connect.SocketConnection;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *

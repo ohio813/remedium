@@ -7,7 +7,7 @@
 package app.sentinel;
 
 import java.io.File;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
@@ -15,36 +15,31 @@ import system.mq.msg;
  */
 public class Scanner_ThreadType extends Thread implements msg{
 
-     // settings
-        long
-                lock = 0; // special lock key
-
      // objects
         ScannerComponent role = null;
         IndexerPackager pack;
 
-    public Scanner_ThreadType(long assignLock, ScannerComponent assignedRole) {
+    public Scanner_ThreadType(ScannerComponent assignedRole) {
             // start the thread
             role = assignedRole;
-            lock = assignLock;
             // start up the IndexerPackager with our custom secret word
-            pack = new IndexerPackager(lock, role);
+            pack = new IndexerPackager(role);
     }
 
     private String getFoundStatus(){
-         return "I've found "+pack.getFolderCount(lock)
-            + " folders and " + pack.getFileCount(lock) + " files";}
+         return "I've found "+pack.getFolderCount()
+            + " folders and " + pack.getFileCount() + " files";}
 
     /**
      * Verify if we are paused or not. If a pause has been requested,
      * place this thread on halt until this status is changed
      */
     synchronized void checkPausedStatus(){
-        if(role.getStatus(lock)==PAUSED){
+        if(role.getStatus()==PAUSED){
             // if someone paused, trap the execution here
                 log(INFO,"Scan is paused, so far "+getFoundStatus());
             // handle resume
-            while(role.getStatus(lock)==PAUSED)
+            while(role.getStatus()==PAUSED)
                 utils.time.wait(1);  // wait for a second
                 log(INFO, "Scanning has resumed");
             }
@@ -52,17 +47,17 @@ public class Scanner_ThreadType extends Thread implements msg{
 
     /** Change the operational status of this role */
     void setStatus(int newStatus){
-       role.setOperationalStatus(lock, newStatus);
+       role.setOperationalStatus(newStatus);
     }
 
     /** Are we running or not? */
     synchronized Boolean isRunning(){
-    return role.getStatus(lock) != STOPPED;
+    return role.getStatus() != STOPPED;
     }
 
     /** slowdown the processing */
     synchronized void doThrottle(){
-        utils.time.wait( role.getThrottle(lock) );
+        utils.time.wait( role.getThrottle() );
     }
 
     /** call the monitoring and management routines */
@@ -91,9 +86,9 @@ public class Scanner_ThreadType extends Thread implements msg{
         
         
         // iterate all mentioned locations (if more than one)
-        for(String where : role.getWhere(lock).split(";")){
+        for(String where : role.getWhere().split(";")){
             folder = new File(where);
-            findfiles(folder, role.getDepth(lock) );
+            findfiles(folder, role.getDepth() );
         }
 
         log(INFO,"Scanning operation was completed, "+getFoundStatus());
@@ -120,12 +115,12 @@ public void findfiles(File where, int maxDeep){
         if(isRunning()==false) return; // check if we are running or not
 
       if (file.isFile())
-          pack.addFile(lock, file);
+          pack.addFile(file);
       else
       if ( (file.isDirectory())
          &&( maxDeep-1 > 0 )
          ){
-            pack.addFolder(lock, file); // add this folder to the list
+            pack.addFolder(file); // add this folder to the list
             findfiles(file, maxDeep-1); // do the recursive crawling
           }
         }//for

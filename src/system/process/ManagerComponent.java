@@ -5,24 +5,28 @@
 
 package system.process;
 
+import app.user.User;
 import system.core.Component;
 import java.util.ArrayList;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
 import system.html.Button;
+import system.mqueue.msg;
 
 /**
  * @author Nuno Brito, 4th of April 2011 in Germany.
  */
-public class ManagerComponent extends Component{
+public class ManagerComponent extends Component implements msg{
+
+
 
     private String
           // used to pad the columns of entries on our table
           pad = "&nbsp&nbsp",
           // set components to be hidden from public view
-          hideComponents = "manager_main;trayicon;system";
-
+          hideComponents = "manager_main;trayicon;system",
+          whitelist = "log";
 
 
        public ManagerComponent(Remedium assignedInstance){
@@ -61,10 +65,10 @@ public class ManagerComponent extends Component{
               "The system has stopped and "
               + "this window will close itself within 3 seconds.."
               + html.br
-              + html.javascript.closeWindow(3)
+              //+ html.javascript.closeWindow(3)
               ;
             // write the new page just before dropping everything
-                html.setSection(html.SectionHome, result);
+            html.setSection(html.SectionHome, result);
 
             return result;
     }
@@ -94,11 +98,18 @@ public class ManagerComponent extends Component{
                 this.getCanonicalName()+"?action=stop");
 
         String result =
-              getListOfProcess()
-              + html.br
-              + html.br
+              getListOfProcess();
+
+
+        // add a stop button if we are the administrators of the system
+        if(this.isLogged(request)){ // are we logged?
+            User user = this.getLoggedUser(request); // who are we?
+            if(user.getMyName().equals(msg.admin)) // are we admin?
+              result = result.concat( // add the button
+                html.br + html.br
               +  stopButton.getText()
-              ;
+                      );
+        }
         // add this text to our home page
         html.setSection(html.SectionHome, result);
 
@@ -120,10 +131,16 @@ public class ManagerComponent extends Component{
             ArrayList<Status> results =
                     getInstance().getProcess().getList();
 
+            
+
             for(Status process : results){
-                if(process.getName().contains("/") // ignore sub components
+                if(whitelist.contains(process.getName())==true){
+                }
+                    else
+                  if(process.getName().contains("/") // ignore sub components
                         // hide unwanted components from our list
-                        || hideComponents.contains(process.getName()))
+                        || hideComponents.contains(process.getName())
+                                )
                     continue; 
                 //String name = process.getName();
 

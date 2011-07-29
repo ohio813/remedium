@@ -1,11 +1,13 @@
 package remedium;
 
+import app.user.User;
 import java.io.File;
+import java.util.HashMap;
 import system.core.global;
 import java.util.Properties;
 import system.log.logHandler;
-import system.mq.MessageQueue;
-import system.mq.msg;
+import system.mqueue.MessageQueue;
+import system.mqueue.msg;
 import utils.TimeTracker;
 import system.net.Network;
 import system.process.ProcessManager;
@@ -31,7 +33,11 @@ public class Remedium implements msg {
 
  // application initializer
     private system.core.global apps;
-    private Properties properties = new Properties();
+    private Properties 
+            properties = new Properties(); // global properties of the system
+            //loggedAddress = new Properties(); // log IP addresses
+    private HashMap<String, User>
+            loggedAddress =  new HashMap(); // keep a record of username is logged or not
 
     private String storageLocation = "storage";
     private File storage = new File (storageLocation);
@@ -55,6 +61,10 @@ public class Remedium implements msg {
         return debug;
     }
 
+//    public boolean isLogged(){
+//        return utils.internet.isLogged(this.getMyAddress());
+//    }
+
     /**
      * Get the public ID of this instance
      */
@@ -64,6 +74,10 @@ public class Remedium implements msg {
 
    public String getIDnameDefault() {
         return IDnameDefault;
+    }
+
+    public HashMap<String, User> getLoggedAddress() {
+        return loggedAddress;
     }
 
    public String getIDserial() {

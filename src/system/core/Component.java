@@ -22,6 +22,7 @@
 package system.core;
 
 //import system.container.ContainerHSQL;
+import app.user.User;
 import java.io.File;
 import system.container.INIcontainer;
 import system.container.Box;
@@ -35,18 +36,18 @@ import org.simpleframework.http.Response;
 import remedium.Remedium;
 import system.container.Container;
 import system.log.LogMessage;
-import system.mq.msg;
+import system.mqueue.msg;
 //import system.database;
 import system.net.protocols;
 import system.process.Status;
 import system.html.HtmlGenerator;
+import system.html.Meta;
 
 /**
  *
  * @author Nuno Brito 3rd of April 2011 in Darmstadt, Germany.
  */
 public abstract class Component extends Thread
-        implements msg
         {
 
     // definitions
@@ -77,21 +78,13 @@ public abstract class Component extends Thread
     protected String
             myAddress;
 
-    protected
-            Properties settings;  // allow extensions to set this value
-
-//    private database // our private database instance
-//            db = new database();
-
+    protected Properties 
+            settings;  // allow extensions to set this value
+            
     protected int
             WAIT_TIME = 4; // how long between time loops here?
     
-    protected long
-            //TODO, we should periodically change this number and
-            //setStatus our friends with the new value
-            compLock = utils.math.RandomInteger(1, 9999999); // generate our appLock code
-
-    protected HtmlGenerator // HTML page creation
+    public HtmlGenerator // HTML page creation
                  html;
 
     private String
@@ -125,7 +118,7 @@ public abstract class Component extends Thread
             return;
         }
         if(utils.text.isEmpty(getTitle())){
-            log(ERROR,"Can't start component using an empty "
+            log(msg.ERROR,"Can't start component using an empty "
                     + "title");
             return;
         }
@@ -137,7 +130,7 @@ public abstract class Component extends Thread
         // create our status object to place on the process manager
         setProcess(new Status(getCanonicalName()));
          // set the operational status (running, stopped, etc)
-            getProcess().setStatus(STOPPED);
+            getProcess().setStatus(msg.STOPPED);
          // set the process parameters (settings, definitions, progress, etc)
             settings = new Properties();
             getProcess().setParameters(settings);
@@ -184,24 +177,16 @@ public abstract class Component extends Thread
         instance.log(getCanonicalName()+"/"+client, gender, message);
     }
 
-
-//    protected final void log(String who, int gender, String message) {
-//        instance.log(getCanonicalName()+"/"+who, gender, message);
-//    }
-
-
-
-
     
     /** Add a given component as our father, this can only be done once */
     private Boolean setFather(Component who){
         // preflight checks
         if(who == null){
-            log(ERROR, "Add father operation failed. This father is null");
+            log(msg.ERROR, "Add father operation failed. This father is null");
             return false;
         }
         if(father != null){
-            log(ERROR, "Add father operation failed. We already have a father");
+            log(msg.ERROR, "Add father operation failed. We already have a father");
             return false;
         }
         // assign this component as our father
@@ -238,12 +223,13 @@ public abstract class Component extends Thread
                     false); // are we selected or not?
         }
 
-                     html.nav.addLink(
-                     getCanonicalName(), // index name
-                     getTitle(),  // title visible to user
-                    //"http://localhost:10101/"+
-                     getCanonicalName()+"?show="+"home", // web page to call
-                    false); // are we selected or not?
+
+        // add the home title
+        html.nav.addLink(
+                getCanonicalName(), // index name
+                getTitle(),  // title visible to user
+                getCanonicalName()+"?show="+"home", // web page to call
+                false); // are we selected or not?
     }
 
 
@@ -262,13 +248,23 @@ public abstract class Component extends Thread
      private void monitor(){
          // if the support instance is not running, stop here as well
         if(instance.isRunning()==false){
-            log(INFO,"Stopping component");
-            process.setStatus(STOPPED);
+            log(msg.INFO,"Stopping component");
+            process.setStatus(msg.STOPPED);
         }
      }
 
 
-         /** close our reply and dispatch the resulting text */
+     /** Ensure that our page runs automatically when doing some operation */
+    public void addAutoHTMLrefresh(int seconds, String URL) {
+        // set this page to update automatically
+        Meta loopMeta = new Meta();
+        loopMeta.add("http-equiv", "refresh");
+        loopMeta.add("content", seconds + ";url=" + URL );
+        html.setMeta(loopMeta.getText());
+    }
+
+
+     /** close our reply and dispatch the resulting text */
     protected void finishWebResponse(Request request, Response response,
             String text){
 
@@ -277,22 +273,22 @@ public abstract class Component extends Thread
         try {
             responseBody = response.getPrintStream();
         } catch (IOException ex) {
-           log(ERROR,"finishResponse operation failed, invalid getPrintStream");
+           log(msg.ERROR,"finishResponse operation failed, invalid getPrintStream");
            return;
         }
         // we can't afford a null reply here
         if(responseBody==null){
-           log(ERROR,"finishResponse operation failed, invalid getPrintStream");
+           log(msg.ERROR,"finishResponse operation failed, invalid getPrintStream");
            return;
         }
 
             responseBody.println(text);
             responseBody.close();
-            log(ROUTINE,"Web page request at "
-                    + utils.time.getDateTime()
-                    + " from "
-                    + request.getClientAddress().getHostName()
-                    );
+//            log(msg.ROUTINE,"Web page request at "
+//                    + utils.time.getDateTime()
+//                    + " from "
+//                    + request.getClientAddress().getHostName()
+//                    );
     }
 
     /** Add all our custom settings to the HTML container */
@@ -302,8 +298,7 @@ public abstract class Component extends Thread
          html.nav.addLink(
                      "index", // index name
                      "index",  // title visible to user
-                     this.getInstance().getMyAddress()
-                     , // web page to call
+                     this.getInstance().getMyAddress(), // web page to call
                     false); // are we selected or not?
 
     // if this is a child component, add the father
@@ -388,7 +383,7 @@ public abstract class Component extends Thread
             if(box.exists(actionDB) == false){
                 String result = "Web: Requested DB does not exist: '"
                         + actionDB + "'";
-                log(DEBUG, result);
+                log(msg.DEBUG, result);
                 this.finishWebResponse(request, response, result);
                 return result;
             }
@@ -409,6 +404,9 @@ public abstract class Component extends Thread
             String 
                 result = "",
                 selectedSection = "";
+
+            // clean up the meta tags
+            html.setMeta("");
 
             // process this request by the component
             String processRequest = doWebResponse(request, response);
@@ -477,16 +475,30 @@ public abstract class Component extends Thread
        return this.process.getStatus();
     }
 
+ /////// Question makers
 
-    /** return the database assigned to this component */
-//    public database getDB(){
-//        return this.db;
-//    }
+    /** Are we currently logged to a given system or not? */
+    protected boolean isLogged(Request request){
+        // get the origin of this request
+        String from = utils.internet.getAddress(request);
+        // return true if it is listed
+        return this.getInstance().getLoggedAddress().containsKey(from);
+    }
+
+    /** Get the details from the currently logged user */
+    public User getLoggedUser(Request request){
+        // get the origin of this request
+        String from = utils.internet.getAddress(request);
+        if(this.getInstance().getLoggedAddress().containsKey(from)==false)
+            return new User(); // return an empty user if we don't know him
+        // got this far, return User details
+        return this.getInstance().getLoggedAddress().get(from);
+    }
 
  /////// SETTERS
 
     /** Set the running state of this instance (running, stopped, etc) */
-    protected final void setOperationalStatus(int operationalStatus) {
+    public final void setOperationalStatus(int operationalStatus) {
         this.process.setStatus(operationalStatus);
     }
 
@@ -506,40 +518,6 @@ public abstract class Component extends Thread
     }
 
 
-//    private Boolean startDB(){
-//
-//        db.setRemedium(instance);
-//
-//        Properties data = new Properties();
-//
-//        String safePath = this.getCanonicalName().replace("/",
-//                ""+java.io.File.separatorChar);
-//
-//        safePath =
-//                  instance.getDB().getDefaultFolder()
-//                + ""+ java.io.File.separatorChar
-//                + instance.getNet().getPort()
-//                + ""+ java.io.File.separatorChar
-//                + safePath;
-//
-//        // create the storage folder specific to this component
-//        utils.files.mkdirs(safePath);
-//
-//        // set the database directory to match this one
-//        data.setProperty(DIR, safePath );
-//
-//
-//        // DB - do we need to start up the database system by ourselves?
-//        if (!this.db.hasStarted()) {
-//            this.db.start(data);
-//        }
-//
-//        if (!this.db.hasStarted()) {
-//            log(ERROR, "Failed to start database system");
-//            return false;
-//        }
-//        return true;
-//    }
 
 ////////// Questions
 
@@ -559,16 +537,16 @@ public abstract class Component extends Thread
 //        db.stop(settings);
 
 
-        process.setStatus(STOPPED);
+        process.setStatus(msg.STOPPED);
 
         children.stop();
 
     }
 
-   /** Default msg that appears when no injected method is available */
-    public void doDefaultMessage(Properties msg) {
-        log(DEBUG,"doDefaultMessage: Got message from "
-                + msg.getProperty(FIELD_FROM));
+   /** Default incomingmsg that appears when no injected method is available */
+    public void doDefaultMessage(Properties incomingmsg) {
+        log(msg.DEBUG,"doDefaultMessage: Got message from "
+                + incomingmsg.getProperty(msg.FIELD_FROM));
     }
 
 
@@ -581,7 +559,7 @@ public abstract class Component extends Thread
     public final void run(){
 
         // set ourselves as running
-        setOperationalStatus(STARTING);
+        setOperationalStatus(msg.STARTING);
 
         // start our internal services:
 //        startDB();
@@ -596,7 +574,7 @@ public abstract class Component extends Thread
         ID_serial = this.getInstance().getIDserial();
 
          // set ourselves as running
-        setOperationalStatus(RUNNING);
+        setOperationalStatus(msg.RUNNING);
 
         // do the loop until it stops
         while(
@@ -605,7 +583,7 @@ public abstract class Component extends Thread
                 ){
 
             // put some business logic here
-            if(process.getStatus() == RUNNING)
+            if(process.getStatus() == msg.RUNNING)
                 //  only run the loop if we are in the "running" status
                 onLoop();
            // do some waiting..
@@ -659,9 +637,9 @@ public abstract class Component extends Thread
     public final void send(String toComponent,
             String task, String message) {
         Properties data = new Properties();
-        data.setProperty(FIELD_TO, toComponent);
-        data.setProperty(FIELD_TASK, task);
-        data.setProperty(FIELD_MESSAGE, message);
+        data.setProperty(msg.FIELD_TO, toComponent);
+        data.setProperty(msg.FIELD_TASK, task);
+        data.setProperty(msg.FIELD_MESSAGE, message);
         this.send(data);
     }
 
@@ -672,28 +650,27 @@ public abstract class Component extends Thread
      * application, it is intended to be used only by roles so that we can
      * control the informations that are passed onto the queue.
      */
-    protected final void send(Properties message) {
+    public final void send(Properties message) {
         // preflight check
         if(this.instance.isRunning()==false)
             return;
 
         if(message == null){
-            log(ERROR,"Send message operation failed, tried to send a null"
+            log(msg.ERROR,"Send message operation failed, tried to send a null"
                     + " message");
             return;
         }
         // we ensure that the ID tag is not faked, force the FROM field to be
         // from the component itself and not some other component.
-        message.setProperty(FIELD_FROM, getCanonicalName() );
+        message.setProperty(msg.FIELD_FROM, getCanonicalName() );
         // send the msg
         instance.getMQ().send(message);
     }
 
      /** Password protected Send */
-    public final void send(long unLock, Properties message) {
-        if(unLock != this.compLock) return;
-        send(message);
-    }
+//    public final void send(long unLock, Properties message) {
+//        send(message);
+//    }
 
 
     /////////////////////////////
@@ -703,7 +680,7 @@ public abstract class Component extends Thread
     /////////////////////////////
 
     /** if we received a message for us in the queue, call respective method */
-    public final synchronized void digest(Properties msg)
+    public final synchronized void digest(Properties digestmsg)
             throws NoSuchMethodException {
         try {
             @SuppressWarnings("rawtypes")
@@ -711,27 +688,27 @@ public abstract class Component extends Thread
             partypes[0] = Properties.class;
 
             Class<? extends Component> cls = this.getClass();
-            Method meth = cls.getMethod(this.getMethodNameFromMessage(msg),
+            Method meth = cls.getMethod(this.getMethodNameFromMessage(digestmsg),
                     partypes);
 
-            // sets the msg (Properties) as parameter
+            // sets the digestmsg (Properties) as parameter
             Object arglist[] = new Object[1];
-            arglist[0] = msg;
+            arglist[0] = digestmsg;
 
             meth.invoke(this, arglist);
 
         } catch (Throwable e) {
 
-            log(ERROR,"Digest message failed: '"+e.getMessage()+"'");
+            log(msg.ERROR,"Digest message failed: '"+e.getMessage()+"'");
 
             /**
              * this means that we didn't found the expected method, just
-             * call the method msgDefault(msg) that can be overriden by each
+             * call the method msgDefault(digestmsg) that can be overriden by each
              * role if they desire to.
              */
-            log(INFO,"Method '" + this.getMethodNameFromMessage(msg) + "()' "
+            log(msg.INFO,"Method '" + this.getMethodNameFromMessage(digestmsg) + "()' "
                     + "was not found, calling 'msgDefault()' instead");
-            doDefaultMessage(msg);
+            doDefaultMessage(digestmsg);
         }
     }
 
@@ -739,25 +716,25 @@ public abstract class Component extends Thread
 
     /**
      * Extract the identification name of the role that is being contacted
-     * If FIELD_TASK exists on the msg, it will return that name instead.
+     * If FIELD_TASK exists on the targetmsg, it will return that name instead.
      */
-    private String getMethodNameFromMessage(Properties msg) {
+    private String getMethodNameFromMessage(Properties targetmsg) {
         String ret = "digest";
-        if (msg.containsKey(FIELD_TASK)) {
+        if (targetmsg.containsKey(msg.FIELD_TASK)) {
             // we need to split the Application from the role, typically
             // the FIELD_FROM will appear like "AppA/RoleB"
-            String call = msg.getProperty(FIELD_FROM);
+            String call = targetmsg.getProperty(msg.FIELD_FROM);
 
             // modification to suit component classes
             if(call.indexOf("/") > 0)
                 call = call.substring(call.indexOf("/") + 1);
 
             // now we append, _<task name>
-            ret += "_" + msg.getProperty(FIELD_TASK);
+            ret += "_" + targetmsg.getProperty(msg.FIELD_TASK);
         } else {
             // we need to split the Application from the role, typically
             // the FIELD_FROM will appear like "AppA/RoleB"
-            String call = msg.getProperty(FIELD_FROM);
+            String call = targetmsg.getProperty(msg.FIELD_FROM);
             // modification to suit components without father
             if(call.indexOf("/") > 0)
                 call = call.substring(call.indexOf("/") + 1);
@@ -802,27 +779,27 @@ public abstract class Component extends Thread
                 // if this was a msg from the outside, convert
                 // the object
                 String params =
-                        message.getProperty(FIELD_PARAMETERS, "");
+                        message.getProperty(msg.FIELD_PARAMETERS, "");
                 // do we have something to convert or not?
                 if(!utils.text.isEmpty(params)){
                 // we need to copy the ID
-                    String id = message.getProperty(FIELD_ID);
+                    String id = message.getProperty(msg.FIELD_ID);
                 // then convert the parameters onto a full object
                    // System.out.println("---------"+msg.toString());
                   message = protocols.stringToProperties(params);
                   // we need to restore these two values to make valid as before
-                  message.setProperty(FIELD_PARAMETERS, params);
-                  message.setProperty(FIELD_ID, id);
+                  message.setProperty(msg.FIELD_PARAMETERS, params);
+                  message.setProperty(msg.FIELD_ID, id);
                 }
 
                 // calls the method mentioned in the msg
                 digest(message);
 
                 // Delete the message after digestion
-                instance.getMQ().delete(message.getProperty(FIELD_ID));
+                instance.getMQ().delete(message.getProperty(msg.FIELD_ID));
 
             } catch (NoSuchMethodException e) {
-                log(ERROR, e.toString());
+                log(msg.ERROR, e.toString());
             }
         
     }
@@ -834,15 +811,15 @@ public abstract class Component extends Thread
     /** dispatch a message to another component, request a status change */
     protected final void requestChangeStatus(String who, int newStatus){
 
-        log(INFO, "Requesting '"+who+"' to change his status to "
+        log(msg.INFO, "Requesting '"+who+"' to change his status to "
             +utils.text.translateStatus(newStatus));
     
             Properties message = new Properties();
             // the fields that we need to place here
-            message.setProperty(FIELD_FROM, this.getCanonicalName());
-            message.setProperty(FIELD_TO, who);
-            message.setProperty(FIELD_TASK, CHANGE_STATUS);
-            message.setProperty(CHANGE_STATUS, ""+ newStatus);
+            message.setProperty(msg.FIELD_FROM, this.getCanonicalName());
+            message.setProperty(msg.FIELD_TO, who);
+            message.setProperty(msg.FIELD_TASK, msg.CHANGE_STATUS);
+            message.setProperty(msg.CHANGE_STATUS, ""+ newStatus);
             // dispatch the message out the queue
             send(message);
     }
@@ -850,31 +827,31 @@ public abstract class Component extends Thread
     /** Change the status of this component */
     public void digest_change_status(Properties message){
         
-        if(message.containsKey(CHANGE_STATUS) == false)
+        if(message.containsKey(msg.CHANGE_STATUS) == false)
             return; // no change request, then we might exit
 
   //      System.err.println(message.toString());
         // get our change request
         int newStatus =
                 Integer.parseInt(
-                    message.getProperty(CHANGE_STATUS, "0")
+                    message.getProperty(msg.CHANGE_STATUS, "0")
                         );
 
         // if the status is valid then apply it to our component
-        if(       (newStatus == STOPPED)
-                ||(newStatus == RUNNING)
-                ||(newStatus == PAUSED)
-                ||(newStatus == RESUME)
+        if(       (newStatus == msg.STOPPED)
+                ||(newStatus == msg.RUNNING)
+                ||(newStatus == msg.PAUSED)
+                ||(newStatus == msg.RESUME)
                 ){
             this.getProcess().setStatus(newStatus);
         }
         
-        log(INFO, "Changed status to "
+        log(msg.INFO, "Changed status to "
                 + utils.text.translateStatus(newStatus)
                 );
 
 
-        if(newStatus == STOPPED){
+        if(newStatus == msg.STOPPED){
             onStop();
         }
     }
@@ -882,7 +859,7 @@ public abstract class Component extends Thread
   /** Display log messages only if authorized */
  private void debug(String message){
     if(debug)
-        log(DEBUG,message);
+        log(msg.DEBUG,message);
  }
 
 

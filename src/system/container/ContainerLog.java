@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import system.log.LogMessage;
-import system.mq.msg;
+import system.mqueue.msg;
 import system.core.Component;
 
 /**

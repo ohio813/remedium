@@ -1,0 +1,4 @@
+Sonar Standalone Runner version: 1.0
+Sonar server: http://localhost:9000
+Sonar work directory: D:\java\remedium\20110629\.\.sonar
+Sonar version: 2.8
