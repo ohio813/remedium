@@ -60,6 +60,11 @@ public class LogRecord{
         return gender;
     }
 
+    public String getWho() {
+        return who;
+    }
+
+    
     /** Convert all arguments onto the nicely formatted text */
     private String convert(){
         String result = message.replace("%", "%!%");

@@ -44,6 +44,13 @@ public class LogMessage {
 
     }
 
+    /** Add a new log record entry */
+    public void add(LogRecord log){
+        this.add(log.getWho(), log.getGender(), log.getMessage(),
+                log.getArgs());
+    }
+
+
     /** Return the gender from the most recent message */
     public int getResult() {
         return mostRecent.getGender();
@@ -58,6 +65,7 @@ public class LogMessage {
     public String getRecent(){
         return mostRecent.getMessage();
     }
+
 
 
     /** Checks if a given type of message has occured since a given time */

@@ -1,0 +1,5 @@
+admin;admin;admin;admin,public; ;1312789570963;127.0.0.1;
+admin1;admin1;admin;test,public,private,admin,guest,egos_web; ;1311689995848;127.0.0.1;
+admin4;admin4;admin;test,public,private,admin,guest,esoc_public,mpl,gnu1,3pp_license; ;1311689995848;127.0.0.1;
+user;user;123;public; ;1311836967802;127.0.0.1;
+nuno;nuno;1234;public,private; ;1312631293278;127.0.0.1;

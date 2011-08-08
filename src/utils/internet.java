@@ -1,11 +1,16 @@
 package utils;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.simpleframework.http.Request;
 
@@ -77,11 +82,15 @@ public class internet {
                         URL url = new URL(TextFileURL);
 
                         //open a connection to that source
-                        HttpURLConnection urlConnect = (HttpURLConnection)url.openConnection();
+                        HttpURLConnection urlConnect =
+                                (HttpURLConnection)url.openConnection();
 
                         // ensure that there is no cache to give old outdated files
                             urlConnect.setDoInput(true);
                             urlConnect.setUseCaches(false);
+                            //urlConnect.setConnectTimeout(1000);
+                            //urlConnect.setDoInput(false);
+                            //urlConnect.setDoOutput(false);
 
                             DataInputStream dis;
                             String s;
@@ -175,8 +184,8 @@ public class internet {
       }
 
 
-       /** Get the value from an HTML provided on command line */
-    static public String getHTMLparameter(Request request, String parameter){
+   /** Get the value from an HTML provided on command line */
+   static public String getHTMLparameter(Request request, String parameter){
         String result = "";
         try {   // should we show a specific section?
                 result = request.getParameter(parameter);
@@ -189,6 +198,55 @@ public class internet {
         return result;
     }
 
+   /** Get the value from an HTML provided on command line */
+   static public String getAddress(Request request){
+        return request.getClientAddress().getAddress().getHostAddress()
+                // the port number seems to be changing all the time
+                //+ ":" + request.getClientAddress().getPort()
+                ;
+   }
+
+   /** Get the login status */
+   static public boolean isLogged(final String URL){
+       // add our specific URL for the component and required parameter
+       String target = URL + "/user?action=isLogged";
+       // get the file
+       String result = utils.internet.getTextFile(target);
+        // output the result
+        boolean out = result.equalsIgnoreCase("true");
+       return out;
+   }
+
+
+       /** get a given page from a given URL address */
+   static public String webget(String address) {
+        // perhaps in the future we can use something like http://goo.gl/03WQp
+        // provide a holder for the reply
+        String result = "";
+
+        try {
+            URL webpage = new URL(address);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(webpage.openStream()));
+
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                // Process each line.
+                result = result.concat(inputLine);
+            }
+            in.close();
+        } catch (MalformedURLException me) {
+            System.err.println("webGet operation has failed, MalFormedException: "
+                    + me.toString());
+            return null;
+        } catch (IOException ioe) {
+            System.err.println("webGet operation has failed, IOException: "
+                    + ioe.toString());
+            return null;
+        }
+
+        return result;
+    }
 
 private void log(String gender, String message){
                   System.out.println
@@ -196,7 +254,39 @@ private void log(String gender, String message){
                     }
  static private void debug(String message){
                   if(action.debug)
-                      action.log("debug",message);}
+                      action.log("debug",message);
+ }
+
+
+
+
+
+    /** Do a threaded webget to prevent congestions.
+     *   This method is not working as originally intended but at least is still
+     *   useful for making requests that do not require a reply back.
+     */
+    public static void threadedWebGet(String URL){
+        // start a new thread for this purpose
+        WebGetThread a = new WebGetThread(URL);
+        a.start();
+    }
 
 
 } // end the show
+
+
+/** This class is used for the independent webget thread*/
+class WebGetThread extends Thread{
+    private String URL = "";  // the target URL address
+
+    /** Public constructor */
+    public WebGetThread(String URL){
+        this.URL = URL;
+    }
+
+    @Override
+    public void run(){
+        // get the page onto a string
+        utils.internet.getTextFile(URL);
+    }
+}

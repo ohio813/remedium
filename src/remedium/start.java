@@ -6,7 +6,7 @@ package remedium;
  */
 
 import java.util.Properties;
-import system.mq.msg;
+import system.mqueue.msg;
 
 public class start implements msg{
 
@@ -27,18 +27,18 @@ public class start implements msg{
 
         // which apps do we want to launch?
         //parameters.setProperty("apps", centrum+";"+triumvir+";"+sentinel);
-
-      //  System.out.println("----->"+utils.files.getRootFolders());
+        parameters.setProperty("apps","file;user;manager;license");
 
         // start the instance with our parameters
         main.start(parameters);
 
         // wait for the indexer to be started (heaviest component)
-        while(main.logContains(sentinel_indexer, "Ready to start")==false)
+        //while(main.logContains(sentinel_indexer, "Ready to start")==false)
         utils.time.wait(1);
 
+        
         // start the process Manager as default application
-        String defaultURL = "http://localhost:10101/sentinel";
+        String defaultURL = "http://localhost:10101/";
         utils.internet.openURL(defaultURL);
 
         // while remedium is intended to be running, wait a few seconds
@@ -49,5 +49,5 @@ public class start implements msg{
         // call the stop of our running system
         main.stop();
     }
-
+    
 }

@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=us-ascii">
+<META content="MSHTML 6.00.2900.5945" name=GENERATOR></HEAD>
+<BODY>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>Hi,</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>The getAddress method returns the request line address, 
+which is a URI as defined by the RFC. A URI can be absolute or relative. For a 
+HTTP proxy it will be absolute, for a HTTP web server it will be 
+relative.</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>If you would like to know how the URL came in, then the 
+HTTP/1.1 specification RFC 2616 requires that the "Host" header is set with all 
+requests. Try this.</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>String host = req.getValue("Host");</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>Then, if you like you can parse it like 
+so.</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>Address hostAddress = new 
+AddressParser(host);</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>String domain&nbsp;= 
+hostAddress.getDomain();</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>String port = hostAddress.getPort();</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>If the host is missing for a HTTP/1.1 request then set an 
+error response Status.BAD_REQUEST back to the client (this is how it should be 
+done). Your local address is.</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>hostAddress.toString() + 
+req.getTarget()</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>That should be enough to find the target 
+address.</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2></FONT></SPAN>&nbsp;</DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>Hope this helps,</FONT></SPAN></DIV>
+<DIV dir=ltr align=left><SPAN class=771023108-23042010><FONT face=Arial 
+color=#0000ff size=2>Niall</FONT></SPAN></DIV>
+<DIV>&nbsp;</DIV><FONT face=Arial color=#003481 size=2><STRONG>Niall 
+Gallagher</STRONG></FONT><BR><FONT face=Arial color=#000000 size=1>RBS Global 
+Banking &amp; Markets</FONT><BR><FONT face=Arial color=#000000 size=1>Office: 
++44 2070851454 <BR></FONT><BR><!--eMS5.0.5.D19M.4Y.2010-->
+<DIV>&nbsp;</DIV><FONT face=Arial color=#0000ff size=2></FONT><BR>
+<DIV class=OutlookMessageHeader lang=en-us dir=ltr align=left>
+<HR tabIndex=-1>
+<FONT face=Tahoma size=2><B>From:</B> Ryan Daum [mailto:ryan@thimbleware.com] 
+<BR><B>Sent:</B> 22 April 2010 17:48<BR><B>To:</B> 
+Simpleweb-Support@lists.sourceforge.net<BR><B>Subject:</B> [Simpleweb-Support] 
+Problems with Address getDomain getPort<BR></FONT><BR></DIV>
+<DIV></DIV>I have an application that was using the Jersey simple server 
+wrapper, and I'm converting it to use simpleframework directly.&nbsp;
+<DIV><BR></DIV>
+<DIV>In Jersey/JAX-RS I was reading the URL host/port from its Request, and 
+using that to write some absolute URLs pointing back to my server. I am trying 
+to do the same thing using just simpleframework and running into issues.</DIV>
+<DIV><BR></DIV>
+<DIV>Basically when I hit the server and look in the debugger getTarget is 
+returning a URL without protocol, host, or port, just the path. &nbsp;Likewise, 
+when I use getAddress.getDomain it returns null and getPort returns -1. 
+&nbsp;This is just plainly false.</DIV>
+<DIV><BR></DIV>
+<DIV>I'm trying to figure out what I could be doing wrong. &nbsp;I read through 
+the Jersey simple framework source and I don't see any difference between the 
+way they're using the framework and the way I am.</DIV>
+<DIV><BR></DIV>
+<DIV>Here's my (Scala) code for starting my server:</DIV>
+<DIV><BR></DIV>
+<DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;container = new 
+ResourceContainer(this)</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;connection = new 
+SocketConnection(container)</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;val address = new 
+InetSocketAddress(7070)</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;connection.connect(address)</DIV></DIV>
+<DIV><FONT face=Arial color=#0000ff size=2></FONT><BR></DIV>
+<DIV>"this" is:&nbsp;</DIV>
+<DIV><BR></DIV>
+<DIV>class HttpContainer extends ResourceEngine with Log {</DIV>
+<DIV><BR></DIV>
+<DIV>and the resolve method returns, for one example:</DIV>
+<DIV><BR></DIV>
+<DIV>
+<DIV>object healthCheckResource &nbsp;extends ServerResource {</DIV>
+<DIV>&nbsp;&nbsp; &nbsp;def perform(request:Request, response:Response) : Unit = 
+{</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;val host: String = 
+request.getAddress.getDomain</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;val port: Int = 
+request.getAddress.getPort</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;val address = 
+localAddress(request)</DIV></DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;...</DIV>
+<DIV>&nbsp;&nbsp; }</DIV>
+<DIV>}</DIV>
+<DIV><BR></DIV>
+<DIV>and 'localAddress' method is:</DIV>
+<DIV><BR></DIV>
+<DIV>
+<DIV>def localAddress(req: Request) : String = {</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;val port = req.getAddress.getPath</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;val hostName = 
+req.getAddress.getDomain</DIV>
+<DIV>&nbsp;&nbsp; &nbsp; &nbsp; &nbsp;if (port == -1) hostName else hostName + 
+":" + port</DIV>
+<DIV>}</DIV></DIV>
+<DIV><BR></DIV><pre>
+***********************************************************************************
+The Royal Bank of Scotland plc. Registered in Scotland No 90312. 
+Registered Office: 36 St Andrew Square, Edinburgh EH2 2YB. 
+Authorised and regulated by the Financial Services Authority. The
+Royal Bank of Scotland N.V. is authorised and regulated by the 
+De Nederlandsche Bank and has its seat at Amsterdam, the 
+Netherlands, and is registered in the Commercial Register under 
+number 33002587. Registered Office: Gustav Mahlerlaan 10, 
+Amsterdam, The Netherlands. The Royal Bank of Scotland N.V. and 
+The Royal Bank of Scotland plc are authorised to act as agent for each 
+other in certain jurisdictions.
+ 
+This e-mail message is confidential and for use by the addressee only.
+If the message is received by anyone other than the addressee, please 
+return the message to the sender by replying to it and then delete the 
+message from your computer. Internet e-mails are not necessarily 
+secure. The Royal Bank of Scotland plc and The Royal Bank of Scotland 
+N.V. including its affiliates ("RBS group") does not accept responsibility 
+for changes made to this message after it was sent. 
+
+Whilst all reasonable care has been taken to avoid the transmission of 
+viruses, it is the responsibility of the recipient to ensure that the onward
+transmission, opening or use of this message and any attachments will 
+not adversely affect its systems or data. No responsibility is accepted 
+by the RBS group in this regard and the recipient should carry out such 
+virus and other checks as it considers appropriate. 
+
+Visit our website at www.rbs.com
+
+***********************************************************************************
+</pre></BODY></HTML>

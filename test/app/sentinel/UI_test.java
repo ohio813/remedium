@@ -8,7 +8,7 @@ package app.sentinel;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import system.mq.msg;
+import system.mqueue.msg;
 import remedium.Remedium;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

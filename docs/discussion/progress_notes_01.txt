@@ -1,7 +1,38 @@
 
 
 
+
+
 --- TODO ---
+- Generic
+
+- Components
+    - Add icon() method to represent each component
+    - Add description() method to describe the purpose of each component
+
+- Manager
+    - Display icons instead of boring list with text
+
+- Container
+    ***- Replace the full string read with line by line approach (see if it solves memory issue)
+
+- User
+    ***- Prevent multiple login attempts (increase time delay on each wrong attempt)
+    ***- Prevent multiple registrations (only one register per IP address)
+
+- File server
+    - Add metrics
+        - Files downloaded recently
+        - Files downloaded by each user
+        - Bandwidth served (to user?)
+
+
+- Sentinel
+    - Show statistics to guests, only allow authorized users to start processes
+
+
+- Remove the About Tab - It is not being used as intended
+- Integrate SDK with web component
 - Serious defect exposed by INIfileTest. Minimal functionality not affected. (Read/Write INI keys)
 - LogMesssage getRecent() should output an error message if one occured on a past set of messages
 - LogMessage should hold a set of messages instead of a single message. This allows to export several messages while processing a method
@@ -24,8 +55,6 @@
 - Missing to compute the score in a separate thread.
 - We need to add numbers onto messages to ease translation effort.
     - The log component can manage translation support
-    - Need a solution to work with variables %1, %2,
-    - perhaps log(DEBUG,1000,"Found %"+ count + " records"); => test,1000,"Encontrei %1 registos"
     - Log manager records message codes in original language and provides translation when available
     - This method also eases Test cases, allow to look for an exact message code instead of text that can be modified in the future
 

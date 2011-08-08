@@ -103,6 +103,16 @@ public class time {
         Date date = new Date();
         return dateFormat.format(date);
         }
+    /** get the current time in a human readable manner */
+
+   public static String getTimeFromLong(long time) {
+       // code adapted from http://goo.gl/rZ716
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        //Date date = new Date();
+        return dateFormat.format(time);
+        }
+
+
 
    /** get the current time in a human readable manner */
    public static String getCurrentYear() {

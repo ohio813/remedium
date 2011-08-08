@@ -1,8 +1,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>D:\java\remedium\20110611\20110518\store\remedium.jar</jar>
-  <outfile>D:\java\remedium\20110611\20110518\binary\remedium.exe</outfile>
+  <jar>D:\java\remedium\20110629\binary\remedium.jar</jar>
+  <outfile>D:\java\remedium\20110629\binary\remedium.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
@@ -12,7 +12,7 @@
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>D:\java\remedium\20110611\20110518\shield.ico</icon>
+  <icon>D:\java\remedium\20110629\shield.ico</icon>
   <singleInstance>
     <mutexName>remedium</mutexName>
     <windowTitle></windowTitle>

@@ -22,10 +22,9 @@
 
 package system.container;
 
-import system.core.Component;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.mq.msg;
+import system.mqueue.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -110,9 +109,6 @@ public class containerBoxTest implements msg {
 
             @Override
             public void onStop() {}
-
-            @Override
-            public void onRecover() {}
 
             @Override
             public void onLoop() {}

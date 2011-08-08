@@ -6,7 +6,7 @@ package system.container;
 
 import java.util.ArrayList;
 import java.util.Properties;
-import system.mq.msg;
+import system.mqueue.msg;
 import system.core.Component;
 
 /**
@@ -18,6 +18,10 @@ public class INIcontainer {
      // where we hold the persistent data
     private Container INIcontainer;
     private Component hostComponent;
+    
+    private final int
+            //_key = 0,
+            _value = 1;
 
     /** the public constructor */
     public INIcontainer(Component assignedComponent){
@@ -51,7 +55,7 @@ public class INIcontainer {
 
     public String read(String section, String key, String defaultValue){
         // get the record
-        ArrayList<Properties> result = INIcontainer.read
+        ArrayList<String[]> result = INIcontainer.readNew
                 (msg.FIELD_KEY, section +"/"+ key);
 
         // preflight check, if result is null then provide an empty string
@@ -62,8 +66,7 @@ public class INIcontainer {
             return "";
 
         // get the value
-        String value = result.get(0).getProperty
-                (msg.FIELD_VALUE, defaultValue);
+        String value = result.get(0)[_value];
         // give back the expected value for our question
         return value;
     }

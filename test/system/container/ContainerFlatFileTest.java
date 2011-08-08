@@ -207,7 +207,7 @@ public class ContainerFlatFileTest {
         long initialCount = container.count();
 
         // test deleting some records and see the result
-        System.out.println(" Test deleting some records and see the result");
+        System.out.println(" Test deleting some records to see the result");
             container.delete("uid", "1");
             container.delete("uid", "3");
             container.delete("uid", "5");

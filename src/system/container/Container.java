@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This class links the Container abstraction with a concrete implementation.
  */
 
 package system.container;
@@ -10,7 +9,7 @@ import system.log.LogMessage;
 
 /**
  *
- * @author Nuno Brito
+ * @author Nuno Brito, 23rd of July 2011 in Darmstadt, Germany
  */
 public class Container extends ContainerFlatFile{
 

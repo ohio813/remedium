@@ -11,7 +11,7 @@
 
 package app.centrum;
 
-import system.mq.msg;
+import system.mqueue.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;

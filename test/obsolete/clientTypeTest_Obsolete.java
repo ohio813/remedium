@@ -6,7 +6,7 @@
 package obsolete;
 
 import app.centrum.CentrumManager;
-import system.mq.msg;
+import system.mqueue.msg;
 import java.util.Properties;
 import org.junit.Test;
 import static org.junit.Assert.*;

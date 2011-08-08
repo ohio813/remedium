@@ -5,13 +5,14 @@
 
 package utils;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
- * @author Nuno Brito
+ * @author Nuno Brito, 24th of July 2011 in Darmstadt, Germany
  */
 public class text {
 
@@ -48,7 +49,13 @@ public class text {
       */
        public static String safeString(String input){
 
-           input = input.replace(" ", "_");
+           // clean up the tags
+           //input = input.replace(" ", "_");
+           input = input.replace("<", ""); 
+           input = input.replace(">", ""); 
+           input = input.replace("%", ""); 
+           input = input.replace(";", ""); 
+          //input = input.replace(";", ".");
 
            String output =
                 utils.text.findRegEx( // only accept a-Z, 0-9 and -, _ chars
@@ -57,6 +64,35 @@ public class text {
        return output;
        }
 
+     
+       /** Disarm potential injections*/
+       public static String safeHTML(String input){
+
+           String output = input;
+           // clean up the tags
+           //input = input.replace(" ", "_");
+           output = output.replace("<", ""); 
+           output = output.replace(">", ""); 
+           output = output.replace("%", ""); 
+           output = output.replace(";", ""); 
+           output = output.replace("\"", ""); 
+           output = output.replace("'", ""); 
+
+       return output;
+       }
+       
+       
+       /** Convert a string from base64 onto decoded format */
+    public static String decodeBase64(String input){
+        String result = "";
+        try {
+            result = new String(utils.Base64.decode(input));
+        } catch (IOException ex) {
+            result = "";
+        }
+        return result;
+    }   
+       
      /** Convert an array of strings to one string.
       *  Put the 'separator' string between each element.
       */
@@ -129,6 +165,12 @@ public class text {
             case msg.RESUME:
                 s = "RESUME";
                 break;
+            case msg.INFO: s =  "info"; break;
+            case msg.DEBUG: s =  "debug"; break;
+            case msg.EXTRA: s =  "extra"; break;
+            case msg.ROUTINE: s = "routine"; break;
+            case msg.WARNING: s =  "warning"; break;
+            case msg.ACCEPTED: s =  "ACCEPTED"; break;
 
             default:
                 s = Integer.toString(status);
@@ -208,8 +250,34 @@ public class text {
         return result.split(";");
      }
 
+     
+     
+     
+    /** Converts a given record onto a string that can be written on a file */
+    public static String convertRecordToString(String[] record){
+        String result = "";
+        // iterate all fields of this record
+        for(String field : record) // add a comma to split them
+                result = result.concat(field + ";");
+            // add the breakline
+            result = result.concat("\n");
+        return result;
+    }
 
 
+   /** Replaces empty elemets with space to ensure compatibility with
+    * string.split */
+     public static String[] stringClean(final String[] input){
+        String result = "";
+        for(String current : input){
+            if (current.isEmpty())
+                result = result.concat(" " + ";");
+            else
+                result = result.concat(current + ";");
+        }
+       // write back our list
+        return result.split(";");
+     }
 
     /** Picks a string and makes it URL safe */
     public static String quickEncode(String input){

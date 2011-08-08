@@ -21,15 +21,18 @@
 
 package system.container;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import system.log.LogMessage;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
@@ -37,10 +40,10 @@ import system.mq.msg;
  */
 public class ContainerFlatFile implements ContainerInterface {
 
-    // should we output debug messages?
-    //private boolean debug = true;
     // maximum number of accepted records per file
     private long maxRecords = 1000;
+
+    private int maxSize     = 10000000;    // split big from small files here
 
     //private int test = 1;
 
@@ -88,16 +91,13 @@ public class ContainerFlatFile implements ContainerInterface {
         this.id = title;
         // define who we are
         this.who = "db-" + title;
-
-        // convert the fields to prevent external exposure of this object
-        String out = "";
-        for(String field: fields){
-            out = out.concat(field + ";");
-        }
-        this.fields = out.split(";");
+        // clean empty fields and assign our available fields in the database
+        this.fields = utils.text.stringPrune(fields);
+        // the folder where all our storage files are placed
         this.rootFolder = rootFolder;
         // instantiate this container
         if(initialization()==false){
+            // something went wrong, exit here
             result.add(who, msg.ERROR, "Failed to initialize");
             return;
         }
@@ -105,8 +105,25 @@ public class ContainerFlatFile implements ContainerInterface {
         long plus = 0;
         // iterate all knowledge files
             for(String reference : readPriority){
+                // get the knowledge file with a given name
                 KnowledgeFile current = knowledge.get(reference);
-                plus += current.getCount();
+                // initialize our variable
+                long value = 0;
+                      try{
+                        // get the count of records inside this database
+                        value = current.getCount();
+                        // ensure that we report the exception
+                      } catch (Exception e){
+                      // output an error message
+                      log(msg.ERROR, "ContainerFlatFile: Failed to initialize"
+                              + " the getCount() method on file '%1'",
+                              current.getFile().getPath()
+                              );
+                      }
+                finally{
+                // add it up to the overall count
+                plus += value;
+                }
             }
         // output a success message
         result.add(who, msg.COMPLETED, "Container has started, %1 records are "
@@ -118,7 +135,6 @@ public class ContainerFlatFile implements ContainerInterface {
 
     /** Initialize the work folder and files */
     private boolean initialization(){
-
         //Verify that target folder is valid and available for operations
         if (checkFolder()==false)
             return false;
@@ -127,10 +143,8 @@ public class ContainerFlatFile implements ContainerInterface {
             return false;
         // Sort these files according to their importance level
         sortKnowledgeFiles();
-       
         // Process each Knowledge file that was found
         processKnowledgeFiles();
-        
         // All done
         return true;
     }
@@ -153,12 +167,9 @@ public class ContainerFlatFile implements ContainerInterface {
                         .equalsIgnoreCase("" + i)==false)
                     continue;
                 // we use the pointer to save RAM memory
-                String name =
-                        //current.getFile().getPath();
-                        current.toString();
+                String name = current.toString();
                 // add the name to our list
                 sort = sort.concat(name + ";");
-                
             }
         }
         // output our result to the read Priority list
@@ -178,7 +189,7 @@ public class ContainerFlatFile implements ContainerInterface {
     private boolean checkFolder(){
     // check if the root folder exists or not, if not then create one
         if(rootFolder.exists()==false){
-            boolean mkdir = rootFolder.mkdir();
+            boolean mkdir = rootFolder.mkdirs();
             if(mkdir == false){
                 log(msg.ERROR, "Unable to create the '%1' folder",
                         rootFolder.getAbsolutePath());
@@ -212,7 +223,6 @@ public class ContainerFlatFile implements ContainerInterface {
         String filename = file.getName();
         // split and iterate through each property
         for(String property : filename.split("_")){
-
             // split and iterate through the key/value
             String[] out = property.split("-");
             // do safety check on this key/value pair
@@ -240,7 +250,7 @@ public class ContainerFlatFile implements ContainerInterface {
     private boolean findKnowledgeFiles(){
 
         // find all files inside our root folder
-        ArrayList<File> list = utils.files.findfiles(rootFolder, 25);
+        ArrayList<File> list = utils.files.findFiles(rootFolder, 25);
         // iterate all files that were found
         for(File file : list){
             // we only want knowledge files
@@ -322,8 +332,8 @@ public class ContainerFlatFile implements ContainerInterface {
         // first test: Do we have the correct format of data?
 
         // read all lines from our file
-                String lines =
-                        utils.files.readAsString(file);
+         String lines = readAsString(file);
+
         long i = 0;
         int size = fields.length;
 
@@ -340,15 +350,23 @@ public class ContainerFlatFile implements ContainerInterface {
                                 "Knowledge file '%1' has a data field sized"
                                 + " in %2 while we are expecting %3. Error"
                                 + " occurred in line %4",
-                                "" + file.getAbsolutePath(),
+                                "" + file.getPath(),
                                 "" + data.length,
                                 "" + size,
                                 "" + i
                                );
                         // remove this file from our list
                         removeKnowledge(check.toString());
+                        // clean up our mess
+                        settings = null;
+                        file = null;
+                        lines = "";
+                        data = null;
+                        // all done
                         return false;
                     }
+                    // clean up our mess
+                    data = null;
                 }
 
         // second test: is the record count accurate?
@@ -367,11 +385,21 @@ public class ContainerFlatFile implements ContainerInterface {
                        );
                 // remove this file from our list
                 removeKnowledge(check.toString());
+                // clean up our mess
+                        settings = null;
+                        file = null;
+                        lines = "";
+                // all done        
                 return false;
             }
-
-            // Add the count value to this knowledge file
-            check.setCount(i);
+        // Add the count value to this knowledge file
+        check.setCount(i);
+        
+        // clean up our mess
+        settings = null;
+        file = null;
+        lines = "";
+        
         // All done
         return true;
     }
@@ -387,10 +415,13 @@ public class ContainerFlatFile implements ContainerInterface {
         String identifier = newKnowledge.toString();
         // add to the readPriority list
         readPriority = utils.text.stringArrayAdd(readPriority, identifier);
-       // repeat same action for write priority
+        // repeat same action for write priority
         writePriority = utils.text.stringArrayAdd(writePriority, identifier);
         // add knowledge to our array list
         knowledge.put(identifier, result);
+        // clean up our mess
+        settings = null;
+        identifier = "";
         // return our result
         return result;
     }
@@ -445,10 +476,13 @@ public class ContainerFlatFile implements ContainerInterface {
     }
 
     /** Write this record onto our containers */
-    public Boolean write(final String[] fields) {
+    public Boolean write(String[] fields) {
         // preflight checks
        if(writePreCheck(fields)==false)
            return false;
+       // prepare our fields
+       fields = utils.text.stringClean(fields);
+
         // empty knowledge? create a new file
         if(knowledge.isEmpty()){
             this.createKnowledgeFile();
@@ -488,17 +522,18 @@ public class ContainerFlatFile implements ContainerInterface {
 
     /** Try to overwrite a key if it already exists */
     private boolean writeOverwrite(final String[] fields) {
-          // If this records already exists, overwrite it.
+        // If this records already exists, overwrite it.
         String find = fields[0];
-        boolean success = false;
-        //Iterate through the knowledge files of our container for the record(s)
+        boolean success = false,
+                doBreak = false;
+        // Iterate through the knowledge files of our container for the record(s)
         for(String reference : readPriority){
             // get the current knowledge file pointer
             KnowledgeFile current = knowledge.get(reference);
             // get the file pointer
             File file = current.getFile();
             // read all lines from our file
-                String lines = utils.files.readAsString(file);
+                String lines = readAsString(file);
 
 //            // quick scan
 //                if(lines.contains("\n"+fields[0]+";")==false)
@@ -513,28 +548,103 @@ public class ContainerFlatFile implements ContainerInterface {
                     // does it match what we want?
                     if(data[0].equals(find)){
                         // add this record to our result
-                        String recordModified = convertRecordToString(fields);
+                        String recordModified = 
+                                utils.text.convertRecordToString(fields);
                         // do the replacement
-                        lines = lines.replaceFirst(record+"\n",recordModified);
+                        lines = lines.replace(record+"\n",recordModified);
                         // write back to disk
                         success = utils.files.SaveStringToFile(file, lines);
                         // was our write successful?
                         if(success == false){
                             log(msg.ERROR, "Write operation: Failed to save record '%1' "
                                     + "at file '%2'");
-                            return false;
-                        }
+                        }else{
                         log(msg.COMPLETED, "Write operation: Overwrote"
                            + " key '%1' at file '%2'",
                            data[0], file.getPath() );
-                        return true;
+                        }
+                        // clean our mess
+                        recordModified = "";
+                        // break the execution
+                        doBreak = true;
+                        success = true;
+                        //return true;
                     }
+                    // clean our mess
+                    data = null;
+                    // should we break?
+                    if(doBreak)
+                        break;
                 }
+                // clean our mess
+                current = null;
+                file = null;
+                reference = "";
+                lines = "";
+                // should we break?
+                if(doBreak)
+                    break;
         }
-        // Not found.. write a new key instead.
+        // clean our mess
+        find = "";
+        
+        // Output out result
         return success;
     }
-
+    
+    
+    
+//    /** Try to overwrite a key if it already exists */
+//    private boolean writeOverwriteOld(final String[] fields) {
+//          // If this records already exists, overwrite it.
+//        String find = fields[0];
+//        boolean success = false;
+//        //Iterate through the knowledge files of our container for the record(s)
+//        for(String reference : readPriority){
+//            // get the current knowledge file pointer
+//            KnowledgeFile current = knowledge.get(reference);
+//            // get the file pointer
+//            File file = current.getFile();
+//            // read all lines from our file
+//                String lines = utils.files.readAsString(file);
+//
+////            // quick scan
+////                if(lines.contains("\n"+fields[0]+";")==false)
+////                    continue;
+//
+//                int i = 0;
+//                // iterate all lines inside the text file, use \n as separator
+//                for(String record : lines.split("\n")){
+//                    ++i;
+//                    // split each record into fields
+//                    String[] data = record.split(";");
+//                    // does it match what we want?
+//                    if(data[0].equals(find)){
+//                        // add this record to our result
+//                        String recordModified = 
+//                                utils.text.convertRecordToString(fields);
+//                        // do the replacement
+//                        lines = lines.replaceFirst(record+"\n",recordModified);
+//                        // write back to disk
+//                        success = utils.files.SaveStringToFile(file, lines);
+//                        // was our write successful?
+//                        if(success == false){
+//                            log(msg.ERROR, "Write operation: Failed to save record '%1' "
+//                                    + "at file '%2'");
+//                            return false;
+//                        }
+//                        log(msg.COMPLETED, "Write operation: Overwrote"
+//                           + " key '%1' at file '%2'",
+//                           data[0], file.getPath() );
+//                        return true;
+//                    }
+//                }
+//        }
+//        // Not found.. write a new key instead.
+//        return success;
+//    }
+    
+    
     /** Create a new file */
     private KnowledgeFile createKnowledgeFile() {
 
@@ -550,17 +660,23 @@ public class ContainerFlatFile implements ContainerInterface {
             if(createNewFile == false){
                 log(msg.ERROR, "Create New KnowledgeFile operation failed:"
                         + " Unable to create file '%1'", file.getPath());
+                // clean up our mess
+                file = null;
                 return null;
             }
         } catch (IOException ex) {
                 log(msg.ERROR, "Create New KnowledgeFile operation failed:"
                         + " Unable to create file '%1', an exception was "
                         + "reported. %2", file.getPath(), ex.toString());
+                // clean up our mess
+                file = null;
                 return null;
         }
         // Add this knowledge to our base
         KnowledgeFile addKnowledge = this.addKnowledge(file);
 
+        // clean our mess
+        file = null;
         // All done
         return addKnowledge;
     }
@@ -569,15 +685,30 @@ public class ContainerFlatFile implements ContainerInterface {
     /** returns the first available knowledge file. Creates a new one 
      *  if none availble */
     private KnowledgeFile getFreeKnowledgeFile(){
-
-
         // iterate all know knowledge files
        if(writePriority.length > 0)
         for(String reference : writePriority){
             // get the current knowledge file pointer
             KnowledgeFile current = knowledge.get(reference);
+            // get the record counter
+            long counter = 0;
+            // count records
+            try{
+                counter = current.getCount();
+            }catch (Exception e){
+                // output an error message to warn that something went wrong
+                log(msg.ERROR, "getFreeKnowledgeFile operation failed. "
+                        + "Unable to count records of '%1' with error '%2'",
+                        current.getFile().getPath(),
+                        e.toString()
+                        );
+            }
             // respect our limitation of records per file
-            if(current.getCount() >= this.maxRecords){
+            if(
+                    (counter >= this.maxRecords)
+                    ||
+                    (current.getFile().length() > this.maxSize)
+                    ){
                 writePriority = utils.text.stringArrayRemove
                         (writePriority, reference);
                 continue; // move onto the next one
@@ -591,6 +722,44 @@ public class ContainerFlatFile implements ContainerInterface {
 
     /** Create a new key */
     private boolean writeCreateNew(final String[] fields) {
+        // get a file container
+        KnowledgeFile current = this.getFreeKnowledgeFile();
+
+            // get the file pointer
+            File file = current.getFile();
+            // read all lines from our file
+            String lines = readAsString(file);
+            // convert record to new string
+            String recordModified = 
+                    utils.text.convertRecordToString(fields);
+            // add the new line
+            lines = lines.concat(recordModified);
+            // write back to disk
+            boolean success = utils.files.SaveStringToFile(file, lines);
+            // was our write successful?
+            if(success == false){
+                log(msg.ERROR, "Write operation: Failed to save record '%1' "
+                        + "at file '%2'");
+            }else{
+            // increase the record count for the used knowledge file
+            current.incCount();
+            // do the log
+            log(msg.COMPLETED, "Write operation: Wrote"
+               + " key '%1' at file '%2'",
+               fields[0], file.getPath() );
+            }
+            // clean up mess
+            current = null;
+            file = null;
+            lines = "";
+            recordModified = "";
+            
+            // finish here and quit
+            return success;
+    }
+
+    /** Create a new key */
+    private boolean writeCreateNewOld(final String[] fields) {
 
         // get a file container
         KnowledgeFile current = this.getFreeKnowledgeFile();
@@ -598,9 +767,10 @@ public class ContainerFlatFile implements ContainerInterface {
             // get the file pointer
             File file = current.getFile();
             // read all lines from our file
-            String lines = utils.files.readAsString(file);
+            String lines = readAsString(file);
             // convert record to new string
-            String recordModified = convertRecordToString(fields);
+            String recordModified = 
+                    utils.text.convertRecordToString(fields);
             // add the new line
             lines = lines.concat(recordModified);
             // write back to disk
@@ -619,10 +789,7 @@ public class ContainerFlatFile implements ContainerInterface {
                fields[0], file.getPath() );
             // finish here and quit
             return true;
-//        }
-//        return false;
     }
-
 
 
     /**
@@ -633,7 +800,7 @@ public class ContainerFlatFile implements ContainerInterface {
      * The parameter field is case insensitive, the parameter find is case
      * sensitive.
      */
-    public ArrayList<Properties> read(String field, String find) {
+  public ArrayList<Properties> read(String field, String find) {
         // create our object
         ArrayList<Properties> result = new ArrayList();
 
@@ -643,6 +810,8 @@ public class ContainerFlatFile implements ContainerInterface {
         if(pos == -1){
             log(msg.ERROR,"Read operation failed: Field '%1' was not found.",
                     field);
+            // clean up our mess
+            result = null;
             return null;
         }
         //Iterate through the knowledge files of our container for the record(s)
@@ -652,7 +821,7 @@ public class ContainerFlatFile implements ContainerInterface {
             // get the file pointer
             File file = current.getFile();
             // read all lines from our file
-                String lines = utils.files.readAsString(file);
+                String lines = readAsString(file);
                 int i = 0;
                 // iterate all lines inside the text file, use \n as separator
                 for(String record : lines.split("\n")){
@@ -660,21 +829,88 @@ public class ContainerFlatFile implements ContainerInterface {
                     // split each record into fields
                     String[] data = record.split(";");
                     // does it match what we want?
+                   try{
                     if(data[pos].equalsIgnoreCase(find)){
                         // add this record to our result
                         result.add(convertRecordToProperties(data));
                     }
+                    }
+                   catch (Exception e){}
+                   // clean up our mess
+                   record = null;
+                   data = null;
                 }
+          // clean up our mess
+          lines = "";
+          current = null;
+          file = null;
         }
         // All done
         return result;
     }
 
-    /** This is a clean and mean version of read. It will only retrieve
+  
+  public ArrayList<String[]> readNew(String field, String find) {
+        // create our object
+        ArrayList<String[]> result = new ArrayList();
+
+        // get the column number
+        int pos = utils.text.arrayIndex(field, fields);
+        // have we found something?
+        if(pos == -1){
+            log(msg.ERROR,"Read operation failed: Field '%1' was not found.",
+                    field);
+            // clean up our mess
+            result = null;
+            return null;
+        }
+        //Iterate through the knowledge files of our container for the record(s)
+        for(String reference : this.readPriority){
+            // get the current knowledge file pointer
+            KnowledgeFile current = this.knowledge.get(reference);
+            // get the file pointer
+            File file = current.getFile();
+            // read all lines from our file
+                String lines = readAsString(file);
+                int i = 0;
+                // iterate all lines inside the text file, use \n as separator
+                for(String record : lines.split("\n")){
+                    ++i;
+                    // split each record into fields
+                    String[] data = record.split(";");
+                    // does it match what we want?
+                   try{
+                    if(data[pos].equalsIgnoreCase(find)){
+                        // add this record to our result
+                        result.add(data);
+                    }
+                    }
+                   catch (Exception e){}
+                   // clean up our mess
+                   record = null;
+                   data = null;
+                }
+          // clean up our mess
+          lines = "";
+          current = null;
+          file = null;
+        }
+        // All done
+        return result;
+    }
+  
+  
+    
+   /** This is a clean and mean version of read. It will only retrieve
      the first record that matches our index key, assumed as being
      the first column on the records. It is case-sensitive, IT IS FAST.*/
     public String[] read(String find) {
-        if(knowledge.isEmpty())
+        // where each line is kept
+        String[] data = null;
+        // should we break the loops?
+        boolean doBreak = false;
+        
+        if(knowledge.isEmpty()) // return a variable with zero entries
             return new String[]{""};
         //Iterate through the knowledge files of our container for the record(s)
         for(String reference : this.readPriority){
@@ -683,24 +919,73 @@ public class ContainerFlatFile implements ContainerInterface {
             // get the file pointer
             File file = current.getFile();
             // read all lines from our file
-                String lines = //TODO remove this and don't read the whole file
-                        utils.files.readAsString(file);
+                String lines = readAsString(file);
                 int i = 0;
                 // iterate all lines inside the text file, use \n as separator
                 for(String record : lines.split("\n")){
                     ++i;
                     // split each record into fields
-                    String[] data = record.split(";");
+                    data = record.split(";");
                     // does it match what we want?
                     if(data[0].equals(find)){
                         // add this record to our result
-                        return data;
+                        doBreak = true;
                     }
+                    // clean up mess
+                    record = "";
+                    // should we break up?
+                    if(doBreak)
+                        break;
                 }
+                // clean up mess
+                reference = "";
+                current = null;
+                file = null;
+                lines = null;
+                // should we break up?
+                    if(doBreak)
+                        break;
         }
-        return new String[]{""};
-    }
+        
+        // should we break up?
+        if(doBreak)
+            return data;
+        else
+            return null;
+    } 
+    
+    
+   
+    
 
+    /** Bad, Bad thing. We will read all the entries from our knowledege files.
+     This will not work on machines with low memory..
+     */
+    public  ArrayList<String[]> readAll() {
+        // create our object
+        ArrayList<String[]> result = new ArrayList();
+
+        //Iterate through the knowledge files of our container for the record(s)
+        for(String reference : this.readPriority){
+            // get the current knowledge file pointer
+            KnowledgeFile current = this.knowledge.get(reference);
+            // get the file pointer
+            File file = current.getFile();
+            // read all lines from our file
+                String lines = readAsString(file);
+                // iterate all lines inside the text file, use \n as separator
+                for(String record : lines.split("\n")){
+                    // split each record into fields
+                    String[] data = record.split(";");
+                        // add this record to our result
+                        result.add(data);
+                }
+          // clear our variable
+          lines = "";
+        }
+        // All done
+        return result;
+    }
 
 
     /** Converts a given record onto a Properties object */
@@ -715,17 +1000,7 @@ public class ContainerFlatFile implements ContainerInterface {
         return result;
     }
 
-  /** Converts a given record onto a string that can be written on a file */
-    private String convertRecordToString(String[] record){
-        String result = "";
-        // iterate all fields of this record
-        for(String field : record) // add a comma to split them
-                result = result.concat(field + ";");
-            // add the breakline
-            result = result.concat("\n");
-        return result;
-    }
-
+  
     /** Delete a given record from our container **/
     public boolean delete(String field, String find) {
         // empty knowledge? No need to continue
@@ -753,8 +1028,7 @@ public class ContainerFlatFile implements ContainerInterface {
             // get the file pointer
             File file = current.getFile();
             // read all lines from our file
-                String lines = //TODO remove this and don't read the whole file
-                        utils.files.readAsString(file);
+                String lines = readAsString(file);
                 int i = 0;
                 // iterate all lines inside the text file, use \n as separator
                 for(String record : lines.split("\n")){
@@ -764,12 +1038,10 @@ public class ContainerFlatFile implements ContainerInterface {
                     // does it match what we want?
                     if(data[fieldIndex].equals(find)){
                         // delete this record
-                        //lines = lines.replaceFirst(record + "\n", "");
-                        lines = lines.replaceAll(record + "\n", "");
+                        lines = lines.replace(record + "\n", "");
                         // save the result back to the file
                         boolean result = 
                                 utils.files.SaveStringToFile(file, lines);
-                        System.out.println();
                         // ensure we decrease the record count
                         if(result == true){
                             // decrease the record count
@@ -800,7 +1072,6 @@ public class ContainerFlatFile implements ContainerInterface {
                 , "" + deletedCounter
                 , find
                 , field);
-         System.out.println("--->" + this.logger.getRecent());
         return true;
         }
     }
@@ -877,6 +1148,20 @@ public class ContainerFlatFile implements ContainerInterface {
         // output the result, not clean but efficient
         return out.split(";");
     }
+    
+    
+        private String readAsString(File file){
+        long length = file.length();
+        byte[] bytes = new byte[(int) length];
+        try{
+        InputStream is = new FileInputStream(file);
+        is.read(bytes);
+        is.close();
+        }catch(Exception e){}
+        finally{        
+        }
+        return new String(bytes);
+    }
 }
 
 
@@ -932,4 +1217,5 @@ class KnowledgeFile{
     public void decCount() {
         this.count--;
     }
+    
 }

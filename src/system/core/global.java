@@ -10,9 +10,11 @@ package system.core;
 import app.centrum.CentrumComponent;
 import app.sentinel.SentinelComponent;
 import app.files.FileServer;
+import app.files.LicenseComponent;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 import system.process.ManagerComponent;
 
 /**
@@ -31,7 +33,7 @@ public class global extends Component {
            for(String comp : AcceptedComponents.split(";")){
                // Record our accepted components, they are listed using ;
                this.settings.setProperty(comp, "");
-               log(DEBUG,"Allowing component '"+comp+"' to start");
+               log(msg.DEBUG,"Allowing component '"+comp+"' to start");
            }
        // save the full list of allowed components
        this.settings.setProperty("components", AcceptedComponents);}
@@ -43,8 +45,13 @@ public class global extends Component {
      /** Check if component is allowed to start. If not components are
       specified then it should allow all components to start */
      private boolean isAllowed(String who){
-        Boolean result = settings.containsKey(who)
-                || settings.getProperty("components").contentEquals("");
+        Boolean result = false;
+         try{
+         if(settings.containsKey(who))
+             result = true;
+         if(settings.getProperty("components").contentEquals(""))
+             result = true;
+         }catch (Exception e){}
         return result;
      }
 
@@ -52,21 +59,29 @@ public class global extends Component {
   /** Kickstart authorized components to start */
   private void startComponents(){
 
-    if(isAllowed(sentinel)){
-         SentinelComponent sentinelComponent = new SentinelComponent(getInstance());
-         sentinelComponent.getCanonicalName();
-         }
-
-    if(isAllowed("fileserver")){
-         FileServer fileServer = new FileServer(getInstance());
-         fileServer.getCanonicalName();
-         }
-
     if(isAllowed("manager")){
          ManagerComponent Manager = new ManagerComponent(getInstance());
          Manager.getCanonicalName();
          }
+      
+    if(isAllowed(msg.sentinel)){
+         SentinelComponent sentinelComponent = new SentinelComponent(getInstance());
+         sentinelComponent.getCanonicalName();
+         }
 
+    LicenseComponent license = null;
+    if(isAllowed("license")){
+         license = new LicenseComponent(getInstance());
+         license.getCanonicalName();
+         }
+
+
+    if(isAllowed("file")){
+         FileServer fileServer = new FileServer(getInstance(), license);
+         fileServer.getCanonicalName();
+         }
+
+    
 //    if(isAllowed("sdk")){
 //        SDK sdk = new SDK(getInstance());
 //        sdk.getCanonicalName();
@@ -77,6 +92,7 @@ public class global extends Component {
         centrum1.getCanonicalName();
          }
 
+
      }
 
 
@@ -86,10 +102,6 @@ public class global extends Component {
         startComponents();
 
          }
-
-    @Override
-    public void onRecover() {
-    }
 
     @Override
     public void onLoop() {

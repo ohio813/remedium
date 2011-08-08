@@ -4,6 +4,8 @@
 
 package utils;
 
+import java.io.File;
+import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -45,14 +47,21 @@ public class FilesTest {
     
 
      @Test
-     public void testgetHotFolders() {
-         System.out.println("Testing the Hot Folders result");
-            for (String dir : utils.files.getHotFolders())
-                System.out.println(dir);
-
+     public void testFindFolders() {
+         
+         System.out.println("Testing the Find Folders result");
+         // choose the target folder
+         File folderRoot = new File(".");
+        // get the available folders
+         ArrayList<File> folders = utils.files.findFolders(folderRoot, 25);
+        // test if we got a valid result
+         assertTrue(folders.size() > 0);
+        // iterate our list of folders
+         for(File folder : folders){
+            // output each folder
+             System.out.println("  " + folder.getPath());
+         }
          System.out.println("..Done!");
-
-     
      }
 
 }

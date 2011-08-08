@@ -16,6 +16,7 @@ public class Tags {
            title = "<%TITLE%>",
            navigation = "<%NAVIGATION%>",
            subnavigation = "<%SUBNAVIGATION%>",
+           login = "<%LOGIN%>",
            column1Content = "<%column1Content%>",
            copyright = "<%copyright%>";
 }

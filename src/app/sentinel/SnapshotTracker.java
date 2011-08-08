@@ -86,7 +86,7 @@ public class SnapshotTracker {
         // clean up the list of recently added files
         recentlyAdded = new ArrayList();
         // crawl our sub directory and check for changes
-        ArrayList<File> result = utils.files.findfiles(root, deepness);
+        ArrayList<File> result = utils.files.findFiles(root, deepness);
         // iterate throught all found files
         for(File file : result){
             // create a record from this file
