@@ -1,0 +1,100 @@
+
+
+
+
+
+--- TODO ---
+- Generic
+
+- Components
+    - Add icon() method to represent each component
+    - Add description() method to describe the purpose of each component
+
+- Manager
+    - Display icons instead of boring list with text
+
+- Container
+    ***- Replace the full string read with line by line approach (see if it solves memory issue)
+
+- User
+    ***- Prevent multiple login attempts (increase time delay on each wrong attempt)
+    ***- Prevent multiple registrations (only one register per IP address)
+
+- File server
+    - Add metrics
+        - Files downloaded recently
+        - Files downloaded by each user
+        - Bandwidth served (to user?)
+
+
+- Sentinel
+    - Show statistics to guests, only allow authorized users to start processes
+
+
+- Remove the About Tab - It is not being used as intended
+- Integrate SDK with web component
+- Serious defect exposed by INIfileTest. Minimal functionality not affected. (Read/Write INI keys)
+- LogMesssage getRecent() should output an error message if one occured on a past set of messages
+- LogMessage should hold a set of messages instead of a single message. This allows to export several messages while processing a method
+- LogMessage should record the time when each log is added to the object, this allows to establish a time line
+- LogMessage should write the log to disk using the FlatFile container to save memory resources
+
+
+
+--- MISSING ---
+- Dump records: don't overide file if record was written before
+- Each component should bear a version number (including the remedium instance)
+- Components should be allowed to share public files (and keep track of stats)
+- Add max number of attempts when message queue fails to contact external machine
+- We need an upgrade or app center urgently
+- Components should decide if they are publicly listed or not in manager
+- Centrum test case is not really proving that it works as intended
+- User messages need to be assigned with a number so that we can translate them
+- Would be nice that each component supports translation / submitting values by volunteers
+- Current way of sending addresses in Centrum is weak
+- Missing to compute the score in a separate thread.
+- We need to add numbers onto messages to ease translation effort.
+    - The log component can manage translation support
+    - Log manager records message codes in original language and provides translation when available
+    - This method also eases Test cases, allow to look for an exact message code instead of text that can be modified in the future
+
+---- Advantages of Remedium
+
+- Open source, free for home and enterprise users
+- Available for Windows, Unix and MacOSX
+- Web interface allows local or remote management throught a web browser
+- Small sized (less than 10Mb)
+- Portable, no need for installing
+- Component based architecture
+- Message queues permit loosely coupled component interaction
+- Controllable from command line
+- Embedded database system using HSQL, no need for external SQL servers
+- Stores knowledge data up to hundreds of gigabytes on normal workstations
+- The web interface is built to support visually impaired users
+- Controllable by tablet devices and phones
+- Platform available for third-party developers implement their own concepts
+- Performance efficient, runs in legacy workstations
+
+---- Disadvantages of Remedium
+- New development, not mature
+- Not completed. Most of the final intended features are not available
+- Code development performed by a single person
+- Developed in part-time/volunteer basis, slow progress of development
+- Java based, requires this platform available on host machines
+- Uses a non standard J2EE web development framework
+- No XML support in messaging/web service requests
+- Non standard User Interface for end-users
+- No installation packages available
+- No technical support besides volunteer based forum
+- Not tested against malicious attacks such as DDoS and authentication bruteforce
+- No automatic upgrade to new versions is available
+- Supports only English language
+- Developer is (obviously) not a web designer
+
+
+- Interpreted languages
+-- Javascript: http://www.mozilla.org/rhino/
+-- PHP: Quercus PHP
+-- BeanShell (very similar to Java)
+///
+http://www.doublejdesign.co.uk/products-page/
