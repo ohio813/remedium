@@ -21,7 +21,7 @@
 package obsolete;
 
 import java.util.Properties;
-import system.mq.msg;
+import system.mqueue.msg;
 import remedium.Remedium;
 import org.junit.After;
 import org.junit.AfterClass;

@@ -16,7 +16,7 @@ package app.sentinel;
 
 import app.sentinel.SnapshotComponent;
 import java.io.File;
-import system.mq.msg;
+import system.mqueue.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;

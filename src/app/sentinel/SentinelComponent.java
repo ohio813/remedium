@@ -14,12 +14,13 @@ import system.html.Button;
 import system.html.Meta;
 import system.html.Section;
 import system.html.Table;
+import system.mqueue.msg;
 
 /**
  *
  * @author Nuno Brito, 8th of April 2011 in Darmstadt, Germany
  */
-public class SentinelComponent extends Component{
+public class SentinelComponent extends Component implements msg{
 
     // definitions
     private int
@@ -116,10 +117,6 @@ public class SentinelComponent extends Component{
     }
 
     @Override
-    public void onRecover() {
-    }
-
-    @Override
     public void onLoop() {
           getUpdatesFromTriumvir();
     }
@@ -162,7 +159,7 @@ public class SentinelComponent extends Component{
 
     @Override
     public String doWebResponse(Request request, Response response) {
-
+        // get the page that we want to display right now
         String show = utils.internet.getHTMLparameter(request, "show");
 
          // only add the HTML refresh to the main page
@@ -226,7 +223,7 @@ public class SentinelComponent extends Component{
         //System.out.println(loopMeta.getText());
 
         Table tableControls = new Table();
-        tableControls.addColumn(actionButton.getText(), stopButton.getText());
+        tableControls.addLine(actionButton.getText(), stopButton.getText());
 
         // output our result
         String result =

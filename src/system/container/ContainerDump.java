@@ -13,7 +13,7 @@
 package system.container;
 
 import java.io.File;
-import system.mq.msg;
+import system.mqueue.msg;
 import system.core.Component;
 
 /**

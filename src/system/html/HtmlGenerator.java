@@ -103,7 +103,6 @@ public final class HtmlGenerator {
 
             title = template.defaultTitle,
             html = template.defaultHTML,
-            footerContent = template.defaultFooterContent,
 
     metaContentType = template.defaultMetaContentType,
     metaContenDesc = template.defaultMetaDesc,
@@ -154,8 +153,8 @@ public final class HtmlGenerator {
 
     /** Set the content displayed on the main section */
     public void setCopyright(String content){
-      footerContent = template.defaultFooterContent.replace
-              (tag.copyright, content);
+//      footerContent = template.defaultFooterContent.replace
+//              (tag.copyright, content);
     }
 
     /** prepare the nav HTML text */
@@ -167,9 +166,12 @@ public final class HtmlGenerator {
               template.defaultNavigation.replace
               (tag.navigation, content);
 
-        content = this.sub.getSubLinks();
-              navigationContent = navigationContent.replace
-                (tag.subnavigation, content);
+        // remove the top links for "Home", "About" and the such
+        navigationContent = navigationContent.replace("<%SUBNAVIGATION%>",
+                "");
+//        content = this.sub.getSubLinks();
+//              navigationContent = navigationContent.replace
+//                (tag.subnavigation, content);
 
     }
 

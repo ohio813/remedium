@@ -6,10 +6,9 @@
 
 package system.core;
 
-import system.core.Component;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.mq.msg;
+import system.mqueue.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -67,11 +66,6 @@ public class component_Test implements msg {
             @Override
             public void onStop() {
                 log(DEBUG,"Goodbye world!");
-            }
-
-            @Override
-            public void onRecover() {
-               log(DEBUG,"Recovering my world!");
             }
 
             @Override

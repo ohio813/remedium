@@ -49,7 +49,7 @@ import java.util.Hashtable;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
@@ -105,8 +105,8 @@ public abstract class ProcessManagerAbstract implements msg{
                 //+componentList.size()+" processes are listed."
                 );
 
-        if(debug)
-         log(DEBUG,"Added '"+who.getCanonicalName()+"' to the list, ");
+//        if(debug)
+//         log(DEBUG,"Added '"+who.getCanonicalName()+"' to the list, ");
 
         //TODO this should not be necessary in the future
         this.add(who.getProcess());
@@ -132,9 +132,9 @@ public abstract class ProcessManagerAbstract implements msg{
         }
         // all checks passed, add this process to the list
         list.put(who.getName(), who);
-        log(ROUTINE,"Added '"+who.getName()+"' to the list, "
-                +list.size()+" processes are listed."
-                );
+//        log(ROUTINE,"Added '"+who.getName()+"' to the list, "
+//                +list.size()+" processes are listed."
+//                );
         // return as true since we had no troubles
         return true;
     }

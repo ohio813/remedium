@@ -15,7 +15,6 @@
  * //TODO Add a start time and end time to know how long each instance survives
  * //TODO Warn when errors occur
  * //TODO Allow triggers to call specific methods
- * //TODO Add a UI to let us browse through the log entries
  */
 
 package system.log;
@@ -23,13 +22,13 @@ package system.log;
 import java.util.ArrayList;
 import java.util.Properties;
 import remedium.Remedium;
-import system.mq.msg;
+import system.mqueue.msg;
 
 /**
  *
  * @author Nuno Brito, 14th April 2011 in Darmstadt, Germany
  */
-public class logHandler implements msg{
+public class logHandler {
 
     // settings
     //Boolean debug = true; // true if you want debugging messages
@@ -67,12 +66,12 @@ public class logHandler implements msg{
         String temp = "";
 
         switch (gender) {
-            case INFO: temp =  "info"; break;
-            case DEBUG: temp =  "debug"; break;
-            case EXTRA: temp =  "extra"; break;
-            case ROUTINE: temp = "routine"; break;
-            case ERROR: temp =  "error"; break;
-            case WARNING: temp =  "warning"; break;
+            case msg.INFO: temp =  "info"; break;
+            case msg.DEBUG: temp =  "debug"; break;
+            case msg.EXTRA: temp =  "extra"; break;
+            case msg.ROUTINE: temp = "routine"; break;
+            case msg.ERROR: temp =  "error"; break;
+            case msg.WARNING: temp =  "warning"; break;
             default: temp =  ""+gender; break;
         }
 
@@ -117,7 +116,8 @@ public class logHandler implements msg{
                 "[" + remedium.getIDname() + "]["
                 + who
                 + "]["
-                + interpret(gender)
+                + //interpret(gender)
+                utils.text.translateStatus(gender)
                 + "] "
                 + message);
 
@@ -151,6 +151,64 @@ public class logHandler implements msg{
         return false;
     }
 
+    /** Returns lines from text outputed to the screen*/
+    public String getHTMLLog(final int lastMessages){
+
+        // freeze the current status
+        Object[] loggedMessages = logs.toArray();
+        // setup our counter variables
+        int size = loggedMessages.length;
+        int since = size - lastMessages;
+
+        // only use the lastMessages values if we have enough history already
+        if(size - lastMessages < 0)
+            since = 0;
+
+
+
+        // the holder of results
+        String result = "";
+            // iterate the last n messages
+            for(int i = since; i < size; i++){
+                // get the log entry
+                log_record log = (log_record) loggedMessages[i];
+
+                // get the log message
+                String message =
+                        utils.time.getTimeFromLong(log.getDate())
+                        //"[" + remedium.getIDname() + "]"
+                        + " ["
+                        + log.getWho()
+                        + "]["
+                        + utils.text.translateStatus(log.getGender())
+                        + "] "
+                        + log.getMessage()
+                        ;
+
+                String temp = "black";
+                
+                // if it is an error change the color
+               switch (log.getGender()) {
+                    case msg.INFO: temp =  "black"; break;
+                    case msg.DEBUG: temp =  "blue"; break;
+                    case msg.EXTRA: temp =  "blue"; break;
+                    case msg.ROUTINE: temp = "rgb(102, 102, 102)"; break;
+                    case msg.ERROR: temp =  "red"; break;
+                    case msg.WARNING: temp =  "red"; break;
+                    default: temp =  "black"; break;
+                    }
+
+
+               result = result.concat(
+                       "<span style=\'color: "+temp+"';>"
+                       + message
+                       + "<span>"
+                       + "<br>\n"
+                       );
+
+            }
+        return result;
+    }
 
     /** Filter out the messages from unwanted roles */
     public void filterExcludeComponent(String who){
@@ -204,10 +262,10 @@ public class logHandler implements msg{
      */
     public void stop(Properties parameters){
 
-        if( (parameters.containsKey(NO_STATS)==false) // cancel the stats completely
+        if( (parameters.containsKey(msg.NO_STATS)==false) // cancel the stats completely
             && (remedium.isDebug()==true)
                 )
-            log(INFO,showStats()); // if we are debugging, show us the stats
+            log(msg.INFO,showStats()); // if we are debugging, show us the stats
     }
 
     private void log(int gender, String message) {

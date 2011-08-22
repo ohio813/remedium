@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 
 /**
  *
@@ -57,11 +58,7 @@ public class TriumvirComponent extends Component{
 
     @Override
     public void onStart() {
-        log(INFO,"Starting fresh");
-    }
-
-    @Override
-    public void onRecover() {
+        log(msg.INFO,"Starting fresh");
     }
 
     @Override
@@ -82,7 +79,7 @@ public class TriumvirComponent extends Component{
 
     @Override
     public void onStop() {
-        log(INFO,"Stopping");
+        log(msg.INFO,"Stopping");
     }
 
     @Override
@@ -98,7 +95,7 @@ public class TriumvirComponent extends Component{
 
     /** Should we set as an active triumvir server or not? */
     private void activateServer(Boolean newState){
-       log(ROUTINE, "Setting server state as '"
+       log(msg.ROUTINE, "Setting server state as '"
                     + newState.toString() + "'");
         // change the state
         isTriumvir = newState;
@@ -112,9 +109,9 @@ public class TriumvirComponent extends Component{
     public void digest_updateClientList(Properties message) {
         // import a list of clients from a received message
         
-        String clientsList =  message.getProperty(FIELD_MESSAGE);
+        String clientsList =  message.getProperty(msg.FIELD_MESSAGE);
 
-        log(ROUTINE, "Received an updated list of clients: '"
+        log(msg.ROUTINE, "Received an updated list of clients: '"
                 + clientsList +"'");
 
         // import our list of clients directly
@@ -130,18 +127,18 @@ public class TriumvirComponent extends Component{
      */
     public void digest_activate(Properties message) {
         // We can only accept messages from a Centrum
-        String fromWho = message.getProperty(FIELD_FROM);
+        String fromWho = message.getProperty(msg.FIELD_FROM);
 
       
         // filter non-authorized messages
-        if(fromWho.equalsIgnoreCase(centrum)==false){
-            log(ERROR,"Can only accept messages from a Centrum");
+        if(fromWho.equalsIgnoreCase(msg.centrum)==false){
+            log(msg.ERROR,"Can only accept messages from a Centrum");
             return;
         }
 
         // should we set ourselves as triumvir or not?
         activateServer(
-                message.getProperty(FIELD_MESSAGE).equalsIgnoreCase("true")
+                message.getProperty(msg.FIELD_MESSAGE).equalsIgnoreCase("true")
                 );
     }
 
@@ -201,7 +198,7 @@ public class TriumvirComponent extends Component{
         clientsUpdate.put(who, "" + this.getTime() );
 
 
-            log(DEBUG, "Requesting knowledge update to Sentinel at " + who);
+            log(msg.DEBUG, "Requesting knowledge update to Sentinel at " + who);
 
 //            Properties message = new Properties();
 //            // the fields that send our message on the expected direction

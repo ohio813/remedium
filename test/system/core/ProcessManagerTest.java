@@ -15,14 +15,14 @@
  */
 package system.core;
 
-import system.mq.msg;
+import system.mqueue.msg;
 import system.process.Status;
 import remedium.Remedium;
 import java.util.Properties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import system.mq.msg;
+import system.mqueue.msg;
 import static org.junit.Assert.*;
 
 /**

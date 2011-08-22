@@ -17,6 +17,7 @@ import javax.swing.tree.TreeSelectionModel;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 
 /**
  *
@@ -506,7 +507,7 @@ public class ProcessManagerUI extends javax.swing.JFrame {
                 // we don't need to update ourselves very often
                 this.setTime(4);
 
-                log(ROUTINE,"Process Manager UI is available");
+                log(msg.ROUTINE,"Process Manager UI is available");
                 return;
             }
 
@@ -520,12 +521,7 @@ public class ProcessManagerUI extends javax.swing.JFrame {
 
             @Override
             public void onStop() {
-                log(ROUTINE,"Stopping");
-            }
-
-            @Override
-            public void onRecover() {
-               log(DEBUG,"Recovering my world!");
+                log(msg.ROUTINE,"Stopping");
             }
 
             @Override

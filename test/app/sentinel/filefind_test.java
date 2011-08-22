@@ -43,7 +43,7 @@ public class filefind_test {
          //File folder = new File("./");
          File folder = new File(where);
 
-     ArrayList<File> results = utils.files.findfiles(folder, 4 );
+     ArrayList<File> results = utils.files.findFiles(folder, 4 );
 
          assertEquals(true,results.size()>0);
          

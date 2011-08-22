@@ -21,7 +21,7 @@ package system.container;
 import java.util.ArrayList;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
-import system.mq.msg;
+import system.mqueue.msg;
 import java.util.Properties;
 import remedium.Remedium;
 import org.junit.AfterClass;
@@ -62,7 +62,9 @@ public class containerTest implements msg {
 
     private static int
             time_to_wait = 2, // how many seconds should we wait?
-            lock = 123456;
+            lock = 123456,
+            //_key = 0,
+            _value = 1;
 
     static Component component;
            Container container;
@@ -101,9 +103,6 @@ public class containerTest implements msg {
 
             @Override
             public void onStop() {}
-
-            @Override
-            public void onRecover() {}
 
             @Override
             public void onLoop() {}
@@ -156,8 +155,8 @@ public class containerTest implements msg {
 
    System.out.println("Test reading keys from the container");
 
-   ArrayList<Properties> readResult = container.read("key", "key1");
-   String testRead = readResult.get(0).getProperty("value", "");
+   ArrayList<String[]> readResult = container.readNew("key", "key1");
+   String testRead = readResult.get(0)[_value];
 
    System.out.println(testRead);
 

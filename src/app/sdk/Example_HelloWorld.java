@@ -31,10 +31,6 @@ public class Example_HelloWorld extends Component{
     }
 
     @Override
-    public void onRecover() {
-    }
-
-    @Override
     public void onLoop() {
     }
 

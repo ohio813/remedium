@@ -11,6 +11,7 @@ import system.core.Component;
 import org.simpleframework.http.Request;
 import org.simpleframework.http.Response;
 import remedium.Remedium;
+import system.mqueue.msg;
 import utils.USBtracker;
 
 /**
@@ -45,7 +46,7 @@ public class USBComponent extends Component{
             return;
             // send the message
             utils.tweaks.updateTrayIconAction(this.getInstance().getMyAddress(),
-               this.getInstance().getMyAddress() +"/"+ sentinel_usb);
+               this.getInstance().getMyAddress() +"/"+ msg.sentinel_usb);
             hasBeenGrabbed = true;
     }
     /** We don't need the system tray icon, let it go..*/
@@ -63,22 +64,26 @@ public class USBComponent extends Component{
     public void onStart() {
          // set our loop for two seconds
         this.setTime(timer);
-        log(ROUTINE,"Prepared to process new USB devices when inserted");
+        log(msg.ROUTINE,"Prepared to process new USB devices when inserted");
     }
 
-
-    @Override
-    public void onRecover() {
-    }
 
     @Override
     public void onLoop() {
-        // get the status of removable drives
+
+        // security check, we need to create this
+        if(tracker==null)
+            tracker = new USBtracker();
+
+        // handle results on this variable
         int result = tracker.noChanges;
 
        try{
+        // get the status of removable drives
         result = tracker.updateDriveStatus();
-        }catch(Exception e){}
+        }catch(Exception e){
+            result = tracker.noChanges;
+        }
         
         // if we detect a new USB drive, react immediately
         if(result == tracker.hasNewDrive){
@@ -104,14 +109,14 @@ public class USBComponent extends Component{
         Boolean result = autorun.immunize(drive);
 
         if(result == true)
-            log(INFO, "Drive '" + drive +"' is immunized");
+            log(msg.INFO, "Drive '" + drive +"' is immunized");
         else
-            log(INFO, "Failed to immunize drive '" + drive +"'");
+            log(msg.INFO, "Failed to immunize drive '" + drive +"'");
     }
 
     @Override
     public void onStop() {
-        log(INFO,"Stopping");
+        log(msg.INFO,"Stopping");
     }
 
     @Override

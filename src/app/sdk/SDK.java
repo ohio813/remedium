@@ -51,10 +51,6 @@ public class SDK extends Component{
     }
 
     @Override
-    public void onRecover() {
-    }
-
-    @Override
     public void onLoop() {
     }
 

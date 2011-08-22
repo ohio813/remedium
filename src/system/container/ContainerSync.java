@@ -15,7 +15,7 @@ package system.container;
 //import java.sql.Statement;
 //import java.util.logging.Level;
 //import java.util.logging.Logger;
-import system.mq.msg;
+import system.mqueue.msg;
 import system.core.Component;
 
 /**

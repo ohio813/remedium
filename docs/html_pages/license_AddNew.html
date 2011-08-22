@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <title>license</title>
+  
+  <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8">
+ 
+  <meta name="description" content="">
+ 
+  <meta name="keywords" content="">
+ 
+  <meta name="robots" content="index, follow">
+ 
+  <style media="screen" type="text/css">/* General styles */body {margin:0;padding:0;border:0; /* removes the border around viewport in old IE */width:100%;background:#fff;min-width:200px; /* Minimum width of layout */font-size:90%;}a {color:#369;text-decoration:none;font-weight:bold;}a:hover {color:#fff;background:#369;text-decoration:none;}h1, h2, h3 {margin:.8em 0 .2em 0;padding:0;}p {margin:.4em 0 .8em 0;padding:0;}/* Header styles */#header {clear:both;float:left;width:100%;}#header {border-bottom:1px solid #000;}#header p,#header h1,#header h2 {padding:.4em 15px 0 15px;margin:0;}#header ul {clear:left;float:left;width:100%;list-style:none;margin:10px 0 0 0;padding:0;}#header ul li {display:inline;list-style:none;margin:0;padding:0;}#header ul li a {display:block;float:left;margin:0 0 0 1px;padding:3px 10px;text-align:center;background:#eee;color:#000;text-decoration:none;position:relative;left:15px;line-height:1.3em;}#header ul li a:hover {background:#369;color:#fff;}#header ul li a.active,#header ul li a.active:hover {color:#fff;background:#000;font-weight:bold;}#header ul li a span {display:block;}/* 'widths' sub menu */#layoutdims {clear:both;background:#eee;border-top:4px solid #000;margin:0;padding:6px 15px !important;text-align:left;}/* column container */.colmask {position:relative; /* This fixes the IE7 overflow hidden bug */clear:both;float:left;width:100%; /* width of whole page */overflow:hidden; /* This chops off any overhanging divs */}/* common column settings */.colright,.colmid,.colleft {float:left;width:100%;position:relative;}.col1,.col2,.col3 {float:left;position:relative;padding:0 0 1em 0;overflow:hidden;}/* Full page settings */.fullpage {background:#fff; /* page background colour */}.fullpage .col1 {width:96%; /* page width minus left and right padding */left:2%; /* page left padding */}/* Footer styles */#footer {clear:both;float:right;width:100%;border-top:1px solid #000;}#footer p {padding:10px;margin:0;}</style>
+</head>
+<body>
+ 
+<div id="header"> 
+<ul>
+ 
+</ul>
+ 
+<p id="layoutdims"> <a href="http://localhost:10101">index</a>&nbsp;&gt;&nbsp;<strong>license</strong> </p>
+ </div>
+ 
+<div class="colmask fullpage"> 
+<div class="col1"><!-- Column 1 start --> <br>
+ 
+<h2>Add a new license</h2>
+ 
+<hr>
+<form method="post" action="?action=submitLicense" name="submitLicense">
+  <table style="text-align: left; width: 5px;" border="0" cellpadding="5" cellspacing="2">
+    <tbody>
+      <tr>
+        <td style="text-align: right;" valign="undefined">Id</td>
+        <td align="undefined" valign="undefined"><input name="id">&nbsp;</td>
+      </tr>
+      <tr>
+        <td style="text-align: right;" valign="undefined">Title</td>
+        <td align="undefined" valign="undefined"><input size="50" name="title"></td>
+      </tr>
+      <tr>
+        <td style="text-align: right;" valign="undefined">Description</td>
+        <td align="undefined" valign="undefined"><textarea cols="50" rows="5" name="description"></textarea></td>
+      </tr>
+      <tr>
+        <td align="undefined" valign="undefined">Content</td>
+        <td align="undefined" valign="undefined"></td>
+      </tr>
+      <tr>
+        <td style="text-align: right;" valign="undefined">Tags</td>
+        <td align="undefined" valign="undefined"><input maxlength="100" size="67" name="tags"></td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <input value="Save" type="submit"><br>
+</form>
+ </div>
+ </div>
+ 
+</body>
+</html>

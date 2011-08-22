@@ -10,7 +10,7 @@
 
 package utils;
 
-import system.mq.msg;
+import system.mqueue.msg;
 import java.io.File;
 import system.log.LogMessage;
 import org.junit.AfterClass;
